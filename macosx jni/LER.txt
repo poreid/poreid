@@ -1,0 +1,2 @@
+- Basta fazer make para criar a biblioteca libj2pcsc.dylib que é parte nativa do pcsc para macosx.
+- A biblioteca deve ser colocada em poreid/src/main/resources.
