@@ -1,0 +1,11 @@
+#How-to
+
+= Exemplos de utilização =
+
+Leitura do nome da rua, do apelido e do campo de notas pessoais:
+{{{
+CitizenCard cc = CardFactory.getCard();
+System.out.println("nome da rua: "+cc.getAddress().getStreetName());
+System.out.println("apelido: "+cc.getID().getSurname());
+System.out.println("notas pessoais: "+cc.readPersonalNotes().toString());
+}}}
