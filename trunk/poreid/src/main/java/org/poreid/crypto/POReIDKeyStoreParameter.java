@@ -32,11 +32,11 @@ public final class POReIDKeyStoreParameter implements LoadStoreParameter {
     }
     
     
-    POReIDSmartCard getCard() {
+    public POReIDSmartCard getCard() {
         return card;
     }
 
-    void setCard(POReIDSmartCard card) {
+    public void setCard(POReIDSmartCard card) {
         this.card = card;
     }
 }
