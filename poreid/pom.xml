@@ -7,7 +7,7 @@
     </parent>
     <groupId>org.poreid</groupId>
     <artifactId>poreid</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2</version>
     <packaging>jar</packaging>
     <name>POReID</name>
     <description>The POReID is a java library to handle the portuguese eID smartcard, this library can be used for desktop applications as well as browser based applets</description>
