@@ -24,22 +24,13 @@
 
 package org.poreid.cc;
 
-import org.poreid.cc.CitizenCard;
-import java.security.KeyStore;
-import java.security.MessageDigest;
-import java.security.PrivateKey;
-import java.security.Security;
-import java.security.Signature;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.poreid.CardFactory;
 import org.poreid.PkAlias;
-import org.poreid.RSAPaddingSchemes;
-import org.poreid.crypto.POReIDProvider;
 
 /**
  *
