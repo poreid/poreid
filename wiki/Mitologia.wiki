@@ -2,7 +2,7 @@
 
 Alguém mencionou a possibilidade de extrair as chaves privadas armazenadas no cartão.
 
-*Se fosse possivel teria sido mais barato distribuir uma _pen_ USB por cada cidadão :D.
+*Se fosse possivel extrair as chaves privadas, teria sido mais barato distribuir uma _pen_ USB por cada cidadão :D.
 Além de não ser possível, a utilização das mesmas está protegida por PIN.
 
 ----
