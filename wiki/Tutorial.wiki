@@ -1,3 +1,4 @@
+#labels poreid,exemplos,java
 = Exemplos de utilização =
 
  ===Leitura do nome da rua, do apelido e do campo de notas pessoais===
@@ -35,4 +36,3 @@ signature.update("01234567890".getBytes());
 byte[] signatureBytes = signature.sign();
 }}}
  * *Este cenário é util na eventualidade de existir mais do que um par cartão/leitor no sistema, assim evita-se selecionar duas vezes o cartão pretendido.*
-
