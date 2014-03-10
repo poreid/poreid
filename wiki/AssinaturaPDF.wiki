@@ -1,5 +1,5 @@
 #labels poreid,itext,pdf,assinatura,java
-#Exemplo de assinatura em PDF (exemplo completo).
+=Assinatura digital em PDF=
 
 Exemplo encontrado no [http://stackoverflow.com/questions/22178665/signing-a-pdf-with-an-eid-using-pkcs11-and-itext/22238404#22238404 stackoverflow]
 {{{
