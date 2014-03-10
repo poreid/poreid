@@ -1,0 +1,78 @@
+#labels itext,poreid,assinatura,pdf,java
+#Exemplo de assinatura em PDF (exemplo completo).
+
+Exemplo encontrado no [http://stackoverflow.com/questions/22178665/signing-a-pdf-with-an-eid-using-pkcs11-and-itext/22238404#22238404 stackoverflow]
+{{{
+package exemplo;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfSignatureAppearance;
+import com.itextpdf.text.pdf.PdfStamper;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.security.ExternalDigest;
+import com.itextpdf.text.pdf.security.ExternalSignature;
+import com.itextpdf.text.pdf.security.MakeSignature;
+import com.itextpdf.text.pdf.security.MakeSignature.CryptoStandard;
+import com.itextpdf.text.pdf.security.PrivateKeySignature;
+import com.itextpdf.text.pdf.security.ProviderDigest;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.Security;
+import java.security.cert.Certificate;
+import org.poreid.config.POReIDConfig;
+import org.poreid.crypto.POReIDProvider;
+
+public class App {
+
+    public void createPdf(String filename) throws IOException, DocumentException {
+        Document document = new Document();
+        PdfWriter.getInstance(document, new FileOutputStream(filename));
+        document.open();
+        document.add(new Paragraph("Assinado com o Cartão de Cidadão!"));
+        document.close();
+    }
+
+    public void signPdf(String src, String dest)
+            throws IOException, DocumentException, GeneralSecurityException {
+          
+        KeyStore ks = KeyStore.getInstance(POReIDConfig.POREID);
+        ks.load(null);
+        PrivateKey pk = (PrivateKey) ks.getKey(POReIDConfig.ASSINATURA, null);
+        Certificate[] chain = ks.getCertificateChain(POReIDConfig.ASSINATURA);
+
+        // reader and stamper
+        PdfReader reader = new PdfReader(src);
+        FileOutputStream os = new FileOutputStream(dest);
+        PdfStamper stamper = PdfStamper.createSignature(reader, os, '\0');
+
+        // appearance
+        PdfSignatureAppearance appearance = stamper.getSignatureAppearance();
+        appearance.setReason("qualquer motivo");
+        appearance.setLocation("qualquer localização");
+        appearance.setVisibleSignature(new Rectangle(72, 732, 144, 780), 1, "primeira assinatura");
+
+        // digital signature
+        ExternalSignature es = new PrivateKeySignature(pk, "SHA-256", POReIDConfig.POREID);
+        ExternalDigest digest = new ProviderDigest(null);
+        MakeSignature.signDetached(appearance, digest, es, chain, null, null, null, 0, CryptoStandard.CMS);
+    }
+
+    public static void main(String[] args) throws DocumentException, IOException, GeneralSecurityException {
+        Security.addProvider(new POReIDProvider());
+        
+        String pathSeparator = java.nio.file.FileSystems.getDefault().getSeparator();
+        App exemplo = new App();
+
+        exemplo.createPdf(System.getProperty("user.home") + pathSeparator + "exemplo.pdf");
+        exemplo.signPdf(System.getProperty("user.home") + pathSeparator + "exemplo.pdf", System.getProperty("user.home") + pathSeparator + "exemplo.assinado.pdf");
+    }
+}
+
+}}}
