@@ -1,4 +1,4 @@
-#labels mitos,tolices,etc
+#labels mitos
 = Mitos sobre o Cartão de Cidadão =
 
 Alguém mencionou a possibilidade de extrair as chaves privadas armazenadas no cartão.
