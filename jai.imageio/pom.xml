@@ -1,0 +1,38 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.poreid.jai.imageio</groupId>
+    <artifactId>jai.imageio</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>JAI Image I/O</name>
+    <description>API Java para manipular imagens no formato JPEG2000. Baseado na versão da biblioteca Bio-Formats (http://www.openmicroscopy.org)</description>
+    <url>http://www.poreid.org</url>
+
+    <licenses>
+        <license>
+            <name>Simplified BSD License</name>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+  
+    <repositories>
+        <repository>
+            <id>project.local</id>
+            <name>project</name>
+            <url>file:${project.basedir}/repo</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.mangosdk.spi</groupId>
+            <artifactId>spi</artifactId>
+            <version>0.24</version>
+        </dependency>
+    </dependencies>
+</project>
