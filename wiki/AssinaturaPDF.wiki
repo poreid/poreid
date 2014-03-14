@@ -67,11 +67,11 @@ public class App {
     public static void main(String[] args) throws DocumentException, IOException, GeneralSecurityException {
         Security.addProvider(new POReIDProvider());
         
-        String pathSeparator = java.nio.file.FileSystems.getDefault().getSeparator();
+        String fileSeparator = java.nio.file.FileSystems.getDefault().getSeparator();
         App exemplo = new App();
 
-        exemplo.createPdf(System.getProperty("user.home") + pathSeparator + "exemplo.pdf");
-        exemplo.signPdf(System.getProperty("user.home") + pathSeparator + "exemplo.pdf", System.getProperty("user.home") + pathSeparator + "exemplo.assinado.pdf");
+        exemplo.createPdf(System.getProperty("user.home") + fileSeparator + "exemplo.pdf");
+        exemplo.signPdf(System.getProperty("user.home") + fileSeparator + "exemplo.pdf", System.getProperty("user.home") + fileSeparator + "exemplo.assinado.pdf");
     }
 }
 
