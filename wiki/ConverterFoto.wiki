@@ -51,7 +51,8 @@ public class App {
             BufferedImage img = ImageIO.read(new ByteArrayInputStream(foto));
             String fileSeparator = java.nio.file.FileSystems.getDefault().getSeparator();
             ImageIO.write(img, "png", new File(System.getProperty("user.home") + fileSeparator + "FOTO.png"));
-        } catch (CardTerminalNotPresentException | UnknownCardException | CardNotPresentException | CanceledSelectionException | POReIDException | IOException | SmartCardFileException ex) {
+        } catch (CardTerminalNotPresentException | UnknownCardException | CardNotPresentException | 
+                CanceledSelectionException | POReIDException | IOException | SmartCardFileException ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
