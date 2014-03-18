@@ -1,6 +1,4 @@
-#summary One-sentence summary of this page.
 #labels poreid,osx,safari,configuração,resolução
-
 =Execução do componente POREID no Safari em OSX=
 
 A execução de uma applet no Safari que utilize o componente POREID resulta na seguinte exceção:
