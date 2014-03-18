@@ -1,0 +1,24 @@
+#summary One-sentence summary of this page.
+#labels poreid,osx,safari,configuração,resolução
+
+=Execução do componente POREID no Safari em OSX=
+
+A execução de uma applet no Safari que utilize o componente POREID resulta na seguinte exceção:
+http://poreid.googlecode.com/svn/wiki/images/excecao.png
+
+*Para permitir a execução sem a exceção indicada é necessário permitir que o plug-in seja executado sem restrições no Safari. Desta forma o seguinte procedimento deve ser realizado:*
+
+ * Aceder às preferências do Safari.
+http://poreid.googlecode.com/svn/wiki/images/passo1.png
+
+ * Selecionar _Security_ e premir _Manage Website Settings_.
+http://poreid.googlecode.com/svn/wiki/images/passo2.png
+
+ * Na caixa _Configured Websites_, para o website pretendido escolher a opção _Run in Unsafe Mode_
+http://poreid.googlecode.com/svn/wiki/images/passo3.png
+
+ * Premir o botão _Trust_
+http://poreid.googlecode.com/svn/wiki/images/passo4.png
+
+Após realização do procedimento, a applet será executada sem restrições no Safari
+http://poreid.googlecode.com/svn/wiki/images/screen5.png
