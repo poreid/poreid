@@ -1,10 +1,10 @@
 #labels poreid,osx,safari,configuração,resolução
 =Execução do componente POREID no Safari em OSX=
 
-A execução de uma applet no Safari que utilize o componente POREID resulta na seguinte exceção:
+ * A execução de uma applet no Safari que utilize o componente POREID resulta na seguinte exceção:
 http://poreid.googlecode.com/svn/wiki/images/excecao.png
 
-*Para permitir a execução sem a exceção indicada é necessário permitir que o plug-in seja executado sem restrições no Safari. Desta forma o seguinte procedimento deve ser realizado:*
+*A mesma execução em Mozilla Firefox não produz esta exceção. No entanto, a utilização de Safari é possível desde que se permita que o plug-in seja executado sem restrições do browser. Para tal deve ser realizado o seguinte procedimento:*
 
  * Aceder às preferências do Safari.
 http://poreid.googlecode.com/svn/wiki/images/passo1.png
