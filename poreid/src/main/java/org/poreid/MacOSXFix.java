@@ -24,10 +24,6 @@
 package org.poreid;
 
 import java.security.Security;
-import java.util.Locale;
-import java.util.ResourceBundle;
-import org.poreid.config.POReIDConfig;
-import org.poreid.dialogs.dialog.DialogController;
 import org.poreid.macosx.smartcardio.MacOSXCustomPCSCProvider;
 
 
@@ -37,17 +33,10 @@ import org.poreid.macosx.smartcardio.MacOSXCustomPCSCProvider;
  */
 final class MacOSXFix {
     private static final String JRE_OS_NAME = "os.name";
-    private static final String TARGET_OS_NAME = "Mac OS X";
-    private static final String JRE_VERSION = "1.8";
-    
+    private static final String TARGET_OS_NAME = "Mac OS X";  
     
     protected static boolean usePOReIDPCSCProvider(){
          if (System.getProperty(JRE_OS_NAME).equalsIgnoreCase(TARGET_OS_NAME)) {
-             if (!System.getProperty("java.version").startsWith(JRE_VERSION)){
-                 Locale locale = POReIDConfig.getDefaultLocale();
-                 ResourceBundle bundle = ResourceBundle.getBundle(MacOSXFix.class.getSimpleName(),locale);
-                 DialogController.getInstance(bundle.getString("warning.jre.title"), bundle.getString("warning.jre.message"), locale, false).displayDialog();
-             }
              useProvider();
              return true;
          }
