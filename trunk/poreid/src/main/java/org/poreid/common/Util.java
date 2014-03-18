@@ -169,10 +169,10 @@ public class Util {
             if (checkNBuildCertificateChain(client, certChain, certs)) {
                 return certChain;
             } else {
-                throw new CertificateChainNotFound("no chain found for "+client.getSubjectDN().getName()+" certificate");
+                throw new CertificateChainNotFound("Não foi gerada a cadeia de certificação para o certificado com o subject: "+client.getSubjectDN().getName());
             }
         } catch (KeyStoreException | CertificateException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchProviderException ex) {
-            throw new CertificateChainNotFound("cannot obtain certificate chain", ex);
+            throw new CertificateChainNotFound("Não foi possivel gerar a cadeia de certificação", ex);
         }
     }
     
@@ -187,7 +187,7 @@ public class Util {
             path = CertificateFactory.getInstance("X.509").generateCertPath(Arrays.asList(new Certificate[]{client}));
             params = new PKIXParameters(Collections.singleton(new TrustAnchor(trustedCerts[--numCerts], null)));
             params.setRevocationEnabled(false);
-            if (client.getIssuerDN().equals(trustedCerts[numCerts].getSubjectDN())) {
+            if (client.getIssuerX500Principal().equals(trustedCerts[numCerts].getSubjectX500Principal())) {
                 try {
                     CertPathValidator.getInstance("PKIX").validate(path, params);
                     if (isCertificateSelfSigned(trustedCerts[numCerts])) {
