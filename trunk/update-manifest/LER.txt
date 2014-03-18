@@ -1,0 +1,12 @@
+update-manifest 
+
+O que é?
+É mais uma forma de fazer uma roda. 
+
+Para que serve?
+É um plugin maven para inserir propriedades no ficheiro META-INF/MANIFEST.MF, o objectivo é inserir as propriedades em dependências que não são geradas no processo de build.
+
+Existem alterativas?
+É provável que sim.
+
+É provável que não seja útil para mais ninguém :-)
