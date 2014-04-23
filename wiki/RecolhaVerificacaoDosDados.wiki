@@ -18,9 +18,9 @@ Sendo assim a recolha de dados num contexto de autenticação consistiria no seg
 
 
  * *ASSINATURA(RESUMO(*dados do cidadão^1^ + _nonce_*))*
- * dados de identificação do cidadão (opcional^1^)
- * morada do cidadão (opcional^1^)
- * fotografia do cidadão (opcional^1^)
+ * dados de identificação do cidadão^1^ (opcional)
+ * morada do cidadão^1^ (opcional)
+ * fotografia do cidadão^1^ (opcional)
 
  * certificado de autenticação (obrigatório)
  * _SOD_ (obrigatório/opcional - ver nota)
