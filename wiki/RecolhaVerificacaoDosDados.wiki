@@ -17,7 +17,7 @@ A verificação da autenticidade dos dados não oferece garantias de que estes n
 Sendo assim a recolha de dados num contexto de autenticação consistiria no seguinte:
 
 
- * *ASSINATURA(RESUMO(*dados do cidadão^1^ + nonce*))*
+ * *ASSINATURA(RESUMO(*dados do cidadão^1^ + _nonce_*))*
  * dados de identificação do cidadão (opcional^1^)
  * morada do cidadão (opcional^1^)
  * fotografia do cidadão (opcional^1^)
