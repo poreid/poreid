@@ -24,9 +24,22 @@
 package org.poreid.verify.sod;
 
 import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
 import java.security.KeyStore;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Signature;
+import java.security.SignatureException;
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import javax.naming.InvalidNameException;
+import javax.naming.ldap.LdapName;
+import javax.naming.ldap.Rdn;
+import javax.security.auth.x500.X500Principal;
+import org.poreid.verify.util.Util;
 
 /**
  *
@@ -34,10 +47,13 @@ import java.util.Arrays;
  */
 public class Validator {
     private final KeyStore keystore;
+    private X509Certificate certificate;
     private SOD sod;
     private CitizenIdentificationAttributes id;
     private CitizenAddressAttributes address;
     private CitizenPhotoAttributes photo;
+    private UUID uuid;
+    private byte[] signatureBytes;
     
     
     public Validator(KeyStore keystore){
@@ -47,7 +63,7 @@ public class Validator {
     
     public void setSOD(byte[] sod) throws ValidatorException{
         try {
-            this.sod =  new SOD(Arrays.copyOfRange(sod, 4, sod.length), keystore);
+            this.sod =  (null != sod) ? new SOD(Arrays.copyOfRange(sod, 4, sod.length), keystore) : null;
         } catch (SODException ex) {
             throw new ValidatorException("Formato inválido - SOD", ex);
         }
@@ -55,40 +71,86 @@ public class Validator {
     
     
     public void setID(byte[] id){
-        this.id = new CitizenIdentificationAttributes(id);
+        this.id = (null != id) ? new CitizenIdentificationAttributes(id) : null;
     }
     
     
     public void setAddress(byte[] address){
-        this.address = new CitizenAddressAttributes(address);
+        this.address = (null != address) ? new CitizenAddressAttributes(address) : null;
     }
     
     
     public void setPhoto(byte[] photo){        
-        this.photo = new CitizenPhotoAttributes(photo);
+        this.photo = (null != photo) ? new CitizenPhotoAttributes(photo) : null;
     }
     
     
     public void validate() throws ValidatorException{
         try {
-            if (sod.verify()){
-                if (!Arrays.equals(id.getHash(), sod.getCitizenIdentificationHash())){
-                    throw new ValidatorException("Resumo da identificação do cidadão não coincide com o resumo no SOD");
-                }
-                
-                if (null != address && !Arrays.equals(address.getHash(), sod.getCitizenAddressHash())){
-                    throw new ValidatorException("Resumo da morada do cidadão não coincide com o resumo no SOD");
-                }
-                
-                if (null != photo && !Arrays.equals(photo.getHash(), sod.getCitizenPhoto())){
-                    throw new ValidatorException("Resumo da fotografia do cidadão não coincide com o resumo no SOD");
-                }
-            } else {
-                throw new ValidatorException("Não foi possivel validar o SOD");
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            if (null != id) {
+                md.update(id.getRawData());
             }
-        } catch (NoSuchAlgorithmException | UnsupportedEncodingException | SODException ex) {
+            if (null != address) {
+                md.update(address.getRawData());
+            }
+            if (null != photo) {
+                md.update(photo.getRawData());
+            }
+            md.update(uuid.toString().getBytes());        
+            Signature sig = Signature.getInstance("SHA1withRSA");
+            sig.initVerify(certificate);
+            sig.update(md.digest());            
+            if (!sig.verify(signatureBytes)){
+                throw new ValidatorException("Não foi possivel validar os dados enviados (assinatura)");
+            }
+            
+            if (!Util.isLeafCertificateValid(keystore, certificate)){
+                throw new ValidatorException("Não foi possivel validar os dados enviados (certificado)");
+            }
+            
+            if (null != sod) {
+                if (sod.verify()) {
+                    if (!Arrays.equals(id.getHash(), sod.getCitizenIdentificationHash())) {
+                        throw new ValidatorException("Resumo da identificação do cidadão não coincide com o resumo no SOD");
+                    }
+
+                    if (null != address && !Arrays.equals(address.getHash(), sod.getCitizenAddressHash())) {
+                        throw new ValidatorException("Resumo da morada do cidadão não coincide com o resumo no SOD");
+                    }
+
+                    if (null != photo && !Arrays.equals(photo.getHash(), sod.getCitizenPhoto())) {
+                        throw new ValidatorException("Resumo da fotografia do cidadão não coincide com o resumo no SOD");
+                    }
+                } else {
+                    throw new ValidatorException("Não foi possivel validar o SOD");
+                }
+                
+                if (!getCitizenIdentification().getCivilianIdNumber().equals(getCivilianIdNumber(certificate))) {
+                    throw new ValidatorException("Os dados enviados não coincidem com os dados do certificado");
+                }
+            }
+        } catch (InvalidKeyException | SignatureException | InvalidNameException | LeafCertificateValidationException | NoSuchAlgorithmException | UnsupportedEncodingException | SODException ex) {
             throw new ValidatorException(ex.getMessage(), ex);        
         }
+    }
+    
+    
+    private String getCivilianIdNumber(X509Certificate certificate) throws InvalidNameException {
+        Map<String, String> oidMap = new HashMap<>();
+        String serialNumber = "serialnumber";
+        String civID = "";  
+           
+        oidMap.put("2.5.4.5", serialNumber);
+        String subjectName = certificate.getSubjectX500Principal().getName(X500Principal.RFC2253, oidMap);
+
+        for (Rdn rdn : new LdapName(subjectName).getRdns()) {
+            if (serialNumber.equals(rdn.getType())) {
+                civID = rdn.getValue().toString().toLowerCase().replace("bi", "");
+            }
+        }
+
+        return civID;
     }
     
     
@@ -104,5 +166,20 @@ public class Validator {
     
     public CitizenPhotoAttributes getPhotoAttributes(){
         return photo;
+    }
+
+    
+    public void setCertificate(X509Certificate certificate) {
+        this.certificate = certificate;
+    }
+
+    
+    public void setUUID(UUID recvUuid) {
+        this.uuid = recvUuid;
+    }
+
+    
+    public void setSignature(byte[] signatureBytes) {
+        this.signatureBytes = signatureBytes;
     }
 }
