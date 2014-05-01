@@ -37,7 +37,7 @@ Posteriormente verifica-se o _Signed CMS_, se for válido, geram-se os resumos c
 
 Falta apenas uma validação adicional, que consiste em verificar se o nome/nic existente no certificado de autenticação coincide com o nome/nic existente no bloco de dados designado por identificação do cidadão. Esta ultima verificação garante que os dados fornecidos constam no mesmo Cartão de Cidadão que produziu a assinatura.
 
-*Exemplo disponível no repositório [http://code.google.com/p/poreid/source/browse/#svn%2Ftrunk%2Fverifysample aqui], para executar necessita do projecto [http://code.google.com/p/poreid/source/browse/#svn%2Ftrunk%2Fsod.verify sod.verify] igualmente disponível no mesmo repositório.
+*Exemplo disponível no repositório [http://code.google.com/p/poreid/source/browse/#svn%2Ftrunk%2Fverifysample aqui], para executar necessita do projecto [http://code.google.com/p/poreid/source/browse/#svn%2Ftrunk%2Fsod.verify sod.verify] igualmente disponível no mesmo repositório.*
 ----
 *Nota:* A leitura dos dados de identificação do cidadão é opcional se os dados pretendidos constarem no certificado de autenticação (nome e número de identificação civil). Desta forma o o procedimento poderia ser reduzido a:
 
