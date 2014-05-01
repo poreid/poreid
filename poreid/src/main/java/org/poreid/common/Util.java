@@ -37,22 +37,23 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.PublicKey;
 import java.security.SignatureException;
-import java.security.cert.CertPath;
-import java.security.cert.CertPathValidator;
-import java.security.cert.CertPathValidatorException;
-import java.security.cert.Certificate;
+import java.security.cert.CertPathBuilder;
+import java.security.cert.CertPathBuilderException;
+import java.security.cert.CertStore;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import java.security.cert.PKIXParameters;
+import java.security.cert.CollectionCertStoreParameters;
+import java.security.cert.PKIXBuilderParameters;
+import java.security.cert.PKIXCertPathBuilderResult;
 import java.security.cert.TrustAnchor;
+import java.security.cert.X509CertSelector;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.xml.bind.DatatypeConverter;
 
 /**
@@ -141,11 +142,9 @@ public class Util {
     }
 
     
-    public static boolean isCertificateSelfSigned(X509Certificate cert) throws CertificateException, NoSuchAlgorithmException, NoSuchProviderException {
-        PublicKey key = cert.getPublicKey();
-        
+    public static boolean isCertificateSelfSigned(X509Certificate cert) throws CertificateException, NoSuchAlgorithmException, NoSuchProviderException {  
         try {
-            cert.verify(key);
+            cert.verify(cert.getPublicKey());
             return true;
         } catch (SignatureException | InvalidKeyException ex) {
             return false;
@@ -153,58 +152,43 @@ public class Util {
     }
     
     
-    public static List<X509Certificate> getCertificateChain(X509Certificate client, KeyStore ks) throws CertificateChainNotFound{ 
+    public static List<? extends X509Certificate> getCertificateChain(X509Certificate client, KeyStore ks) throws CertificateChainNotFound{ 
         try {
-            List<X509Certificate> certChain = new ArrayList<>();
+            CertPathBuilder pathBuilder = CertPathBuilder.getInstance("PKIX");
+            X509CertSelector select = new X509CertSelector();
+            select.setSubject(client.getSubjectX500Principal().getEncoded());
             
-            
-            X509Certificate[] certs = new X509Certificate[ks.size()];
-            int i = 0;
-            Enumeration<String> alias = ks.aliases();
-            while (alias.hasMoreElements()) {
-                certs[i++] = (X509Certificate) ks.getCertificate(alias.nextElement());
-            }
-            
-            certChain.add(client);
-            if (checkNBuildCertificateChain(client, certChain, certs)) {
-                return certChain;
-            } else {
-                throw new CertificateChainNotFound("Não foi gerada a cadeia de certificação para o certificado com o subject: "+client.getSubjectDN().getName());
-            }
-        } catch (KeyStoreException | CertificateException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchProviderException ex) {
-            throw new CertificateChainNotFound("Não foi possivel gerar a cadeia de certificação", ex);
-        }
-    }
-    
-    
-    public static boolean checkNBuildCertificateChain(X509Certificate client, List<X509Certificate> certChain, X509Certificate... trustedCerts) throws CertificateException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
-        int numCerts = trustedCerts.length;
-        boolean found = false;
-        PKIXParameters params;
-        CertPath path;
-        
-        while (!found && numCerts > 0) { 
-            path = CertificateFactory.getInstance("X.509").generateCertPath(Arrays.asList(new Certificate[]{client}));
-            params = new PKIXParameters(Collections.singleton(new TrustAnchor(trustedCerts[--numCerts], null)));
-            params.setRevocationEnabled(false);
-            if (client.getIssuerX500Principal().equals(trustedCerts[numCerts].getSubjectX500Principal())) {
-                try {
-                    CertPathValidator.getInstance("PKIX").validate(path, params);
-                    if (isCertificateSelfSigned(trustedCerts[numCerts])) {
-                        if (null != certChain) {
-                            certChain.add(trustedCerts[numCerts]);
-                        }
-                        found = true;
-                    } else if (!client.equals(trustedCerts[numCerts])) {
-                        if (null != certChain) {
-                            certChain.add(trustedCerts[numCerts]);
-                        }
-                        found = checkNBuildCertificateChain(trustedCerts[numCerts], certChain, trustedCerts);
+            Set<TrustAnchor> trustanchors = new HashSet<>();
+            List<X509Certificate> certList = new ArrayList<>();
+            certList.add(client);
+            Enumeration<String> enumeration = ks.aliases();
+            while (enumeration.hasMoreElements()) {
+                X509Certificate certificate = (X509Certificate) ks.getCertificate(enumeration.nextElement());
+                if (certificate.getIssuerX500Principal().equals(certificate.getSubjectX500Principal())) {
+                    if (isCertificateSelfSigned(certificate)) {
+                        trustanchors.add(new TrustAnchor((X509Certificate) certificate, null));
                     }
-                } catch (CertPathValidatorException ignore) { }
+                } else {
+                    certList.add(certificate);
+                }
+
             }
+
+            PKIXBuilderParameters params = new PKIXBuilderParameters(trustanchors, select);
+            CertStore certStore = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certList));
+            params.addCertStore(certStore);
+            params.setRevocationEnabled(false);
+            PKIXCertPathBuilderResult result = (PKIXCertPathBuilderResult) pathBuilder.build(params);
+            
+            ArrayList<? super X509Certificate> certChain = new ArrayList<>(result.getCertPath().getCertificates());    
+            certChain.add(result.getTrustAnchor().getTrustedCert());
+            
+            return (List<X509Certificate>) certChain;
+        } catch (IOException | KeyStoreException | CertificateException | NoSuchAlgorithmException | NoSuchProviderException | InvalidAlgorithmParameterException ex) {
+            throw new CertificateChainNotFound("Não foi possivel gerar a cadeia de certificação", ex);
+        } catch (CertPathBuilderException ex){
+            throw new CertificateChainNotFound("Não foi gerada a cadeia de certificação para o certificado com o subject: "+client.getSubjectX500Principal().getName());
         }
-        return found;
     }
     
     

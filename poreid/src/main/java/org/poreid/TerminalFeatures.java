@@ -41,7 +41,7 @@ import org.poreid.config.POReIDConfig;
  */
 public final class TerminalFeatures {
     private final Card card;
-    private String className;
+    private final String className;
     private final String readerName;
     private final byte FEATURE_VERIFY_PIN_DIRECT = 0x06;
     private final byte FEATURE_MODIFY_PIN_DIRECT = 0x07;              
@@ -57,10 +57,6 @@ public final class TerminalFeatures {
         matcher.matches();
         this.readerName = null != matcher.group(1) ? matcher.group(1): matcher.group(2);   
         this.className = POReIDConfig.getSmartCardReaderImplementingClassName(this.readerName);
-        
-        if (null == this.className) {
-            this.className = POReIDConfig.getSmartCardReaderImplementingClassName(POReIDConfig.GENERIC_PINPAD_READER);
-        }
     }
     
     
@@ -124,18 +120,17 @@ public final class TerminalFeatures {
     
     private Integer getFeature(byte featureTag) {
         byte[] features;
-        
+
         try {
             features = card.transmitControlCommand(CM_IOCTL_GET_FEATURE_REQUEST, new byte[0]);
+            if (0 == features.length) {
+                return null;
+            }
         } catch (CardException e) {
             return null;
         }
-        if (0 == features.length) {
-            return null;
-        }  
-        
-        Integer feature = findFeature(featureTag, features);
-        return feature;
+
+        return findFeature(featureTag, features);
     }
 
     
@@ -154,7 +149,7 @@ public final class TerminalFeatures {
     private int SCARD_CTL_CODE(int code) {
         int ioctl;
 
-        if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0) {
+        if (System.getProperty("os.name").toLowerCase().contains("win")) {
             ioctl = MICROSOFT_DEVICE_TYPE__SMARTCARD << 16 | (code) << 2;
         } else {
             ioctl = SCARD_CTL_BASE_CODE + code;

@@ -286,6 +286,7 @@ public final class CitizenCardAddressAttributes {
      * @return designação do país
      */
     public String getCountryDescriptionF() {
+        checkNLoad();
         return countryDescriptionF;
     }
 
@@ -294,6 +295,7 @@ public final class CitizenCardAddressAttributes {
      * @return atributo endereço da morada estrangeira
      */
     public String getForeignAddress() {
+        checkNLoad();
         return addressF;
     }
 
@@ -302,6 +304,7 @@ public final class CitizenCardAddressAttributes {
      * @return atributo cidade da morada estrangeira
      */
     public String getForeignCity() {
+        checkNLoad();
         return cityF;
     }
 
@@ -310,6 +313,7 @@ public final class CitizenCardAddressAttributes {
      * @return atributo região da morada estrangeira
      */
     public String getForeignRegion() {
+        checkNLoad();
         return regionF;
     }
 
@@ -318,6 +322,7 @@ public final class CitizenCardAddressAttributes {
      * @return atributo localidade da morada estrangeira
      */
     public String getLocalityF() {
+        checkNLoad();
         return localityF;
     }
 
@@ -326,6 +331,7 @@ public final class CitizenCardAddressAttributes {
      * @return atributo código postal da morada estrangeira
      */
     public String getPostalCodeF() {
+        checkNLoad();
         return postalCodeF;
     }
 
@@ -334,6 +340,7 @@ public final class CitizenCardAddressAttributes {
      * @return atributo código da morada estrangeira
      */
     public String getGenAddressNoF() {
+        checkNLoad();
         return GenAddressNoF;
     }
     
@@ -369,8 +376,7 @@ public final class CitizenCardAddressAttributes {
             zip4 = new String(data, 1070, 8, StandardCharsets.UTF_8).trim();
             zip3 = new String(data, 1078, 6, StandardCharsets.UTF_8).trim();
             postalLocality = new String(data, 1084, 50, StandardCharsets.UTF_8).trim();
-            GenAddressNo = new String(data, 1134, 12, StandardCharsets.UTF_8).trim();
-            isdataLoaded = true;
+            GenAddressNo = new String(data, 1134, 12, StandardCharsets.UTF_8).trim();            
         } else {
             country = new String(data, 2, 4, StandardCharsets.UTF_8).trim();
             countryDescriptionF = new String(data, 6, 100, StandardCharsets.UTF_8).trim();
@@ -381,6 +387,7 @@ public final class CitizenCardAddressAttributes {
             postalCodeF = new String(data, 706, 100, StandardCharsets.UTF_8).trim();
             GenAddressNoF = new String(data, 806, 12, StandardCharsets.UTF_8).trim();
         }
+        isdataLoaded = true;
     }
 }
 
