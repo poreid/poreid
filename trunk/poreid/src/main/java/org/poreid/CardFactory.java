@@ -166,13 +166,13 @@ public final class CardFactory {
         Card card = terminal.connect("*");
         String className = POReIDConfig.getSmartCardImplementingClassName(Util.bytesToHex(card.getATR().getBytes()));
         boolean cachePreferences = POReIDConfig.getSmartCardCacheStatus(Util.bytesToHex(card.getATR().getBytes()));
-        
+
         if (!CacheStatus.isUnset(status)){
             cachePreferences = CacheStatus.getStatus(status);
         }
-        
+
         if (null != className){
-            try {           
+            try {
                 Constructor<? extends POReIDSmartCard> ctor = Class.forName(className).asSubclass(POReIDSmartCard.class).getDeclaredConstructor(Card.class, String.class, Locale.class, boolean.class);
                 return (T) ctor.newInstance(card, terminal.getName(), locale, cachePreferences);
             } catch (InvocationTargetException | IllegalArgumentException | SecurityException | NoSuchMethodException | InstantiationException | IllegalAccessException | ClassNotFoundException ex) {
@@ -180,7 +180,7 @@ public final class CardFactory {
                 throw new UnknownCardException("Cartão não suportado", ex);
             }
         }
-        
+
         throw new UnknownCardException("Cartão não suportado");
     }
 

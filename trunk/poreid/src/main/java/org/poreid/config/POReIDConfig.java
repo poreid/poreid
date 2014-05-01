@@ -40,7 +40,7 @@ import org.xml.sax.SAXException;
  */
 public class POReIDConfig {   
     public static final String LAF = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
-    public static final String GENERIC_PINPAD_READER = "generic reader";
+    public static final String GENERIC_READER = "generic reader";
     public static final String POREID = "POReID";
     public static final String RSA = "RSA";
     public static final String DIGITAL_SIGNATURE = "Signature";
@@ -106,7 +106,13 @@ public class POReIDConfig {
     
     
     private static String getUniqueReaderID(String readerName){
-        return config.getSmartCardPinPadReaders().getAliases().get(readerName);  
+        String uniqueName = config.getSmartCardPinPadReaders().getAliases().get(readerName);
+        
+        if (null == uniqueName){
+            uniqueName = config.getSmartCardPinPadReaders().getAliases().get(POReIDConfig.GENERIC_READER); 
+        }
+        
+        return uniqueName;
     }
     
     
@@ -165,13 +171,13 @@ public class POReIDConfig {
     private static OsType detectOS() {
         String os = System.getProperty("os.name").toLowerCase();
 
-        if (os.indexOf("win") >= 0) {
+        if (os.contains("win")) {
             return OsType.WINDOWS;
         }
-        if (os.indexOf("mac") >= 0) {
+        if (os.contains("mac")) {
             return OsType.MAC;
         }
-        if (os.indexOf("nux") >= 0) {
+        if (os.contains("nux")) {
             return OsType.LINUX;
         }
         

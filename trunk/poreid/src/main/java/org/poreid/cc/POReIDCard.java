@@ -490,7 +490,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
             List<X509Certificate> l;
             KeyStore ks = KeyStore.getInstance("JKS");
             ks.load(POReIDCard.class.getResourceAsStream(poreidKeystore), null);
-            l = Util.getCertificateChain(getCertificate(files.QualifiedSignatureSubCACertificate), ks);
+            l = (List<X509Certificate>) Util.getCertificateChain(getCertificate(files.QualifiedSignatureSubCACertificate), ks);
             l.add(0,getQualifiedSignatureCertificate());
             return l;  
         } catch (CertificateNotFound | KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException ex) {
@@ -505,7 +505,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
             List<X509Certificate> l;
             KeyStore ks = KeyStore.getInstance("JKS");
             ks.load(POReIDCard.class.getResourceAsStream(poreidKeystore), null);
-            l = Util.getCertificateChain(getCertificate(files.AuthenticationSubCACertificate), ks);
+            l = (List<X509Certificate>) Util.getCertificateChain(getCertificate(files.AuthenticationSubCACertificate), ks);
             l.add(0,getAuthenticationCertificate());
             return l;
         } catch (CertificateNotFound | KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException ex) {
