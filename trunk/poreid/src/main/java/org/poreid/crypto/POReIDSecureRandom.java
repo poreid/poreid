@@ -25,8 +25,8 @@
 package org.poreid.crypto;
 
 import java.security.SecureRandomSpi;
-import javax.smartcardio.CardNotPresentException;
 import org.poreid.CardFactory;
+import org.poreid.CardNotPresentException;
 import org.poreid.CardTerminalNotPresentException;
 import org.poreid.POReIDException;
 import org.poreid.POReIDSmartCard;

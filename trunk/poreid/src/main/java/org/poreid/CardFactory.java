@@ -35,7 +35,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.smartcardio.Card;
 import javax.smartcardio.CardException;
-import javax.smartcardio.CardNotPresentException;
 import javax.smartcardio.CardTerminal;
 import javax.smartcardio.CardTerminals;
 import javax.smartcardio.TerminalFactory;
