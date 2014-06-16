@@ -1,4 +1,4 @@
-#labels poreid,autenticação,applet,authentication
+#labels poreid,autenticação,applet,assinatura
 =Applet para Autenticação=
 Está disponível no [http://code.google.com/p/poreid/source/browse/#svn%2Ftrunk%2Fapplet.autenticacao repositório] um exemplo completo de uma applet para autenticação de utilizadores com recurso ao cartão de cidadão através do componente POReID.
 
