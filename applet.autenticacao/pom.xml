@@ -25,8 +25,8 @@
             </activation>
             <properties>
                 <permissions.jar>all-permissions</permissions.jar>
-                <codebase.jar>http://localhost:8080/jnlp/codebase</codebase.jar> <!-- localização dos jars -->
-                <application.library.allowable.codebase.jar>http://localhost:8080</application.library.allowable.codebase.jar>
+                <codebase.jar>https://localhost:8080/jnlp/codebase</codebase.jar> <!-- localização dos jars -->
+                <application.library.allowable.codebase.jar>https://localhost:8080</application.library.allowable.codebase.jar>
             </properties>
         </profile>
     </profiles>

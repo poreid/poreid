@@ -62,10 +62,11 @@ import org.poreid.dialogs.selectcard.CanceledSelectionException;
  * @author ruim
  */
 public class AppletAutenticacao extends JApplet {
-
+    private static final String HTTPS = "https";
     private String nonce;
     private URL postURL;
     private String[] requestedData = null;
+    
     
     @Override
     public String[][] getParameterInfo() {
@@ -78,32 +79,45 @@ public class AppletAutenticacao extends JApplet {
         return pinfo;
     }
     
+    
     @Override
     public void init() {
-        nonce = getParameter("nonce");
-        String url = getParameter("post.url");
-        String requestedDataList = getParameter("data.requested");
         
-        Security.addProvider(new POReIDProvider());
-         
-        if (null != url && !url.isEmpty()) {
-            try {
-                postURL = new URL(url);
-                
-                if (null == nonce || nonce.isEmpty()) {
-                    postError(postURL, new ErrorMessage("Erro: falta parâmetro nonce"));
-                }
-                
-                if (null != requestedDataList && !requestedDataList.isEmpty()) {
-                    requestedData = requestedDataList.split(",");
-                }                
-            } catch (MalformedURLException ex) {
-                Logger.getLogger(AppletAutenticacao.class.getName()).log(Level.SEVERE, "parâmetro post.url inválido", ex);             
-            }
+        if (!HTTPS.equalsIgnoreCase(this.getCodeBase().getProtocol())) {
+            Logger.getLogger(AppletAutenticacao.class.getName()).log(Level.SEVERE, "Erro: necessário utilizar https");
+            System.exit(0);
         } else {
-            Logger.getLogger(AppletAutenticacao.class.getName()).log(Level.SEVERE, "parâmetro post.url não fornecido");
+            nonce = getParameter("nonce");
+            String url = getParameter("post.url");
+            String requestedDataList = getParameter("data.requested");
+
+            Security.addProvider(new POReIDProvider());
+
+            if (null != url && !url.isEmpty()) {
+                try {
+                    postURL = new URL(url);
+                    if (!HTTPS.equalsIgnoreCase(postURL.getProtocol())) {
+                        postError(postURL, new ErrorMessage("Erro: parâmetro post.url não usa https"));
+                    }
+
+                    if (null == nonce || nonce.isEmpty()) {
+                        postError(postURL, new ErrorMessage("Erro: falta parâmetro nonce"));
+                    }
+
+                    if (null != requestedDataList && !requestedDataList.isEmpty()) {
+                        requestedData = requestedDataList.split(",");
+                    }
+                } catch (MalformedURLException ex) {
+                    Logger.getLogger(AppletAutenticacao.class.getName()).log(Level.SEVERE, "parâmetro post.url inválido", ex);
+                    System.exit(0);
+                }
+            } else {
+                Logger.getLogger(AppletAutenticacao.class.getName()).log(Level.SEVERE, "parâmetro post.url não fornecido");
+                System.exit(0);
+            }
         }
     }
+    
     
     @Override
     public void start() {
@@ -176,6 +190,7 @@ public class AppletAutenticacao extends JApplet {
         System.exit(0);
     }
 
+    
     private void createErrorSubmitForm(URL submitUrl, ErrorMessage message) throws JSException {
         JSObject document = (JSObject) JSObject.getWindow(this).getMember("document");
         JSObject body = (JSObject) document.getMember("body");
@@ -193,6 +208,7 @@ public class AppletAutenticacao extends JApplet {
         
         redirectForm.call("submit", null);
     }
+    
     
     private void createOkSubmitForm(URL submitUrl, CitizenData data) throws JSException {
         
@@ -217,6 +233,7 @@ public class AppletAutenticacao extends JApplet {
         
         redirectForm.call("submit", null);
     }
+    
     
     private void addInputField(JSObject parentDocument, JSObject targetForm, String fieldName, String fieldValue) throws JSException {
         if (null != fieldValue) {
