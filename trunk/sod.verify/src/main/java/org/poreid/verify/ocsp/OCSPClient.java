@@ -43,6 +43,7 @@ import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
+import org.bouncycastle.asn1.x509.AccessDescription;
 import org.bouncycastle.asn1.x509.AuthorityInformationAccess;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
@@ -91,12 +92,18 @@ public class OCSPClient {
     /* não é obrigatório que tenha, mas os certificados do CC têm */
     private URL getOcspUrlFromCertificate(X509Certificate certificate) {
         byte[] octetBytes = certificate.getExtensionValue(org.bouncycastle.asn1.x509.Extension.authorityInfoAccess.getId());
+        
         if (null != octetBytes) {
             try {
                 byte[] encoded = X509ExtensionUtil.fromExtensionValue(octetBytes).getEncoded();
                 ASN1Sequence seq = ASN1Sequence.getInstance(ASN1Primitive.fromByteArray(encoded));
                 AuthorityInformationAccess access = AuthorityInformationAccess.getInstance(seq);
-                url = new URL(access.getAccessDescriptions()[0].getAccessLocation().getName().toString());
+                for (AccessDescription accessDescription : access.getAccessDescriptions()){
+                    if (accessDescription.getAccessMethod().equals(AccessDescription.id_ad_ocsp)){
+                        url = new URL(accessDescription.getAccessLocation().getName().toString());
+                        break;
+                    }
+                }                
             } catch (IOException ignore) {
             }
         }
