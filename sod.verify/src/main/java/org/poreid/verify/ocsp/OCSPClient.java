@@ -34,20 +34,30 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.security.Security;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AccessDescription;
 import org.bouncycastle.asn1.x509.AuthorityInformationAccess;
+import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
+import org.bouncycastle.asn1.x509.KeyPurposeId;
+import org.bouncycastle.cert.CertException;
 import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.CertificateID;
 import org.bouncycastle.cert.ocsp.CertificateStatus;
@@ -139,29 +149,44 @@ public class OCSPClient {
 
             InputStream in = (InputStream) httpConnection.getContent();
 
-            if (httpConnection.getResponseCode() != 200) {
+            if (httpConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
                 return false;
             }
             
             OCSPResp ocspResponse = new OCSPResp(in);
-            BasicOCSPResp basicResponse = (BasicOCSPResp) ocspResponse.getResponseObject();
-
+            BasicOCSPResp basicResponse = (BasicOCSPResp) ocspResponse.getResponseObject();            
             X509CertificateHolder certHolder = basicResponse.getCerts()[0];
-            if (basicResponse.isSignatureValid(new JcaContentVerifierProviderBuilder().setProvider("BC").build(certHolder))) {
-                if (null == certHolder.getExtension(OCSPObjectIdentifiers.id_pkix_ocsp_nocheck).getExtnId()) {
-                    throw new OCSPValidationException("Extensão id_pkix_ocsp_nocheck não encontrada no certificado (Politica de Certificados do SCEE)");
+            
+            if (!basicResponse.isSignatureValid(new JcaContentVerifierProviderBuilder().setProvider("BC").build(issuer))){            
+                // Certificado tem de ter uma Key Purpose ID for authorized responders
+                if (!ExtendedKeyUsage.fromExtensions(certHolder.getExtensions()).hasKeyPurposeId(KeyPurposeId.id_kp_OCSPSigning)){
+                    return false;
                 }
-                SingleResp[] responses = basicResponse.getResponses();
-                byte[] receivedNonce = basicResponse.getExtension(OCSPObjectIdentifiers.id_pkix_ocsp_nonce).getExtnId().getEncoded();
-                if (Arrays.equals(receivedNonce, sentNonce) && responses[0].getCertID().getSerialNumber().equals(certificate.getSerialNumber())) {
-                    retval = responses[0].getCertStatus() == CertificateStatus.GOOD;
+                // Certificado tem de ser emitido pela mesma CA do certificado que estamos a verificar
+                if (!certHolder.isSignatureValid(new JcaContentVerifierProviderBuilder().setProvider("BC").build(issuer))){
+                    return false;
                 }
+                // Validar assinatura na resposta ocsp
+                if (!basicResponse.isSignatureValid(new JcaContentVerifierProviderBuilder().setProvider("BC").build(certHolder))){
+                    return false;
+                }                
             }
-
+                
+            // Politica de Certificados do SCEE
+            if (null == certHolder.getExtension(OCSPObjectIdentifiers.id_pkix_ocsp_nocheck).getExtnId()) {
+                throw new OCSPValidationException("Extensão id_pkix_ocsp_nocheck não encontrada no certificado (Politica de Certificados do SCEE)");
+            }
+            
+            SingleResp[] responses = basicResponse.getResponses();
+            byte[] receivedNonce = basicResponse.getExtension(OCSPObjectIdentifiers.id_pkix_ocsp_nonce).getExtnId().getEncoded();
+            if (Arrays.equals(receivedNonce, sentNonce) && responses[0].getCertID().getSerialNumber().equals(certificate.getSerialNumber())) {
+                retval = responses[0].getCertStatus() == CertificateStatus.GOOD;
+            }
+            
             return retval;
         } catch (CertificateEncodingException | OperatorCreationException | OCSPException | IOException ex) {
             throw new OCSPValidationException("Não foi possivel efetuar a validação através de OCSP (" + certificate.getSubjectX500Principal().getName() + ")", ex);
-        } catch (CertificateException ex) {
+        } catch (CertException | CertificateException ex) {
             throw new OCSPValidationException("Não foi possivel efetuar a validação através de OCSP (" + certificate.getSubjectX500Principal().getName() + ")", ex);
         }
     }
