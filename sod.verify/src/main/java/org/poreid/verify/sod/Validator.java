@@ -39,6 +39,7 @@ import javax.naming.InvalidNameException;
 import javax.naming.ldap.LdapName;
 import javax.naming.ldap.Rdn;
 import javax.security.auth.x500.X500Principal;
+import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.poreid.verify.util.Util;
 
 /**
@@ -46,6 +47,7 @@ import org.poreid.verify.util.Util;
  * @author POReID
  */
 public class Validator {
+    private final String BI = "bi";
     private final KeyStore keystore;
     private X509Certificate certificate;
     private SOD sod;
@@ -53,7 +55,7 @@ public class Validator {
     private CitizenAddressAttributes address;
     private CitizenPhotoAttributes photo;
     private UUID uuid;
-    private byte[] signatureBytes;
+    private byte[] signatureBytes;    
     
     
     public Validator(KeyStore keystore){
@@ -136,21 +138,20 @@ public class Validator {
     }
     
     
-    private String getCivilianIdNumber(X509Certificate certificate) throws InvalidNameException {
-        Map<String, String> oidMap = new HashMap<>();
-        String serialNumber = "serialnumber";
-        String civID = "";  
-           
-        oidMap.put("2.5.4.5", serialNumber);
+    private String getCivilianIdNumber(X509Certificate certificate) throws InvalidNameException {        
+        String serialNumber = BCStyle.INSTANCE.oidToDisplayName(BCStyle.SERIALNUMBER);
+        Map<String, String> oidMap = new HashMap<>();        
+        
+        oidMap.put(BCStyle.SERIALNUMBER.getId(), serialNumber);        
         String subjectName = certificate.getSubjectX500Principal().getName(X500Principal.RFC2253, oidMap);
 
         for (Rdn rdn : new LdapName(subjectName).getRdns()) {
-            if (serialNumber.equals(rdn.getType())) {
-                civID = rdn.getValue().toString().toLowerCase().replace("bi", "");
+            if (serialNumber.equalsIgnoreCase(rdn.getType())) {
+                return rdn.getValue().toString().toLowerCase().replace(BI, "");
             }
         }
 
-        return civID;
+        return "";
     }
     
     

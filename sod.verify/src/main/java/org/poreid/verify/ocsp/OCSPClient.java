@@ -38,7 +38,10 @@ import java.security.Security;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.time.Instant;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.Optional;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DEROctetString;
@@ -58,6 +61,7 @@ import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.OCSPReq;
 import org.bouncycastle.cert.ocsp.OCSPReqBuilder;
 import org.bouncycastle.cert.ocsp.OCSPResp;
+import org.bouncycastle.cert.ocsp.RevokedStatus;
 import org.bouncycastle.cert.ocsp.SingleResp;
 import org.bouncycastle.cert.ocsp.jcajce.JcaCertificateID;
 import org.bouncycastle.operator.OperatorCreationException;
@@ -71,6 +75,7 @@ public class OCSPClient {
     private final X509Certificate issuer;
     private final X509Certificate certificate;
     private URL url;
+    private RevokedStatus revokedStatus = null;
 
     public OCSPClient(X509Certificate issuer, X509Certificate certificate) {
         this.issuer = issuer;
@@ -113,16 +118,15 @@ public class OCSPClient {
 
         return url;
     }
-
-    public boolean haveOCSP() {
-        return (null != url);
+    
+    
+    public Optional<RevokedStatus> getRevokedStatus(){
+        return Optional.ofNullable(revokedStatus); 
     }
 
-    public boolean checkOCSP() throws OCSPValidationException {
-        boolean retval = false;
-        
-        try {
-
+    
+    public CertStatus getCertificateStatus() throws OCSPValidationException {        
+        try {            
             if (null == url) {
                 throw new OCSPValidationException("Certificado não tem validação por OCSP");
             }
@@ -143,44 +147,75 @@ public class OCSPClient {
             InputStream in = (InputStream) httpConnection.getContent();
 
             if (httpConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                return false;
+                throw new OCSPValidationException("Código HTTP recebido != 200 ["+httpConnection.getResponseCode()+"]");
             }
             
             OCSPResp ocspResponse = new OCSPResp(in);
-            BasicOCSPResp basicResponse = (BasicOCSPResp) ocspResponse.getResponseObject();            
-            X509CertificateHolder certHolder = basicResponse.getCerts()[0];
+            BasicOCSPResp basicResponse = (BasicOCSPResp) ocspResponse.getResponseObject();                        
             
+            byte[] receivedNonce = basicResponse.getExtension(OCSPObjectIdentifiers.id_pkix_ocsp_nonce).getExtnId().getEncoded();
+            if (!Arrays.equals(receivedNonce, sentNonce)) {
+                throw new OCSPValidationException("Nonce na resposta ocsp não coincide com nonce do pedido ocsp");
+            }
+
+            X509CertificateHolder certHolder = basicResponse.getCerts()[0];
             if (!basicResponse.isSignatureValid(new JcaContentVerifierProviderBuilder().setProvider("BC").build(issuer))){            
+                if (!certHolder.isValidOn(Date.from(Instant.now()))){
+                    throw new OCSPValidationException("Certificado não é válido na data atual");
+                }
                 // Certificado tem de ter uma Key Purpose ID for authorized responders
                 if (!ExtendedKeyUsage.fromExtensions(certHolder.getExtensions()).hasKeyPurposeId(KeyPurposeId.id_kp_OCSPSigning)){
-                    return false;
+                    throw new OCSPValidationException("Certificado não contém extensão necessária (id_kp_OCSPSigning)");
                 }
                 // Certificado tem de ser emitido pela mesma CA do certificado que estamos a verificar
                 if (!certHolder.isSignatureValid(new JcaContentVerifierProviderBuilder().setProvider("BC").build(issuer))){
-                    return false;
+                    throw new OCSPValidationException("Certificado não é assinado pelo mesmo issuer");
                 }
                 // Validar assinatura na resposta ocsp
                 if (!basicResponse.isSignatureValid(new JcaContentVerifierProviderBuilder().setProvider("BC").build(certHolder))){
-                    return false;
+                    throw new OCSPValidationException("Não foi possivel validar resposta ocsp");
                 }                
+            } else {
+                if (!certHolder.isValidOn(Date.from(Instant.now()))){
+                    throw new OCSPValidationException("Certificado não é válido na data atual");
+                }
             }
                 
             // Politica de Certificados do SCEE
             if (null == certHolder.getExtension(OCSPObjectIdentifiers.id_pkix_ocsp_nocheck).getExtnId()) {
                 throw new OCSPValidationException("Extensão id_pkix_ocsp_nocheck não encontrada no certificado (Politica de Certificados do SCEE)");
             }
-            
+                         
             SingleResp[] responses = basicResponse.getResponses();
-            byte[] receivedNonce = basicResponse.getExtension(OCSPObjectIdentifiers.id_pkix_ocsp_nonce).getExtnId().getEncoded();
-            if (Arrays.equals(receivedNonce, sentNonce) && responses[0].getCertID().getSerialNumber().equals(certificate.getSerialNumber())) {
-                retval = responses[0].getCertStatus() == CertificateStatus.GOOD;
-            }
-            
-            return retval;
+            if (responses[0].getCertID().getSerialNumber().equals(certificate.getSerialNumber())) {
+                CertificateStatus status = responses[0].getCertStatus();
+                if (status == CertificateStatus.GOOD) {
+                    return CertStatus.GOOD;
+                } else {
+
+                    if (status instanceof RevokedStatus) {
+                        revokedStatus = (RevokedStatus) status;
+                        return CertStatus.REVOKED;                                                
+                    } else {
+                        return CertStatus.UNKNOWN;
+                    }
+                }
+            } else {
+                throw new OCSPValidationException("Número de série do certificado na resposta ocsp não coincide com número de série do certificado");
+            }   
         } catch (CertificateEncodingException | OperatorCreationException | OCSPException | IOException ex) {
             throw new OCSPValidationException("Não foi possivel efetuar a validação através de OCSP (" + certificate.getSubjectX500Principal().getName() + ")", ex);
         } catch (CertException | CertificateException ex) {
-            throw new OCSPValidationException("Não foi possivel efetuar a validação através de OCSP (" + certificate.getSubjectX500Principal().getName() + ")", ex);
+            throw new OCSPValidationException("Não foi possivel efetuar a validação através de OCSP (" + certificate.getSubjectX500Principal().getName() + ")", ex);        
         }
+    }
+    
+    
+    public boolean checkOCSP() throws OCSPValidationException {        
+        try {            
+            return getCertificateStatus() == CertStatus.GOOD;
+        } catch (OCSPValidationException ex) {
+            return false;
+        } 
     }
 }
