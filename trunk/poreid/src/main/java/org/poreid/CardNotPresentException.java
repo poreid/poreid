@@ -32,8 +32,8 @@ public class CardNotPresentException extends Exception{
 
     /**
      * Constroi uma nova exceção com a mensagem de detalhe
-     * @param detalhe
-     * @param causa
+     * @param detalhe A mensagem de detalhe relativa à exceção
+     * @param causa A causa da exceção
      */
     public CardNotPresentException(String detalhe, Exception causa) {
         super(detalhe, causa);
@@ -42,7 +42,7 @@ public class CardNotPresentException extends Exception{
     
     /**
      * Constroi uma nova exceção com a mensagem de detalhe
-     * @param detalhe
+     * @param detalhe A mensagem de detalhe relativa à exceção
      */
     public CardNotPresentException(String detalhe) {
         super(detalhe);

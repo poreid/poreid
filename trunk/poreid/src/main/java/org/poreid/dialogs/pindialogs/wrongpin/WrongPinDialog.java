@@ -26,6 +26,7 @@ package org.poreid.dialogs.pindialogs.wrongpin;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import org.poreid.config.POReIDConfig;
 import org.poreid.dialogs.DialogEventListener;
 
 /**
@@ -41,17 +42,17 @@ public class WrongPinDialog extends javax.swing.JDialog {
     
     /**
      * Creates new Dialog WarnBlockedPin
-     * @param pinLabel
-     * @param pinTriesLeft
-     * @param locale
-     * @param listener
+     * @param pinLabel Descrição textual do pin
+     * @param pinTriesLeft Tentativas até bloqueio do pin
+     * @param locale Linguagem utilizada
+     * @param listener Objecto a notificar
      */
     public WrongPinDialog(String pinLabel, int pinTriesLeft, Locale locale, DialogEventListener<Void> listener) {
         super();
         this.pinLabel = pinLabel;
         this.pinTriesLeft = pinTriesLeft;
         this.listener = listener;
-        bundle = ResourceBundle.getBundle(WrongPinDialog.class.getSimpleName(),locale);
+        bundle = POReIDConfig.getBundle(WrongPinDialog.class.getSimpleName(),locale);
         initComponents();
         
         this.setTitle(MessageFormat.format(bundle.getString("dialog.title"),pinLabel));
@@ -89,7 +90,7 @@ public class WrongPinDialog extends javax.swing.JDialog {
 
         jPanel1.setLayout(new java.awt.GridLayout(0, 1));
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/aviso.png")));
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource(POReIDConfig.IMAGE_WARNING_LOCATION)));
         jLabel1.setMaximumSize(new java.awt.Dimension(64, 64));
         jLabel1.setMinimumSize(new java.awt.Dimension(64, 64));
         jLabel1.setPreferredSize(new java.awt.Dimension(64, 64));

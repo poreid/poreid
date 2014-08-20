@@ -57,7 +57,7 @@ public abstract class CitizenCard extends POReIDCard implements CitizenData{
     
     protected CitizenCard(CardSpecificReferences csr) {
         super(csr);
-        bundle = ResourceBundle.getBundle(CitizenCard.class.getSimpleName(),csr.getLocale());
+        bundle = POReIDConfig.getBundle(CitizenCard.class.getSimpleName(),csr.getLocale());
     }
    
     

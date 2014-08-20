@@ -32,8 +32,8 @@ public class CardTerminalNotPresentException extends Exception{
 
     /**
      * Constroi uma nova exceção com a mensagem de detalhe
-     * @param detalhe
-     * @param causa
+     * @param detalhe A mensagem de detalhe relativa à exceção
+     * @param causa A causa da exceção
      */
     public CardTerminalNotPresentException(String detalhe, Exception causa) {
         super(detalhe, causa);

@@ -31,7 +31,7 @@ public class SecurityStatusNotSatisfiedException extends Exception{
 
     /**
      * Constroi uma nova exceção com a mensagem de detalhe
-     * @param detalhe
+     * @param detalhe A mensagem de detalhe relativa à exceção
      */
     public SecurityStatusNotSatisfiedException(String detalhe) {
         super(detalhe);

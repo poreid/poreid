@@ -27,6 +27,7 @@ package org.poreid.dialogs.dialog;
 import java.awt.event.WindowEvent;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import org.poreid.config.POReIDConfig;
 
 /**
  *
@@ -39,16 +40,16 @@ public class Dialog extends javax.swing.JDialog {
     
     /**
      * Creates new form ErrorPinDialog
-     * @param title
-     * @param message
-     * @param locale
-     * @param error
+     * @param title Título a exibir
+     * @param message Mensagem a exibir
+     * @param locale Linguagem utilizada
+     * @param error Indica se é um diálogo de erro
      */
     public Dialog(String title, String message, Locale locale, boolean error) {
         super();
         this.message = message;
         this.error = error;
-        bundle = ResourceBundle.getBundle(Dialog.class.getSimpleName(),locale);
+        bundle = POReIDConfig.getBundle(Dialog.class.getSimpleName(),locale);
         
         initComponents();
         
@@ -118,7 +119,7 @@ public class Dialog extends javax.swing.JDialog {
 
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource((error ? "/erro.png": "/aviso.png"))));
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource((error ? POReIDConfig.IMAGE_ERROR_LOCATION : POReIDConfig.IMAGE_WARNING_LOCATION))));
         jLabel1.setMaximumSize(new java.awt.Dimension(64, 64));
         jLabel1.setMinimumSize(new java.awt.Dimension(64, 64));
         jLabel1.setPreferredSize(new java.awt.Dimension(64, 64));

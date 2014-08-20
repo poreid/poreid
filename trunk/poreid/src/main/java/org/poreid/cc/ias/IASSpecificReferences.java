@@ -34,6 +34,7 @@ import org.poreid.PkAlias;
 import org.poreid.RSAPaddingSchemes;
 import org.poreid.cc.CardSpecificReferences;
 import org.poreid.cc.CitizenCard;
+import org.poreid.config.POReIDConfig;
 
 /**
  *
@@ -45,9 +46,6 @@ public final class IASSpecificReferences implements CardSpecificReferences{
     private final String CDOL1 = "0000000000000000000000000000800000000000000000000000000000";
     private final byte TAMANHO_MIN_PIN = 4;
     private final byte TAMANHO_MAX_PIN = 8;
-    private final String iconAssinatura = "/assinatura.png";
-    private final String iconAutenticacao = "/autenticacao.png";
-    private final String iconMorada = "/morada.png";
     private final ResourceBundle bundle;
     private final Card card;
     private final String cardReaderName;
@@ -63,14 +61,14 @@ public final class IASSpecificReferences implements CardSpecificReferences{
         this.cardReaderName = cardReaderName;
         this.locale = locale;
         this.cachePreferences = cachePreferences;
-        bundle = ResourceBundle.getBundle(CitizenCard.class.getSimpleName(), locale);
+        bundle = POReIDConfig.getBundle(CitizenCard.class.getSimpleName(), locale);
         
         algorithmID = new HashMap<>();
         algorithmID.put(RSAPaddingSchemes.PKCS1, (byte)0x02);
         
         pinInfo = new HashMap<>();
-        pinInfo.put(PkAlias.AUTENTICACAO, new Pin(bundle.getString("authentication.pin"), TAMANHO_MIN_PIN, TAMANHO_MIN_PIN, iconAutenticacao, (byte)0x01, (byte)0x01, (byte)0x2F));
-        pinInfo.put(PkAlias.ASSINATURA, new Pin(bundle.getString("signature.pin"), TAMANHO_MIN_PIN, TAMANHO_MAX_PIN, iconAssinatura, (byte)0x82, (byte)0x82, SELECT_AID, (byte)0x2F));
+        pinInfo.put(PkAlias.AUTENTICACAO, new Pin(bundle.getString("authentication.pin"), TAMANHO_MIN_PIN, TAMANHO_MIN_PIN, POReIDConfig.IMAGE_AUTHENTICATION_LOCATION, (byte)0x01, (byte)0x01, (byte)0x2F));
+        pinInfo.put(PkAlias.ASSINATURA, new Pin(bundle.getString("signature.pin"), TAMANHO_MIN_PIN, TAMANHO_MAX_PIN, POReIDConfig.IMAGE_SIGNATURE_LOCATION, (byte)0x82, (byte)0x82, SELECT_AID, (byte)0x2F));
         
         digestsMap = new HashMap<>();
         digestsMap.put("SHA-1", DigestPrefixes.SHA_1);
@@ -87,7 +85,7 @@ public final class IASSpecificReferences implements CardSpecificReferences{
     
     @Override
     public Pin getAddressPin() {
-        return new Pin(bundle.getString("address.pin"), TAMANHO_MIN_PIN, TAMANHO_MAX_PIN, iconMorada, (byte)0x83, SELECT_AID, (byte)0x2F);
+        return new Pin(bundle.getString("address.pin"), TAMANHO_MIN_PIN, TAMANHO_MAX_PIN, POReIDConfig.IMAGE_ADDRESS_LOCATION, (byte)0x83, SELECT_AID, (byte)0x2F);
     }
 
     

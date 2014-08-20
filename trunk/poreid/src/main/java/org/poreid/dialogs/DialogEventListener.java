@@ -26,7 +26,7 @@ package org.poreid.dialogs;
 /**
  *
  * @author POReID
- * @param <T>
+ * @param <T> Tipo genérico para utilizar quando necessário
  */
 public interface DialogEventListener<T> {
 

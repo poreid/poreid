@@ -71,8 +71,8 @@ import org.poreid.dialogs.pindialogs.wrongpin.WrongPinDialogController;
  * @author POReID
  */
 public abstract class POReIDCard implements POReIDSmartCard {
-    private final String escudoPortugues = "/escudo.png";
-    private final String poreidKeystore = "/poreid.cc.ks";
+    private final String escudoPortugues = "/org/poreid/images/escudo.png"; // icone especifico para o cc
+    private final String poreidKeystore = "/org/poreid/cc/keystores/poreid.cc.ks";
     
     private final CardSpecificReferences csr;
     private final Card card;
@@ -98,7 +98,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
         this.files = new Files(csr);
         this.channel = this.card.getBasicChannel();
         this.terminalFeatures = TerminalFeatures.getInstance(card, csr.getCardReaderName());
-        this.bundle = ResourceBundle.getBundle(POReIDCard.class.getSimpleName(),locale);
+        this.bundle = POReIDConfig.getBundle(POReIDCard.class.getSimpleName(),locale);
     }
     
     

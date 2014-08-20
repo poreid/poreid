@@ -60,13 +60,13 @@ public final class CardFactory {
 
     /**
      * Obter um cartão e utilizar as parametrizações (linguagem e utilização da cache) definidas no ficheiro de configuração.
-     * @param <T>
+     * @param <T> Uma classe que implemente a interface POReIDSmartCard
      * @return cartão suportado pelo poreid
-     * @throws CardTerminalNotPresentException
-     * @throws UnknownCardException
-     * @throws CardNotPresentException
-     * @throws CanceledSelectionException
-     * @throws POReIDException
+     * @throws CardTerminalNotPresentException Exceção lançada quando não existe um leitor de cartões no sistema
+     * @throws UnknownCardException Exceção lançada quando o cartão não é reconhecido
+     * @throws CardNotPresentException Exceção lançada quando não existe um cartão no leitor
+     * @throws CanceledSelectionException Exceção lançada quando o utilizador não selecionou um de entre os vários cartões que foram detetados
+     * @throws POReIDException Exceção lançada quando ocorre uma exceção num componente (encapsula a exeção original)
      */
     public static <T extends POReIDSmartCard> T getCard() throws CardTerminalNotPresentException, UnknownCardException, CardNotPresentException, CanceledSelectionException, POReIDException{
         return getCard(defaultLocale, CacheStatus.UNSET);
@@ -74,14 +74,14 @@ public final class CardFactory {
 
     /**
      * Obter um cartão, redefinir o comportamento da cache (ligada / desligada) e utilizar a parametrização relativa à linguagem definida no ficheiro de configuração.
-     * @param <T>
-     * @param cachePreferences
+     * @param <T> Uma classe que implemente a interface POReIDSmartCard
+     * @param cachePreferences Permite indicar se a cache deve ser utilizada
      * @return cartão suportado pelo poreid
-     * @throws CardTerminalNotPresentException
-     * @throws UnknownCardException
-     * @throws CardNotPresentException
-     * @throws CanceledSelectionException
-     * @throws POReIDException
+     * @throws CardTerminalNotPresentException Exceção lançada quando não existe um leitor de cartões no sistema
+     * @throws UnknownCardException Exceção lançada quando o cartão não é reconhecido
+     * @throws CardNotPresentException Exceção lançada quando não existe um cartão no leitor
+     * @throws CanceledSelectionException Exceção lançada quando o utilizador não selecionou um de entre os vários cartões que foram detetados
+     * @throws POReIDException Exceção lançada quando ocorre uma exceção num componente (encapsula a exeção original)
      */
     public static <T extends POReIDSmartCard> T getCard(boolean cachePreferences) throws CardTerminalNotPresentException, UnknownCardException, CardNotPresentException, CanceledSelectionException, POReIDException{
         return getCard(defaultLocale, CacheStatus.getStatus(cachePreferences));
@@ -89,14 +89,14 @@ public final class CardFactory {
 
     /**
      * Obter um cartão, redefinir a linguagem e utilizar a parametrização relativa ao estado da cache definida no ficheiro de configuração.
-     * @param <T>
-     * @param locale
+     * @param <T> Uma classe que implemente a interface POReIDSmartCard
+     * @param locale Permite escolher a linguagem utilizada (português/inglês)
      * @return cartão suportado pelo poreid
-     * @throws CardTerminalNotPresentException
-     * @throws UnknownCardException
-     * @throws CardNotPresentException
-     * @throws CanceledSelectionException
-     * @throws POReIDException
+     * @throws CardTerminalNotPresentException Exceção lançada quando não existe um leitor de cartões no sistema
+     * @throws UnknownCardException Exceção lançada quando o cartão não é reconhecido
+     * @throws CardNotPresentException Exceção lançada quando não existe um cartão no leitor
+     * @throws CanceledSelectionException Exceção lançada quando o utilizador não selecionou um de entre os vários cartões que foram detetados
+     * @throws POReIDException Exceção lançada quando ocorre uma exceção num componente (encapsula a exeção original)
      */
     public static <T extends POReIDSmartCard> T getCard(Locale locale) throws CardTerminalNotPresentException, UnknownCardException, CardNotPresentException, CanceledSelectionException, POReIDException{
         if (null == locale){
@@ -108,15 +108,15 @@ public final class CardFactory {
 
     /**
      * Obter um cartão, redefinir o comportamento da cache e da linguagem.
-     * @param <T>
-     * @param locale
-     * @param cachePreferences
+     * @param <T> Uma classe que implemente a interface POReIDSmartCard
+     * @param locale Permite escolher a linguagem utilizada (português/inglês)
+     * @param cachePreferences Permite indicar se a cache deve ser utilizada
      * @return cartão suportado pelo poreid
-     * @throws CardTerminalNotPresentException
-     * @throws UnknownCardException
-     * @throws CardNotPresentException
-     * @throws CanceledSelectionException
-     * @throws POReIDException
+     * @throws CardTerminalNotPresentException Exceção lançada quando não existe um leitor de cartões no sistema
+     * @throws UnknownCardException Exceção lançada quando o cartão não é reconhecido
+     * @throws CardNotPresentException Exceção lançada quando não existe um cartão no leitor
+     * @throws CanceledSelectionException Exceção lançada quando o utilizador não selecionou um de entre os vários cartões que foram detetados
+     * @throws POReIDException Exceção lançada quando ocorre uma exceção num componente (encapsula a exeção original)
      */
     public static <T extends POReIDSmartCard> T getCard(Locale locale, CacheStatus cachePreferences) throws CardTerminalNotPresentException, UnknownCardException, CardNotPresentException, CanceledSelectionException, POReIDException{
         TerminalFactory factory;

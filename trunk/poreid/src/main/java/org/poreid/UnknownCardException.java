@@ -31,7 +31,7 @@ public class UnknownCardException extends Exception {
 
     /**
      * Constroi uma nova exceção com a mensagem de detalhe
-     * @param detalhe
+     * @param detalhe A mensagem de detalhe relativa à exceção
      */
     public UnknownCardException(String detalhe) {
         super(detalhe);
@@ -39,8 +39,8 @@ public class UnknownCardException extends Exception {
 
     /**
      * Constroi uma nova exceção com a mensagem de detalhe e a causa
-     * @param detalhe
-     * @param causa
+     * @param detalhe A mensagem de detalhe relativa à exceção
+     * @param causa A causa da exceção
      */
     public UnknownCardException(String detalhe, Exception causa) {
         super(detalhe, causa);

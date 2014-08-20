@@ -43,10 +43,10 @@ public interface POReIDSmartCard extends SmartCardUIData {
      * @param pkAlias Alias da chave privada a utilizar
      * @param sch Tipo de padding a utilizar na assinatura
      * @return assinatura digital
-     * @throws PinTimeoutException
-     * @throws PinEntryCancelledException
-     * @throws PinBlockedException
-     * @throws POReIDException
+     * @throws PinTimeoutException Exceção lançada quando o pin não é introduzido no intervalo de tempo designado (tipicamente 30 segundos)
+     * @throws PinEntryCancelledException Exceção lançada quando o utilizador cancela a introdução do pin
+     * @throws PinBlockedException Exceção lançada quando é detetado o bloqueio do pin
+     * @throws POReIDException Exceção lançada quando ocorre uma exceção num componente (encapsula a exeção original)
      */
     byte[] sign(byte hash[], byte[] pinCode, String digestAlgo, PkAlias pkAlias, RSAPaddingSchemes... sch) throws PinTimeoutException, PinEntryCancelledException, PinBlockedException, POReIDException;
 
@@ -55,34 +55,34 @@ public interface POReIDSmartCard extends SmartCardUIData {
      * @param pin identificação do pin a verificar (pin de autenticação, assinatura,..)
      * @param pinCode este parametro estará preenchido se o código PIN for recolhido externamente (este parametro é desabilitado via ficheiro de configuração)
      * @return true se o PIN for válido false se o PIN for inválido.
-     * @throws PinTimeoutException
-     * @throws PinEntryCancelledException
-     * @throws PinBlockedException
-     * @throws POReIDException
+     * @throws PinTimeoutException Exceção lançada quando o pin não é introduzido no intervalo de tempo designado (tipicamente 30 segundos)
+     * @throws PinEntryCancelledException Exceção lançada quando o utilizador cancela a introdução do pin
+     * @throws PinBlockedException Exceção lançada quando é detetado o bloqueio do pin
+     * @throws POReIDException Exceção lançada quando ocorre uma exceção num componente (encapsula a exeção original)
      */
     boolean verifyPin(Pin pin, byte[] pinCode) throws PinTimeoutException, PinEntryCancelledException, PinBlockedException, POReIDException;
 
     /**
      * Modificação de PIN
      * @param pin identificação do pin a modificar (pin de autenticação, assinatura,..)
-     * @throws PinBlockedException
-     * @throws PinEntryCancelledException
-     * @throws POReIDException
+     * @throws PinBlockedException Exceção lançada quando é detetado o bloqueio do pin
+     * @throws PinEntryCancelledException Exceção lançada quando o utilizador cancela a introdução do pin
+     * @throws POReIDException Exceção lançada quando ocorre uma exceção num componente (encapsula a exeção original)
      */
     void ModifyPin(Pin pin) throws PinBlockedException, PinEntryCancelledException, POReIDException;
 
     /**
      * Gera um conjuto de 8 bytes aleatórios
      * @return 8 bytes aleatórios.
-     * @throws POReIDException
+     * @throws POReIDException Exceção lançada quando ocorre uma exceção num componente (encapsula a exeção original)
      */
     byte[] getChallenge() throws POReIDException;
 
     /**
      * Retorna o número de tentativas até bloquear o PIN.
-     * @param pin
+     * @param pin identificação do pin (pin de autenticação, assinatura,..)
      * @return número de tentativas até bloquear o PIN.
-     * @throws POReIDException
+     * @throws POReIDException Exceção lançada quando ocorre uma exceção num componente (encapsula a exeção original)
      */
     int getPinStatus(Pin pin) throws POReIDException;
 
@@ -90,35 +90,35 @@ public interface POReIDSmartCard extends SmartCardUIData {
      * Retorna o certificado contido no ficheiro
      * @param file identificação do ficheiro que contem o certificado
      * @return certificado na forma de objecto X509Certificate 
-     * @throws CertificateNotFound
+     * @throws CertificateNotFound Exceção lançada quando não é encontrado o certificado pretendido
      */
     X509Certificate getCertificate(SmartCardFile file) throws CertificateNotFound;
 
     /**
      * Retorna o certificado de autenticação
      * @return certificado na forma de objecto X509Certificate 
-     * @throws CertificateNotFound
+     * @throws CertificateNotFound Exceção lançada quando não é encontrado o certificado pretendido
      */
     X509Certificate getAuthenticationCertificate() throws CertificateNotFound;
 
     /**
      * Retorna o certificado de assinatura qualificada
      * @return certificado na forma de objecto X509Certificate 
-     * @throws CertificateNotFound
+     * @throws CertificateNotFound Exceção lançada quando não é encontrado o certificado pretendido
      */
     X509Certificate getQualifiedSignatureCertificate() throws CertificateNotFound;
 
     /**
      * Retorna o caminho completo entre o certificado de assinatura qualificada e o seu certificado raíz 
      * @return lista de certificados ordenados do certificado de assinatura qualificada para o certificado raíz.
-     * @throws CertificateChainNotFound
+     * @throws CertificateChainNotFound Exceção lançada quando não é possivel construir um caminho de certificação para o certificado
      */
     List<X509Certificate> getQualifiedSignatureCertificateChain() throws CertificateChainNotFound;
 
     /**
      * Retorna o caminho completo entre o certificado de autenticação e o seu certificado raíz
      * @return lista de certificados ordenados do certificado de autenticação para o certificado raíz.
-     * @throws CertificateChainNotFound
+     * @throws CertificateChainNotFound Exceção lançada quando não é possivel construir um caminho de certificação para o certificado
      */
     List<X509Certificate> getAuthenticationCertificateChain() throws CertificateChainNotFound;
 
@@ -126,7 +126,7 @@ public interface POReIDSmartCard extends SmartCardUIData {
      * Retorna o caminho completo entre o certificado contido no ficheiro e o seu certificado raíz
      * @param file identificação do ficheiro que contem o certificado
      * @return lista de certificados ordenados do certificado contido no ficheiro para o certificado raíz.
-     * @throws CertificateChainNotFound
+     * @throws CertificateChainNotFound Exceção lançada quando não é possivel construir um caminho de certificação para o certificado
      */
     List<X509Certificate> getCertificateChain(SmartCardFile file) throws CertificateChainNotFound;
 }

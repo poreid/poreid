@@ -27,6 +27,7 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.swing.ImageIcon;
+import org.poreid.config.POReIDConfig;
 
 /**
  *
@@ -40,17 +41,17 @@ public class UsePinPadDialog extends javax.swing.JDialog {
     
     /**
      * Creates new form WarnVerifyPinDialog
-     * @param pinOp
-     * @param pinLabel
-     * @param pinIcon
-     * @param locale
+     * @param pinOp operação a realizar no pin (verificação / modificação)
+     * @param pinLabel Descrição textual do pin
+     * @param pinIcon Icone associado ao pin
+     * @param locale Linguagem utilizada
      */
     public UsePinPadDialog(PinOperation pinOp, String pinLabel, byte[] pinIcon, Locale locale) {
         super();
         this.pinLabel = pinLabel;
         this.pinIcon = pinIcon;
         this.pinOp = pinOp;
-        bundle = ResourceBundle.getBundle(UsePinPadDialog.class.getSimpleName(),locale);
+        bundle = POReIDConfig.getBundle(UsePinPadDialog.class.getSimpleName(),locale);
         initComponents();
         
         this.setTitle(MessageFormat.format(bundle.getString("dialog."+pinOp.getOperacao()+".title"), pinLabel));

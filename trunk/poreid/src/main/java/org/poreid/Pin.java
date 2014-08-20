@@ -42,13 +42,13 @@ public class Pin {
 
     /**
      * Cria uma instância com os parametros indicados
-     * @param label
-     * @param length
-     * @param maxLength
-     * @param iconPath
-     * @param reference
-     * @param keyReference
-     * @param padChar
+     * @param label descrição do pin (Pin de autenticação / Pin de assinatura)
+     * @param length Tamanho do pin
+     * @param maxLength Tamanho máximo do pin
+     * @param iconPath Localização do icone associado ao pin
+     * @param reference Referência interna do pin
+     * @param keyReference Referência interna da chave
+     * @param padChar Caracter de "pad" utilizado
      */
     public Pin(String label, byte length, byte maxLength, String iconPath, byte reference, byte keyReference, byte padChar) {
         this.label = label;
@@ -62,13 +62,13 @@ public class Pin {
 
     /**
      * Cria uma instância com os parametros indicados
-     * @param label
-     * @param length
-     * @param maxLength
-     * @param iconPath
-     * @param reference
-     * @param keyPath
-     * @param padChar
+     * @param label descrição do pin (Pin de autenticação / Pin de assinatura)
+     * @param length Tamanho do pin
+     * @param maxLength Tamanho máximo do pin
+     * @param iconPath Localização do icone associado ao pin
+     * @param reference Referência interna do pin
+     * @param keyPath Caminho da chave
+     * @param padChar Caracter de "pad" utilizado
      */
     public Pin(String label, byte length, byte maxLength, String iconPath, byte reference, String keyPath, byte padChar) {
         this.label = label;
@@ -82,14 +82,14 @@ public class Pin {
 
     /**
      * Cria uma instância com os parametros indicados
-     * @param label
-     * @param length
-     * @param maxLength
-     * @param iconPath
-     * @param reference
-     * @param keyReference
-     * @param keyPath
-     * @param padChar
+     * @param label descrição do pin (Pin de autenticação / Pin de assinatura)
+     * @param length Tamanho do pin
+     * @param maxLength Tamanho máximo do pin
+     * @param iconPath Localização do icone associado ao pin
+     * @param reference Referência interna do pin
+     * @param keyReference Referência interna da chave
+     * @param keyPath Caminho da chave
+     * @param padChar Caracter de "pad" utilizado
      */
     public Pin(String label, byte length, byte maxLength, String iconPath, byte reference, byte keyReference, String keyPath, byte padChar) {
         this.label = label;

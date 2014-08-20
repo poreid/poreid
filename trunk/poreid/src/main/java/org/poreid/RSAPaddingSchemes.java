@@ -49,7 +49,7 @@ public enum RSAPaddingSchemes {
 
     /**
      * Verifica se o padding scheme fornecido é suportado
-     * @param s
+     * @param s padding scheme
      * @return RSAPaddingScheme correspondente ou null
      */
     public static RSAPaddingSchemes contains(String s) {
