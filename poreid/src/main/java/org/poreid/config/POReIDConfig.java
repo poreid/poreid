@@ -24,6 +24,8 @@
 
 package org.poreid.config;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.XMLConstants;
@@ -53,8 +55,15 @@ public class POReIDConfig {
     public static final String cacheDirectory = ".poreidcache";
     public static final String cacheLocation = System.getProperty("user.home") + System.getProperty("file.separator") + cacheDirectory + System.getProperty("file.separator");
     public static final String AUTHORIZED_INVOCATION = "org.poreid.cc.OTP";
-    private static final String XML_SCHEMA = "/poreid.config.xsd";
-    private static final String CONFIGURACAO = "/poreid.config.xml";
+    public static final String IMAGE_ERROR_LOCATION = "/org/poreid/images/erro.png";
+    public static final String IMAGE_WARNING_LOCATION = "/org/poreid/images/aviso.png";
+    public static final String IMAGE_SIGNATURE_LOCATION = "/org/poreid/images/assinatura.png";
+    public static final String IMAGE_AUTHENTICATION_LOCATION = "/org/poreid/images/autenticacao.png";
+    public static final String IMAGE_ESCUDO_PORTUGUES_LOCATION = "/org/poreid/images/escudo.png";
+    public static final String IMAGE_ADDRESS_LOCATION = "/org/poreid/images/morada.png";
+    private static final String I18N_BUNDLE_LOCATION = "org.poreid.i18n.";
+    private static final String XML_SCHEMA = "/org/poreid/config/schema/poreid.config.xsd";
+    private static final String CONFIGURACAO = "/org/poreid/config/xml/poreid.config.xml";
     private static Configuration config;
     private static final int version = 0x01;
     
@@ -76,6 +85,11 @@ public class POReIDConfig {
     
     public static int getPOReIDVersion(){
         return version;
+    }
+    
+    
+     public static ResourceBundle getBundle(String simpleName, Locale locale){
+        return ResourceBundle.getBundle(I18N_BUNDLE_LOCATION + simpleName, locale);
     }
     
     public static String getSmartCardImplementingClassName(String atr){

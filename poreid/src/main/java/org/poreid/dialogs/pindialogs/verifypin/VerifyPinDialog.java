@@ -37,6 +37,7 @@ import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+import org.poreid.config.POReIDConfig;
 import org.poreid.dialogs.DialogEventListener;
 import org.poreid.dialogs.pindialogs.MyDocument;
 
@@ -63,7 +64,7 @@ class VerifyPinDialog extends javax.swing.JDialog {
         this.pinMinLength = pinMinLength;
         this.pinMaxLength = pinMaxLength;
         this.listener = listener;
-        bundle = ResourceBundle.getBundle(VerifyPinDialog.class.getSimpleName(),locale);
+        bundle = POReIDConfig.getBundle(VerifyPinDialog.class.getSimpleName(),locale);
         initComponents();
         
         this.setTitle(MessageFormat.format(bundle.getString("dialog.title"),pinLabel));

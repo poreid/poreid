@@ -18,7 +18,7 @@
             <email>rmartinho@gmail.com</email>
         </developer> 
         <developer>
-            <name>AntÃ³nio Braz</name>
+            <name>António Braz</name>
             <email>antoniocbraz@gmail.com</email>
         </developer>
     </developers>
@@ -67,8 +67,9 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                    <compilerArgument>-XDignore.symbol.file</compilerArgument>
                 </configuration>
             </plugin>
             <plugin>

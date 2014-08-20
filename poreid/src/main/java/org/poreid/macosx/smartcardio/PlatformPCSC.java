@@ -37,7 +37,7 @@ import java.security.PrivilegedAction;
  * @author POReID
  */
 public class PlatformPCSC {
-    private static final String PCSC_JNI_LIBRARY_NAME = "/libj2pcsc.dylib";
+    private static final String PCSC_JNI_LIBRARY_NAME = "/org/poreid/macosx/lib/libj2pcsc.dylib";
     private static final String PCSC_FRAMEWORK = "/System/Library/Frameworks/PCSC.framework/Versions/Current/PCSC";
  
     public static final int SCARD_PROTOCOL_T0  = 0x0001;

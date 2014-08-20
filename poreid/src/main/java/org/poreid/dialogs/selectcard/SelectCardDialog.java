@@ -28,11 +28,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.swing.DefaultListModel;
+import org.poreid.config.POReIDConfig;
 
 /**
  *
  * @author POReID
- * @param <T>
+ * @param <T> Classe que implemente a interface POReIDSmartCard
  */
 public class SelectCardDialog<T> extends javax.swing.JDialog {
     private final DefaultListModel<T> model = new DefaultListModel<>();
@@ -40,20 +41,18 @@ public class SelectCardDialog<T> extends javax.swing.JDialog {
     private final ResourceBundle bundle;
     
     /**
-     * Creates new form SelectCardDialog
-     * @param modal
-     * @param list
-     * @param locale
-     * @param listener
+     * Creates new form SelectCardDialog     
+     * @param list Lista de classes que implementam a interface POReIDSmartCard
+     * @param locale Linguagem utilizada
+     * @param listener Objecto a notificar
      */
-    public SelectCardDialog(boolean modal,final List<T> list, Locale locale, DialogEventListener<T> listener) {
-        super();
-        this.setModal(modal);
+    public SelectCardDialog(final List<T> list, Locale locale, DialogEventListener<T> listener) {
+        super();        
         this.listener = listener; 
         for (T t : list) {
             model.addElement(t);
         }
-        bundle = ResourceBundle.getBundle(SelectCardDialog.class.getSimpleName(),locale);
+        bundle = POReIDConfig.getBundle(SelectCardDialog.class.getSimpleName(),locale);
         initComponents();
         
         this.setTitle(bundle.getString("dialog.title"));

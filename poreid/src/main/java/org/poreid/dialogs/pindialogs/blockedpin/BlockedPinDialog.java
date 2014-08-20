@@ -27,6 +27,7 @@ package org.poreid.dialogs.pindialogs.blockedpin;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import org.poreid.config.POReIDConfig;
 
 /**
  *
@@ -38,13 +39,13 @@ public class BlockedPinDialog extends javax.swing.JDialog {
     
     /**
      * Creates new form ErrorPinDialog
-     * @param pinLabel
-     * @param locale
+     * @param pinLabel Descrição textual do pin
+     * @param locale Linguagem utilizada
      */
     public BlockedPinDialog(String pinLabel, Locale locale) {
         super();
         this.pinLabel = pinLabel;
-        bundle = ResourceBundle.getBundle(BlockedPinDialog.class.getSimpleName(),locale);
+        bundle = POReIDConfig.getBundle(BlockedPinDialog.class.getSimpleName(),locale);
         
         initComponents();
         
@@ -106,7 +107,7 @@ public class BlockedPinDialog extends javax.swing.JDialog {
 
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/erro.png")));
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource(POReIDConfig.IMAGE_ERROR_LOCATION)));
         jLabel1.setMaximumSize(new java.awt.Dimension(64, 64));
         jLabel1.setMinimumSize(new java.awt.Dimension(64, 64));
         jLabel1.setPreferredSize(new java.awt.Dimension(64, 64));

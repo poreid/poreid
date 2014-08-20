@@ -43,6 +43,7 @@ import javax.smartcardio.ResponseAPDU;
 import org.poreid.POReIDException;
 import org.poreid.Pin;
 import org.poreid.common.Util;
+import org.poreid.config.POReIDConfig;
 import org.poreid.crypto.POReIDSocketFactory;
 import org.poreid.dialogs.dialog.DialogController;
 import org.poreid.dialogs.pindialogs.otpfeedback.OTPFeedbackDialogController;
@@ -59,7 +60,7 @@ class OTP {
     private final String OTP_SEND_CHANGE_PIN_RESPONSE_URL = "https://otp.cartaodecidadao.pt/CAPPINChange/sendChangePINResponse";
     private final String OTP_SCRIPT_COUNTER_PARAMETERS_URL = "https://otp.cartaodecidadao.pt/CAPPINChange/sendResetScriptCounterParameters";
     private final String OTP_SCRIPT_COUNTER_RESPONSE_URL = "https://otp.cartaodecidadao.pt/CAPPINChange/resetScriptCounterResponse";
-    private final String OTP_TRUST_STORE = "/poreid.cc.otp.ks";
+    private final String OTP_TRUST_STORE = "/org/poreid/cc/keystores/poreid.cc.otp.ks";
     private final String OTP_TRUST_STORE_PASSWORD = "";
     private SSLSocketFactory sslSocketFactory;
     private String cookie;
@@ -83,7 +84,7 @@ class OTP {
             this.card = card;
             this.pin = pin;
             this.p = pins[1].array();
-            this.bundle = ResourceBundle.getBundle(OTP.class.getSimpleName(),card.getCardSpecificReferences().getLocale());
+            this.bundle = POReIDConfig.getBundle(OTP.class.getSimpleName(),card.getCardSpecificReferences().getLocale());
             sslSocketFactory = POReIDSocketFactory.getSSLSocketFactoryOTP(card, OTP_TRUST_STORE, OTP_TRUST_STORE_PASSWORD, pins[0].array());
         } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException | IOException | CertificateException | InvalidAlgorithmParameterException ex) {
             throw new POReIDException("Não foi possivel iniciar o processo de alteração do pin OTP", ex);

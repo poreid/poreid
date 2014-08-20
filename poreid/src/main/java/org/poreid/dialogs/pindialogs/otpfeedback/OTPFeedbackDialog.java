@@ -27,6 +27,7 @@ import java.awt.CardLayout;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import org.poreid.config.POReIDConfig;
 
 /**
  *
@@ -39,13 +40,13 @@ public class OTPFeedbackDialog extends javax.swing.JDialog {
     
     /**
      * Creates new form OTPFeedbackDialog
-     * @param pinLabel
-     * @param locale
+     * @param pinLabel Descrição textual do pin
+     * @param locale Linguagem utilizada
      */
     public OTPFeedbackDialog(String pinLabel, Locale locale) {
         super();
         this.pinLabel = pinLabel;
-        bundle = ResourceBundle.getBundle(OTPFeedbackDialog.class.getSimpleName(),locale);
+        bundle = POReIDConfig.getBundle(OTPFeedbackDialog.class.getSimpleName(),locale);
         initComponents();
         status.setText(bundle.getString("dialog.action.start"));
         this.setTitle(MessageFormat.format(bundle.getString("dialog.title"),pinLabel));
@@ -79,7 +80,7 @@ public class OTPFeedbackDialog extends javax.swing.JDialog {
         setResizable(false);
         getContentPane().setLayout(new java.awt.CardLayout());
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/aviso.png"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource(POReIDConfig.IMAGE_WARNING_LOCATION))); // NOI18N
 
         status.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         status.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -122,7 +123,7 @@ public class OTPFeedbackDialog extends javax.swing.JDialog {
         jPanel2.setMinimumSize(new java.awt.Dimension(350, 145));
         jPanel2.setPreferredSize(new java.awt.Dimension(350, 145));
 
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/aviso.png"))); // NOI18N
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource(POReIDConfig.IMAGE_WARNING_LOCATION))); // NOI18N
 
         successLabel.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         successLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);

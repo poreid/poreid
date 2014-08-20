@@ -69,7 +69,7 @@ public final class CitizenCardAddressAttributes {
 
     /**
      * C
-     * @param data
+     * @param data conteúdo do ficheiro da morada
      */
     protected CitizenCardAddressAttributes(byte[] data){
         this.data = data;

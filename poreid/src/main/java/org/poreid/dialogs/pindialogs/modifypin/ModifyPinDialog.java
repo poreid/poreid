@@ -35,6 +35,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+import org.poreid.config.POReIDConfig;
 import org.poreid.dialogs.DialogEventListener;
 import org.poreid.dialogs.pindialogs.ButtonAbstractAction;
 import org.poreid.dialogs.pindialogs.MyDocument;
@@ -57,7 +58,7 @@ public class ModifyPinDialog extends javax.swing.JDialog {
         this.pinMinLength = pinMinLength;
         this.pinMaxLength = pinMaxLength;
         this.listener = listener;
-        bundle = ResourceBundle.getBundle(ModifyPinDialog.class.getSimpleName(),locale);
+        bundle = POReIDConfig.getBundle(ModifyPinDialog.class.getSimpleName(),locale);
         initComponents();
         
         this.setTitle(MessageFormat.format(bundle.getString("dialog.title"),pinLabel));
@@ -123,7 +124,7 @@ public class ModifyPinDialog extends javax.swing.JDialog {
 
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.LINE_AXIS));
 
-        icon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/aviso.png")));
+        icon.setIcon(new javax.swing.ImageIcon(getClass().getResource(POReIDConfig.IMAGE_WARNING_LOCATION)));
         icon.setMaximumSize(new java.awt.Dimension(64, 64));
         icon.setMinimumSize(new java.awt.Dimension(64, 64));
         icon.setPreferredSize(new java.awt.Dimension(64, 64));

@@ -35,7 +35,7 @@ import org.poreid.SmartCardUIData;
 /**
  *
  * @author POReID
- * @param <T>
+ * @param <T> Classe que implemente a interface POReIDSmartCard
  */
 public class SelectCardListCellRenderer<T extends SmartCardUIData> extends JLabel implements ListCellRenderer<SmartCardUIData> {
 

@@ -37,42 +37,42 @@ public interface CitizenData {
     /**
      * Retorna os dados do cidadão
      * @return dados do cidadão
-     * @throws SmartCardFileException
+     * @throws SmartCardFileException Exceção lançada quando ocorre um erro durante uma operação sobre um ficheiro existente no cartão
      */
     CitizenCardIdAttributes getID() throws SmartCardFileException;
 
     /**
      * Retorna o conteúdo do ficheiro da morada
      * @return morada
-     * @throws SmartCardFileException
+     * @throws SmartCardFileException Exceção lançada quando ocorre um erro durante uma operação sobre um ficheiro existente no cartão
      */
     CitizenCardAddressAttributes getAddress() throws SmartCardFileException;
 
     /**
      * Retorna o conteúdo do ficheiro das notas pessoais
      * @return conteúdo do ficheiro das notas pessoais
-     * @throws SmartCardFileException
+     * @throws SmartCardFileException Exceção lançada quando ocorre um erro durante uma operação sobre um ficheiro existente no cartão
      */
     byte[] readPersonalNotes() throws SmartCardFileException;
 
     /**
      * Retorna metadados e foto no formato jpeg2000
      * @return metadados e foto no formato jpeg2000
-     * @throws SmartCardFileException
+     * @throws SmartCardFileException Exceção lançada quando ocorre um erro durante uma operação sobre um ficheiro existente no cartão
      */
     CitizenCardPhotoAttributes getPhotoData() throws SmartCardFileException;
 
     /**
      * Retorna o conteúdo do ficheiro SOD
      * @return conteúdo do ficheiro SOD
-     * @throws SmartCardFileException
+     * @throws SmartCardFileException Exceção lançada quando ocorre um erro durante uma operação sobre um ficheiro existente no cartão
      */
     byte[] getSOD() throws SmartCardFileException;
 
     /**
      * Grava as notas pessoais no cartão. Este método deve ser invocado com as notas pessoais completas e não apenas o excerto modificado.
-     * @param notes
-     * @throws SmartCardFileException
+     * @param notes notas pessoais do cidadão para gravar no cartão
+     * @throws SmartCardFileException Exceção lançada quando ocorre um erro durante uma operação sobre um ficheiro existente no cartão
      */
     void savePersonalNotes(String notes) throws SmartCardFileException;
     
@@ -80,9 +80,9 @@ public interface CitizenData {
     /**
      * Retorna a chave pública existente no cartão
      * @return chave pública
-     * @throws SmartCardFileException
-     * @throws InvalidKeySpecException
-     * @throws NoSuchAlgorithmException
+     * @throws SmartCardFileException Exceção lançada quando ocorre um erro durante uma operação sobre um ficheiro existente no cartão
+     * @throws InvalidKeySpecException Exception for invalid key specifications
+     * @throws NoSuchAlgorithmException Exceção lançada quando é solicitado um algoritmo criptográfico que não está disponível no sistema
      */
     PublicKey getPublicKey() throws SmartCardFileException, InvalidKeySpecException, NoSuchAlgorithmException;
 

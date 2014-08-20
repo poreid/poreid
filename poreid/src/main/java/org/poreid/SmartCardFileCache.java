@@ -63,9 +63,9 @@ public final class SmartCardFileCache {
 
     /**
      * Constroi uma instância
-     * @param prefix
-     * @param cacheEnabled
-     * @param data
+     * @param prefix Prefixo utilizado para mapear os cartões com os ficheiros da cache
+     * @param cacheEnabled Permite ligar/desligar a utilização da cache
+     * @param data Dados utilizados para cifrar a cache
      */
     public SmartCardFileCache(String prefix, boolean cacheEnabled, byte[] data){
         this.prefix = prefix;
@@ -81,7 +81,7 @@ public final class SmartCardFileCache {
 
     /**
      * Retorna o nome do ficheiro na cache
-     * @param file
+     * @param file Ficheiro no smartcard
      * @return nome do ficheiro na cache
      */
     public String getSCFileCacheFileName(SmartCardFile file) {
@@ -90,7 +90,7 @@ public final class SmartCardFileCache {
 
     /**
      * Verifica se o ficheiro existe em cache
-     * @param fileId
+     * @param fileId Identificador do ficheiro no smartcard
      * @return true se existe em cache, falso se não existe
      */
     public boolean isCached(String fileId) {
@@ -109,8 +109,8 @@ public final class SmartCardFileCache {
 
     /**
      * Compara e retorna o conteúdo do ficheiro em cache
-     * @param file
-     * @param contentToCompare
+     * @param file Ficheiro no smartcard
+     * @param contentToCompare Conteúdo a comparar entre a cache e o ficheiro no smartcard
      * @return ficheiro em cache ou null se a cache não for válida
      */
     public byte[] readNCheckCacheFile(SmartCardFile file, byte[] contentToCompare){
@@ -125,7 +125,7 @@ public final class SmartCardFileCache {
 
     /**
      * Retorna o conteúdo do ficheiro em cache
-     * @param fileId
+     * @param fileId Identificador do ficheiro no smartcard
      * @return conteudo do ficheiro em cache ou null se a cache estiver inativa
      */
     public byte[] readCachedFile(String fileId) {
@@ -157,8 +157,8 @@ public final class SmartCardFileCache {
 
     /**
      * Escreve conteúdo do ficheiro na cache
-     * @param fileId
-     * @param contents
+     * @param fileId Identificador do ficheiro no smartcard
+     * @param contents Conteúdo a escrever no ficheiro de cache
      */
     public void writeCacheFile(String fileId, byte[] contents) {
         if (cacheEnabled){

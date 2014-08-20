@@ -62,8 +62,8 @@ public final class TerminalFeatures {
     
     /**
      * Devolve uma instância da classe
-     * @param card
-     * @param readerName
+     * @param card Instância de um cartão (pertence ao smartcardio)
+     * @param readerName Nome do leitor de cartões
      * @return Instância da classe TerminalFeatures
      */
     public static TerminalFeatures getInstance(Card card, String readerName) {   
@@ -82,7 +82,7 @@ public final class TerminalFeatures {
     
     /**
      * Indica se o leitor apesar de dispor de pinpad a funcionalidade de verificação do pin através do pinpad é suportada
-     * @param scClass
+     * @param scClass Nome da classe que implementa o suporte ao cartão
      * @return true se suporta, false se não.
      */
     public boolean isVerifyPinThroughPinpadSupported(String scClass) {
@@ -101,7 +101,7 @@ public final class TerminalFeatures {
     
     /**
      * Indica se o leitor apesar de dispor de pinpad a funcionalidade de modificação do pin através do pinpad é suportada
-     * @param scClass
+     * @param scClass Nome da classe que implementa o suporte ao cartão
      * @return true se suporta, false se não.
      */
     public boolean isModifyPinThroughPinpadSupported(String scClass) {
@@ -160,12 +160,12 @@ public final class TerminalFeatures {
     
     /**
      * Transmite as instruções necessárias à verificação de PIN
-     * @param timeOut
-     * @param minPinSize
-     * @param maxPinSize
-     * @param apdu
+     * @param timeOut Tempo limite
+     * @param minPinSize Tamanho minimo do pin
+     * @param maxPinSize Tamanho máximo do pin
+     * @param apdu Instrução de verificação do pin a enviar para o cartão
      * @return status word
-     * @throws POReIDException
+     * @throws POReIDException Exceção lançada quando ocorre uma exceção num componente (encapsula a exeção original)
      */
     public byte[] transmitVerifyPinDirect(byte timeOut, byte minPinSize, byte maxPinSize, byte[] apdu) throws POReIDException {        
         try {
@@ -187,12 +187,12 @@ public final class TerminalFeatures {
     
     /**
      * Transmite as instruções necessárias à modificação de PIN
-     * @param timeOut
-     * @param minPinSize
-     * @param maxPinSize
-     * @param modifyApdu
+     * @param timeOut Tempo limite
+     * @param minPinSize Tamanho minimo do pin
+     * @param maxPinSize Tamanho máximo do pin
+     * @param modifyApdu Instrução de modificação do pin a enviar para o cartão
      * @return status word
-     * @throws POReIDException
+     * @throws POReIDException Exceção lançada quando ocorre uma exceção num componente (encapsula a exeção original)
      */
     public byte[] transmitModifyPinDirect(byte timeOut, byte minPinSize, byte maxPinSize, byte[] modifyApdu) throws POReIDException {        
         return transmitModifyPinDirect(timeOut, minPinSize, maxPinSize, null, modifyApdu);
@@ -201,13 +201,13 @@ public final class TerminalFeatures {
     
     /**
      * Transmite as instruções necessárias à modificação de PIN
-     * @param timeOut
-     * @param minPinSize
-     * @param maxPinSize
-     * @param verifyApdu
-     * @param modifyApdu
+     * @param timeOut tempo de expiração
+      * @param minPinSize Tamanho minimo do pin
+     * @param maxPinSize Tamanho máximo do pin
+     * @param verifyApdu Instrução de verificação do pin a enviar para o cartão
+     * @param modifyApdu Instrução de modificação do pin a enviar para o cartão
      * @return status word
-     * @throws POReIDException
+     * @throws POReIDException Exceção lançada quando ocorre uma exceção num componente (encapsula a exeção original)
      */
     public byte[] transmitModifyPinDirect(byte timeOut, byte minPinSize, byte maxPinSize, byte[] verifyApdu, byte[] modifyApdu) throws POReIDException {
         ResponseAPDU responseApdu;

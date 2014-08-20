@@ -35,7 +35,7 @@ import org.poreid.config.POReIDConfig;
 /**
  *
  * @author POReID
- * @param <T>
+ * @param <T> Classe que implemente a interface POReIDSmartCard
  */
 public class SelectCardDialogController<T>{
     private boolean cancelled;
@@ -82,7 +82,7 @@ public class SelectCardDialogController<T>{
         javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
             @Override
             public void run() {
-                dialog = new SelectCardDialog<>(true, cardList, locale, listener);
+                dialog = new SelectCardDialog<>(cardList, locale, listener);
                 dialog.setVisible(true);
             }
         });
