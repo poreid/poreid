@@ -163,6 +163,7 @@ public class JSONArray {
     /**
      * Construct a JSONArray from an array
      *
+     * @param array array
      * @throws JSONException
      *             If not an array.
      */
@@ -870,7 +871,7 @@ public class JSONArray {
      *         object, beginning with <code>[</code>&nbsp;<small>(left
      *         bracket)</small> and ending with <code>]</code>
      *         &nbsp;<small>(right bracket)</small>.
-     * @throws JSONException
+     * @throws JSONException thrown by the JSON.org classes when things are amiss
      */
     public String toString(int indentFactor) throws JSONException {
         StringWriter sw = new StringWriter();
@@ -885,8 +886,9 @@ public class JSONArray {
      * <p>
      * Warning: This method assumes that the data structure is acyclical.
      *
+     * @param writer writer
      * @return The writer.
-     * @throws JSONException
+     * @throws JSONException thrown by the JSON.org classes when things are amiss
      */
     public Writer write(Writer writer) throws JSONException {
         return this.write(writer, 0, 0);
@@ -903,7 +905,7 @@ public class JSONArray {
      * @param indent
      *            The indention of the top level.
      * @return The writer.
-     * @throws JSONException
+     * @throws JSONException thrown by the JSON.org classes when things are amiss
      */
     Writer write(Writer writer, int indentFactor, int indent)
             throws JSONException {

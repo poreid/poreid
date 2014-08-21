@@ -162,7 +162,6 @@ public class JSONObject {
      * @param names
      *            An array of strings.
      * @throws JSONException
-     * @exception JSONException
      *                If a value is a non-finite number or if a name is
      *                duplicated.
      */
@@ -237,7 +236,7 @@ public class JSONObject {
      * @param map
      *            A map object that can be used to initialize the contents of
      *            the JSONObject.
-     * @throws JSONException
+     * @throws JSONException thrown by the JSON.org classes when things are amiss.
      */
     public JSONObject(Map map) {
         this.map = new HashMap();
@@ -602,6 +601,7 @@ public class JSONObject {
     /**
      * Get an array of field names from a JSONObject.
      *
+     * @param jo JSONObject
      * @return An array of field names, or null if there are no names.
      */
     public static String[] getNames(JSONObject jo) {
@@ -622,6 +622,7 @@ public class JSONObject {
     /**
      * Get an array of field names from an Object.
      *
+     * @param object Object
      * @return An array of field names, or null if there are no names.
      */
     public static String[] getNames(Object object) {
@@ -1048,7 +1049,7 @@ public class JSONObject {
      * @param value
      *            A Collection value.
      * @return this.
-     * @throws JSONException
+     * @throws JSONException thrown by the JSON.org classes when things are amiss.
      */
     public JSONObject put(String key, Collection value) throws JSONException {
         this.put(key, new JSONArray(value));
@@ -1063,7 +1064,7 @@ public class JSONObject {
      * @param value
      *            A double which is the value.
      * @return this.
-     * @throws JSONException
+     * @throws JSONException 
      *             If the key is null or if the number is invalid.
      */
     public JSONObject put(String key, double value) throws JSONException {
@@ -1112,7 +1113,7 @@ public class JSONObject {
      * @param value
      *            A Map value.
      * @return this.
-     * @throws JSONException
+     * @throws JSONException thrown by the JSON.org classes when things are amiss.
      */
     public JSONObject put(String key, Map value) throws JSONException {
         this.put(key, new JSONObject(value));
@@ -1151,8 +1152,8 @@ public class JSONObject {
      * are both non-null, and only if there is not already a member with that
      * name.
      *
-     * @param key
-     * @param value
+     * @param key key 
+     * @param value value
      * @return his.
      * @throws JSONException
      *             if the key is a duplicate
@@ -1536,8 +1537,9 @@ public class JSONObject {
      * <p>
      * Warning: This method assumes that the data structure is acyclical.
      *
+     * @param writer writer
      * @return The writer.
-     * @throws JSONException
+     * @throws JSONException thrown by the JSON.org classes when things are amiss.
      */
     public Writer write(Writer writer) throws JSONException {
         return this.write(writer, 0, 0);

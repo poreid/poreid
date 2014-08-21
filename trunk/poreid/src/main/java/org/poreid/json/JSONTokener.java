@@ -69,6 +69,7 @@ public class JSONTokener {
 
     /**
      * Construct a JSONTokener from an InputStream.
+     * @param inputStream Inputstream
      */
     public JSONTokener(InputStream inputStream) throws JSONException {
         this(new InputStreamReader(inputStream));
@@ -224,7 +225,7 @@ public class JSONTokener {
 
     /**
      * Get the next char in the string, skipping whitespace.
-     * @throws JSONException
+     * @throws JSONException thrown by the JSON.org classes when things are amiss.
      * @return  A character, or 0 if there are no more characters.
      */
     public char nextClean() throws JSONException {
