@@ -33,24 +33,24 @@ public interface ReaderWithPinPad {
 
     /**
      * Retorna uma estrutura que será passada ao leitor de cartões com pinpad
-     * @param timeOut
-     * @param minPinSize
-     * @param maxPinSize
-     * @param apdu
+     * @param timeOut Tempo limite
+     * @param minPinSize Tamanho minimo do pin
+     * @param maxPinSize Tamanho máximo do pin
+     * @param apdu Instrução a enviar ao cartão
      * @return estrutura que será passada ao leitor de cartões com pinpad
-     * @throws IOException
+     * @throws IOException Exceção lançada se ocorrer algum problema com instâncias de ByteArrayOutputStream
      */
     ReaderWithPinPadData getVerifyPinDirect(byte timeOut, byte minPinSize, byte maxPinSize, byte[] apdu) throws IOException;
 
     /**
      * Retorna uma estrutura que será passada ao leitor de cartões com pinpad
-     * @param verifyToModify
-     * @param timeOut
-     * @param minPinSize
-     * @param maxPinSize
-     * @param apdu
+     * @param verifyToModify indica se ocorreu uma verificação de pin
+     * @param timeOut Tempo limite
+     * @param minPinSize Tamanho minimo do pin
+     * @param maxPinSize Tamanho máximo do pin
+     * @param apdu Instrução a enviar ao cartão
      * @return estrutura que será passada ao leitor de cartões com pinpad
-     * @throws IOException
+     * @throws IOException Exceção lançada se ocorrer algum problema com instâncias de ByteArrayOutputStream
      */
     ReaderWithPinPadData getModifyPinDirect(boolean verifyToModify, byte timeOut, byte minPinSize, byte maxPinSize, byte[] apdu) throws IOException;
 }
