@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import javax.smartcardio.Card;
+import javax.smartcardio.CardTerminal;
 import org.poreid.DigestPrefixes;
 import org.poreid.Pin;
 import org.poreid.PkAlias;
@@ -48,17 +49,19 @@ public final class IASSpecificReferences implements CardSpecificReferences{
     private final byte TAMANHO_MAX_PIN = 8;
     private final ResourceBundle bundle;
     private final Card card;
+    private final CardTerminal terminal;
     private final String cardReaderName;
     private final Locale locale;
     private final Map<RSAPaddingSchemes, Byte> algorithmID;
-    private final Map<PkAlias, Pin> pinInfo;  
+    private final Map<PkAlias, Pin> pinInfo;
     protected final Map<String, DigestPrefixes> digestsMap;
     private final boolean cachePreferences;
      
     
-    public IASSpecificReferences(Card card, String cardReaderName, Locale locale, boolean cachePreferences){
+    public IASSpecificReferences(Card card, CardTerminal terminal, Locale locale, boolean cachePreferences){
         this.card = card;
-        this.cardReaderName = cardReaderName;
+        this.terminal = terminal;
+        this.cardReaderName = terminal.getName();
         this.locale = locale;
         this.cachePreferences = cachePreferences;
         bundle = POReIDConfig.getBundle(CitizenCard.class.getSimpleName(), locale);
@@ -144,5 +147,10 @@ public final class IASSpecificReferences implements CardSpecificReferences{
     @Override
     public boolean getCachePreference() {
         return cachePreferences;
+    }
+
+    @Override
+    public CardTerminal getTerminal() {
+        return terminal;
     }
 }

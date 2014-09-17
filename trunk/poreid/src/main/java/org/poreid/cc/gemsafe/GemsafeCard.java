@@ -29,15 +29,16 @@ import java.util.Locale;
 import javax.smartcardio.Card;
 import javax.smartcardio.CardChannel;
 import javax.smartcardio.CardException;
+import javax.smartcardio.CardTerminal;
 import javax.smartcardio.CommandAPDU;
 import javax.smartcardio.ResponseAPDU;
-import org.poreid.cc.CitizenCard;
 import org.poreid.DigestPrefixes;
+import org.poreid.POReIDException;
 import org.poreid.Pin;
 import org.poreid.PkAlias;
 import org.poreid.RSAPaddingSchemes;
 import org.poreid.cc.CardSpecificReferences;
-import org.poreid.POReIDException;
+import org.poreid.cc.CitizenCard;
 import org.poreid.common.Util;
 import org.poreid.config.POReIDConfig;
 import org.poreid.dialogs.pindialogs.PinBlockedException;
@@ -53,8 +54,8 @@ public final class GemsafeCard extends CitizenCard {
     private final CardChannel channel;
     
     
-    public GemsafeCard(Card card, String readerName, Locale locale, boolean cachePreferences) {
-        super(new GemsafeSpecificReferences(card, readerName, locale, cachePreferences));
+    public GemsafeCard(Card card, CardTerminal terminal, Locale locale, boolean cachePreferences) {
+        super(new GemsafeSpecificReferences(card, terminal, locale, cachePreferences));
         this.card = card;
         this.channel = card.getBasicChannel();
     }
