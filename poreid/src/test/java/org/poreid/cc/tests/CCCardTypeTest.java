@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.poreid.cc;
+package org.poreid.cc.tests;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -31,6 +31,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.poreid.CardFactory;
 import org.poreid.PkAlias;
+import org.poreid.cc.CitizenCard;
 
 /**
  *

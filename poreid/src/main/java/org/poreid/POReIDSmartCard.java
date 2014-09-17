@@ -129,4 +129,11 @@ public interface POReIDSmartCard extends SmartCardUIData {
      * @throws CertificateChainNotFound Exceção lançada quando não é possivel construir um caminho de certificação para o certificado
      */
     List<X509Certificate> getCertificateChain(SmartCardFile file) throws CertificateChainNotFound;
+    
+    /**
+     * Verifica se o cartão está presente no leitor
+     * @return true se o cartão estiver no leitor
+     * @throws POReIDException Exceção lançada quando ocorre uma exceção num componente (encapsula a exeção original)
+     */
+    boolean isPOReIDSmartcardPresent() throws POReIDException;
 }

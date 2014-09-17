@@ -172,8 +172,8 @@ public final class CardFactory {
 
         if (null != className){
             try {
-                Constructor<? extends POReIDSmartCard> ctor = Class.forName(className).asSubclass(POReIDSmartCard.class).getDeclaredConstructor(Card.class, String.class, Locale.class, boolean.class);
-                return (T) ctor.newInstance(card, terminal.getName(), locale, cachePreferences);
+                Constructor<? extends POReIDSmartCard> ctor = Class.forName(className).asSubclass(POReIDSmartCard.class).getDeclaredConstructor(Card.class, CardTerminal.class, Locale.class, boolean.class);
+                return (T) ctor.newInstance(card, terminal, locale, cachePreferences);
             } catch (InvocationTargetException | IllegalArgumentException | SecurityException | NoSuchMethodException | InstantiationException | IllegalAccessException | ClassNotFoundException ex) {
                 Logger.getLogger(CardFactory.class.getName()).log(Level.SEVERE, null, ex);
                 throw new UnknownCardException("Cartão não suportado", ex);

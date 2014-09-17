@@ -743,4 +743,13 @@ public abstract class POReIDCard implements POReIDSmartCard {
         
         return unlock;
     }
+    
+    @Override
+    public boolean isPOReIDSmartcardPresent() throws POReIDException{
+        try {
+            return csr.getTerminal().isCardPresent();
+        } catch (CardException ex) {
+            throw new POReIDException("Ocorreu um erro durante a verificação do leitor no cartão", ex);
+        }
+    }
 }

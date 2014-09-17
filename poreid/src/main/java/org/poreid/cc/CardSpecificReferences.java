@@ -25,6 +25,7 @@ package org.poreid.cc;
 
 import java.util.Locale;
 import javax.smartcardio.Card;
+import javax.smartcardio.CardTerminal;
 import org.poreid.DigestPrefixes;
 import org.poreid.Pin;
 import org.poreid.PkAlias;
@@ -59,4 +60,6 @@ public interface CardSpecificReferences {
     boolean isEMVCAPPin(Pin pin);
     
     boolean getCachePreference();
+    
+    CardTerminal getTerminal();
 }
