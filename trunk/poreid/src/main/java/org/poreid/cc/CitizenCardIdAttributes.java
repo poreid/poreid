@@ -344,7 +344,7 @@ public final class CitizenCardIdAttributes {
         documentVersion = new String(data, 214, 16, StandardCharsets.UTF_8).trim();
         validityBeginDate = new String(data, 230, 20, StandardCharsets.UTF_8).trim();
         localofRequest = new String(data, 250, 60, StandardCharsets.UTF_8).trim();
-        validityBeginDate = new String(data, 310, 20, StandardCharsets.UTF_8).trim();
+        validityEndDate = new String(data, 310, 20, StandardCharsets.UTF_8).trim();
         surname = new String(data, 330, 120, StandardCharsets.UTF_8).trim();
         name = new String(data, 450, 120, StandardCharsets.UTF_8).trim();
         gender = new String(data, 570, 2, StandardCharsets.UTF_8).trim();
