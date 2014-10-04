@@ -40,11 +40,11 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.smartcardio.CardNotPresentException;
 import javax.swing.JApplet;
 import netscape.javascript.JSException;
 import netscape.javascript.JSObject;
 import org.poreid.CardFactory;
+import org.poreid.CardNotPresentException;
 import org.poreid.CardTerminalNotPresentException;
 import org.poreid.CertificateNotFound;
 import org.poreid.POReIDException;
@@ -177,7 +177,7 @@ public class AppletAutenticacao extends JApplet {
             cd.setSignature(signature.sign());
             
             createOkSubmitForm(postURL, cd);
-        } catch (CertificateNotFound | CardTerminalNotPresentException | UnknownCardException | CardNotPresentException | CanceledSelectionException | POReIDException | SmartCardFileException | NoSuchAlgorithmException | KeyStoreException | IOException | CertificateException | UnrecoverableKeyException | InvalidKeyException | SignatureException ex) {
+        } catch (CardNotPresentException | CertificateNotFound | CardTerminalNotPresentException | UnknownCardException | CanceledSelectionException | POReIDException | SmartCardFileException | NoSuchAlgorithmException | KeyStoreException | IOException | CertificateException | UnrecoverableKeyException | InvalidKeyException | SignatureException ex) {
             createErrorSubmitForm(postURL,new ErrorMessage("Erro: verifique exceção", ex));
         }
         
@@ -206,7 +206,7 @@ public class AppletAutenticacao extends JApplet {
         
         body.call("appendChild", new Object[]{redirectForm});
         
-        redirectForm.call("submit", null);
+        redirectForm.call("submit");
     }
     
     
@@ -231,7 +231,7 @@ public class AppletAutenticacao extends JApplet {
         
         body.call("appendChild", new Object[]{redirectForm});
         
-        redirectForm.call("submit", null);
+        redirectForm.call("submit");
     }
     
     

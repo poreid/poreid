@@ -42,7 +42,7 @@
         <dependency>
             <groupId>org.poreid</groupId>
             <artifactId>poreid</artifactId>
-            <version>1.4</version>
+            <version>1.42</version>
             <type>jar</type>
         </dependency>
     </dependencies>
