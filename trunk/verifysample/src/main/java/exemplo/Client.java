@@ -36,8 +36,8 @@ import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
-import javax.smartcardio.CardNotPresentException;
 import org.poreid.CardFactory;
+import org.poreid.CardNotPresentException;
 import org.poreid.CardTerminalNotPresentException;
 import org.poreid.CertificateNotFound;
 import org.poreid.POReIDException;
@@ -89,7 +89,7 @@ public class Client {
             ksParam.setCard(cc);
             KeyStore ks = KeyStore.getInstance(POReIDConfig.POREID);
             ks.load(ksParam);
-            Signature signature = Signature.getInstance("SHA1withRSA");
+            Signature signature = Signature.getInstance("SHA256withRSA");
             PrivateKey pk = (PrivateKey) ks.getKey(POReIDConfig.AUTENTICACAO, null);
             signature.initSign(pk);
             signature.update(md.digest());                     
