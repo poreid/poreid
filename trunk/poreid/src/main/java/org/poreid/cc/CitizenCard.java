@@ -88,15 +88,12 @@ public abstract class CitizenCard extends POReIDCard implements CitizenData{
 
     
     @Override
-    public final CitizenCardAddressAttributes getAddress() throws SmartCardFileException {
-        try {
-            if (null != ccaa){
-                return ccaa;
-            }
-            return ccaa = new CitizenCardAddressAttributes(readFile(getFileDescription().ADDRESS));
-        } catch (PinTimeoutException | PinEntryCancelledException | PinBlockedException | POReIDException ex) {
-            throw new SmartCardFileException("Erro durante a leitura da morada. Não foi possivel ler os dados.", ex);
+    public final CitizenCardAddressAttributes getAddress() throws PinTimeoutException, PinEntryCancelledException, PinBlockedException, POReIDException {
+        if (null != ccaa) {
+            return ccaa;
         }
+        
+        return ccaa = new CitizenCardAddressAttributes(readFile(getFileDescription().ADDRESS));
     }
 
     
@@ -172,7 +169,7 @@ public abstract class CitizenCard extends POReIDCard implements CitizenData{
 
     
     @Override
-    public final void savePersonalNotes(String notes) throws SmartCardFileException {
+    public final void savePersonalNotes(String notes) throws SmartCardFileException, PinTimeoutException, POReIDException, PinEntryCancelledException, PinBlockedException {
         byte[] tmp = notes.getBytes();
         byte[] notesBytes;
         
@@ -183,11 +180,8 @@ public abstract class CitizenCard extends POReIDCard implements CitizenData{
         notesBytes = new byte[tmp.length+1];
         System.arraycopy(tmp, 0, notesBytes, 0, tmp.length);
         notesBytes[tmp.length] = '\0';
-        try {
-            writeFile(getFileDescription().NOTES, notesBytes);
-        } catch (PinTimeoutException | POReIDException | PinEntryCancelledException | PinBlockedException ex) {
-            throw new SmartCardFileException("Erro não foi possivel escrever os dados nas notas pessoais.", ex);
-        }
+        
+        writeFile(getFileDescription().NOTES, notesBytes);        
     }
     
     
@@ -205,8 +199,8 @@ public abstract class CitizenCard extends POReIDCard implements CitizenData{
             KeyFactory factory = KeyFactory.getInstance(POReIDConfig.RSA);
             pubKey = factory.generatePublic(spec);
             return pubKey;
-        } catch (PinEntryCancelledException | PinBlockedException | POReIDException | PinTimeoutException ignore) { }
-
-        return null;
+        } catch (PinEntryCancelledException | PinBlockedException | POReIDException | PinTimeoutException ex) { 
+            throw new SmartCardFileException("Erro durante a leitura da chave pública. Não foi possivel ler os dados.", ex);
+        }
     }
 }
