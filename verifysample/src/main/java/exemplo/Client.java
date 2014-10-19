@@ -36,6 +36,8 @@ import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.poreid.CardFactory;
 import org.poreid.CardNotPresentException;
 import org.poreid.CardTerminalNotPresentException;
@@ -47,6 +49,9 @@ import org.poreid.cc.CitizenCard;
 import org.poreid.config.POReIDConfig;
 import org.poreid.crypto.POReIDKeyStoreParameter;
 import org.poreid.crypto.POReIDProvider;
+import org.poreid.dialogs.pindialogs.PinBlockedException;
+import org.poreid.dialogs.pindialogs.PinEntryCancelledException;
+import org.poreid.dialogs.pindialogs.PinTimeoutException;
 import org.poreid.dialogs.selectcard.CanceledSelectionException;
 
 /**
@@ -95,7 +100,7 @@ public class Client {
             signature.update(md.digest());                     
             signatureBytes = signature.sign();
             
-        } catch (CertificateEncodingException | CardTerminalNotPresentException | UnknownCardException | CardNotPresentException | CanceledSelectionException | POReIDException | SmartCardFileException | CertificateNotFound | NoSuchAlgorithmException | KeyStoreException | IOException | UnrecoverableKeyException | InvalidKeyException | SignatureException ex) {
+        } catch (PinTimeoutException | PinEntryCancelledException | PinBlockedException | CertificateEncodingException | CardTerminalNotPresentException | UnknownCardException | CardNotPresentException | CanceledSelectionException | POReIDException | SmartCardFileException | CertificateNotFound | NoSuchAlgorithmException | KeyStoreException | IOException | UnrecoverableKeyException | InvalidKeyException | SignatureException ex) {
             throw new RuntimeException("Não foi possivel ler o cartão("+ex.getMessage()+")",ex);        
         } catch (CertificateException ex) {
             throw new RuntimeException("Não foi possivel ler o cartão("+ex.getMessage()+")",ex);
