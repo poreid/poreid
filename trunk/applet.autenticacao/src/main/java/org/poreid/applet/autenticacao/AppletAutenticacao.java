@@ -54,6 +54,9 @@ import org.poreid.cc.CitizenCard;
 import org.poreid.config.POReIDConfig;
 import org.poreid.crypto.POReIDKeyStoreParameter;
 import org.poreid.crypto.POReIDProvider;
+import org.poreid.dialogs.pindialogs.PinBlockedException;
+import org.poreid.dialogs.pindialogs.PinEntryCancelledException;
+import org.poreid.dialogs.pindialogs.PinTimeoutException;
 import org.poreid.dialogs.selectcard.CanceledSelectionException;
 
 
@@ -177,7 +180,7 @@ public class AppletAutenticacao extends JApplet {
             cd.setSignature(signature.sign());
             
             createOkSubmitForm(postURL, cd);
-        } catch (CardNotPresentException | CertificateNotFound | CardTerminalNotPresentException | UnknownCardException | CanceledSelectionException | POReIDException | SmartCardFileException | NoSuchAlgorithmException | KeyStoreException | IOException | CertificateException | UnrecoverableKeyException | InvalidKeyException | SignatureException ex) {
+        } catch (PinTimeoutException | PinEntryCancelledException | PinBlockedException | CardNotPresentException | CertificateNotFound | CardTerminalNotPresentException | UnknownCardException | CanceledSelectionException | POReIDException | SmartCardFileException | NoSuchAlgorithmException | KeyStoreException | IOException | CertificateException | UnrecoverableKeyException | InvalidKeyException | SignatureException ex) {
             createErrorSubmitForm(postURL,new ErrorMessage("Erro: verifique exceção", ex));
         }
         
