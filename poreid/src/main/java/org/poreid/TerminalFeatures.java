@@ -28,8 +28,6 @@ import org.poreid.pinpad.ReaderWithPinPadData;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.smartcardio.Card;
 import javax.smartcardio.CardException;
 import javax.smartcardio.ResponseAPDU;
@@ -52,10 +50,8 @@ public final class TerminalFeatures {
     
     
     private TerminalFeatures(Card card, String readerName) {
-        this.card = card;
-        Matcher matcher = Pattern.compile("^(.*) \\d+ \\d+$|^(.*) \\d+$").matcher(readerName);
-        matcher.matches();
-        this.readerName = null != matcher.group(1) ? matcher.group(1): matcher.group(2);   
+        this.card = card;        
+        this.readerName = readerName.replaceAll("( \\d+)*$", "");
         this.className = POReIDConfig.getSmartCardReaderImplementingClassName(this.readerName);
     }
     
