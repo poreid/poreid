@@ -43,7 +43,7 @@ import javax.smartcardio.ResponseAPDU;
 import org.poreid.POReIDException;
 import org.poreid.Pin;
 import org.poreid.common.Util;
-import org.poreid.config.POReIDConfig;
+import org.poreid.crypto.CanContinue;
 import org.poreid.crypto.POReIDSocketFactory;
 import org.poreid.dialogs.dialog.DialogController;
 import org.poreid.dialogs.pindialogs.otpfeedback.OTPFeedbackDialogController;
@@ -84,8 +84,8 @@ class OTP {
             this.card = card;
             this.pin = pin;
             this.p = pins[1].array();
-            this.bundle = POReIDConfig.getBundle(OTP.class.getSimpleName(),card.getCardSpecificReferences().getLocale());
-            sslSocketFactory = POReIDSocketFactory.getSSLSocketFactoryOTP(card, OTP_TRUST_STORE, OTP_TRUST_STORE_PASSWORD, pins[0].array());
+            this.bundle = CCConfig.getBundle(OTP.class.getSimpleName(),card.getCardSpecificReferences().getLocale());
+            sslSocketFactory = POReIDSocketFactory.getSSLSocketFactoryOTP(new CanContinue__(), card, OTP_TRUST_STORE, OTP_TRUST_STORE_PASSWORD, pins[0].array());
         } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException | IOException | CertificateException | InvalidAlgorithmParameterException ex) {
             throw new POReIDException("Não foi possivel iniciar o processo de alteração do pin OTP", ex);
         }
@@ -430,5 +430,13 @@ class OTP {
                 pin.getLabel()), card.getCardSpecificReferences().getLocale(), true).displayDialog();
         
         throw ex;
+    }
+    
+    private class CanContinue__ implements CanContinue {
+
+        @Override
+        public boolean proceed() {
+            return Thread.currentThread().getStackTrace()[3].getClassName().equalsIgnoreCase(CCConfig.AUTHORIZED_INVOCATION);
+        }
     }
 }

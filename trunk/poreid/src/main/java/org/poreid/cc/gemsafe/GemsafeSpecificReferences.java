@@ -35,7 +35,7 @@ import org.poreid.PkAlias;
 import org.poreid.RSAPaddingSchemes;
 import org.poreid.cc.CardSpecificReferences;
 import org.poreid.cc.CitizenCard;
-import org.poreid.config.POReIDConfig;
+import org.poreid.cc.CCConfig;
 
 /**
  *
@@ -65,7 +65,7 @@ public final class GemsafeSpecificReferences implements CardSpecificReferences{
         this.cardReaderName = terminal.getName();
         this.locale = locale;
         this.cachePreferences = cachePreferences;
-        bundle = POReIDConfig.getBundle(CitizenCard.class.getSimpleName(), locale);
+        bundle = CCConfig.getBundle(CitizenCard.class.getSimpleName(), locale);
         
         algorithmID = new HashMap<>();
         //algorithmID.put(RSAPaddingSchemes.ISO9796_2, (byte)0x01); 
@@ -73,8 +73,8 @@ public final class GemsafeSpecificReferences implements CardSpecificReferences{
         //algorithmID.put(RSAPaddingSchemes.RFC2409, (byte)0x03); 
         
         pinInfo = new HashMap<>();
-        pinInfo.put(PkAlias.AUTENTICACAO, new Pin(bundle.getString("authentication.pin"), TAMANHO_MIN_PIN, TAMANHO_MIN_PIN, POReIDConfig.IMAGE_AUTHENTICATION_LOCATION, (byte)0x81, (byte)0x02, SELECT_AID, (byte)0xFF));
-        pinInfo.put(PkAlias.ASSINATURA, new Pin(bundle.getString("signature.pin"), TAMANHO_MIN_PIN, TAMANHO_MAX_PIN, POReIDConfig.IMAGE_SIGNATURE_LOCATION, (byte)0x82, (byte)0x01, SELECT_AID, (byte)0xFF));
+        pinInfo.put(PkAlias.AUTENTICACAO, new Pin(bundle.getString("authentication.pin"), TAMANHO_MIN_PIN, TAMANHO_MIN_PIN, CCConfig.IMAGE_AUTHENTICATION_LOCATION, (byte)0x81, (byte)0x02, SELECT_AID, (byte)0xFF));
+        pinInfo.put(PkAlias.ASSINATURA, new Pin(bundle.getString("signature.pin"), TAMANHO_MIN_PIN, TAMANHO_MAX_PIN, CCConfig.IMAGE_SIGNATURE_LOCATION, (byte)0x82, (byte)0x01, SELECT_AID, (byte)0xFF));
         
         digestsMap = new HashMap<>();
         digestsMap.put("SHA-1", DigestPrefixes.SHA_1);
@@ -94,7 +94,7 @@ public final class GemsafeSpecificReferences implements CardSpecificReferences{
     
     @Override
     public Pin getAddressPin() {
-        return new Pin(bundle.getString("address.pin"), TAMANHO_MIN_PIN, TAMANHO_MAX_PIN, POReIDConfig.IMAGE_ADDRESS_LOCATION, (byte)0x83, SELECT_AID, (byte)0xFF);
+        return new Pin(bundle.getString("address.pin"), TAMANHO_MIN_PIN, TAMANHO_MAX_PIN, CCConfig.IMAGE_ADDRESS_LOCATION, (byte)0x83, SELECT_AID, (byte)0xFF);
     }
 
     

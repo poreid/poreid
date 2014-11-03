@@ -34,7 +34,6 @@ import java.util.Arrays;
 import java.util.ResourceBundle;
 import org.poreid.POReIDException;
 import org.poreid.SmartCardFileException;
-import org.poreid.config.POReIDConfig;
 import org.poreid.dialogs.pindialogs.PinBlockedException;
 import org.poreid.dialogs.pindialogs.PinEntryCancelledException;
 import org.poreid.dialogs.pindialogs.PinTimeoutException;
@@ -57,7 +56,7 @@ public abstract class CitizenCard extends POReIDCard implements CitizenData{
     
     protected CitizenCard(CardSpecificReferences csr) {
         super(csr);
-        bundle = POReIDConfig.getBundle(CitizenCard.class.getSimpleName(),csr.getLocale());
+        bundle = CCConfig.getBundle(CitizenCard.class.getSimpleName(),csr.getLocale());
     }
    
     
@@ -196,7 +195,7 @@ public abstract class CitizenCard extends POReIDCard implements CitizenData{
             BigInteger modulus = new BigInteger(Arrays.copyOf(pk, 128));
             BigInteger exponent = new BigInteger(Arrays.copyOfRange(pk, 128, pk.length));
             RSAPublicKeySpec spec = new RSAPublicKeySpec(modulus, exponent);
-            KeyFactory factory = KeyFactory.getInstance(POReIDConfig.RSA);
+            KeyFactory factory = KeyFactory.getInstance(CCConfig.RSA);
             pubKey = factory.generatePublic(spec);
             return pubKey;
         } catch (PinEntryCancelledException | PinBlockedException | POReIDException | PinTimeoutException ex) { 

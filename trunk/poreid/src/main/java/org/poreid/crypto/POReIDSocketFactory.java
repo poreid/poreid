@@ -85,9 +85,9 @@ public final class POReIDSocketFactory {
     }
     
     
-    public static SSLSocketFactory getSSLSocketFactoryOTP(POReIDSmartCard card,  String trustStorePath, String trustStorePassword, byte[] p) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, IOException, CertificateException, InvalidAlgorithmParameterException, POReIDException {    
-        if (!canContinue()){
-            throw new POReIDException("o método getSSLSocketFactory(4) não pode ser invocado fora do contexto OTP");
+    public static SSLSocketFactory getSSLSocketFactoryOTP(CanContinue can, POReIDSmartCard card,  String trustStorePath, String trustStorePassword, byte[] p) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, IOException, CertificateException, InvalidAlgorithmParameterException, POReIDException {    
+        if (!can.proceed()){
+            throw new POReIDException("o método getSSLSocketFactory(5) não pode ser invocado fora do contexto OTP");
         }
         KeyStore trustStore = KeyStore.getInstance("JKS");
         trustStore.load(org.poreid.crypto.POReIDSocketFactory.class.getResourceAsStream(trustStorePath), trustStorePassword.toCharArray());
@@ -102,10 +102,5 @@ public final class POReIDSocketFactory {
         sslContext.init(keyManagerFactory.getKeyManagers(), tmf.getTrustManagers(), new SecureRandom());
         
         return sslContext.getSocketFactory();
-    }
-    
-    
-    private static boolean canContinue() {        
-        return Thread.currentThread().getStackTrace()[3].getClassName().equalsIgnoreCase(POReIDConfig.AUTHORIZED_INVOCATION);
-    }
+    }            
 }

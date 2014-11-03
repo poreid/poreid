@@ -54,7 +54,6 @@ import org.poreid.CertificateNotFound;
 import org.poreid.POReIDException;
 import org.poreid.SecurityStatusNotSatisfiedException;
 import org.poreid.common.Util;
-import org.poreid.config.POReIDConfig;
 import org.poreid.dialogs.dialog.DialogController;
 import org.poreid.dialogs.pindialogs.blockedpin.BlockedPinDialogController;
 import org.poreid.dialogs.pindialogs.PinBlockedException;
@@ -98,7 +97,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
         this.files = new Files(csr);
         this.channel = this.card.getBasicChannel();
         this.terminalFeatures = TerminalFeatures.getInstance(card, csr.getCardReaderName());
-        this.bundle = POReIDConfig.getBundle(POReIDCard.class.getSimpleName(),locale);
+        this.bundle = CCConfig.getBundle(POReIDCard.class.getSimpleName(),locale);
     }
     
     
@@ -141,7 +140,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
     
     @Override
     public final boolean verifyPin(Pin pin, byte[] pinCode) throws PinTimeoutException, PinEntryCancelledException, PinBlockedException, POReIDException {       
-        if (!POReIDConfig.isExternalPinCachePermitted() && !otpPinChanging){
+        if (!CCConfig.isExternalPinCachePermitted() && !otpPinChanging){
             pinCode = null;
         }
         
@@ -247,7 +246,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
 
         dialogCtl.displayVerifyPinPinPadDialog();
         try {
-            return new ResponseAPDU(terminalFeatures.transmitVerifyPinDirect((byte) 30, (byte) pin.getMinLength(), (byte) pin.getMaxLength(), getVerifyPinAPDU(pin)));
+            return new ResponseAPDU(terminalFeatures.transmitVerifyPinDirect(CCConfig.TIMEOUT, (byte) pin.getMinLength(), (byte) pin.getMaxLength(), getVerifyPinAPDU(pin)));
         } finally {
             dialogCtl.disposeVerifyPinPinPadDialog();
         }
@@ -267,7 +266,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
 
             Arrays.fill(pcode, pin.getPadChar());
             if (null == pinCode || 0 == pinCode.length) {
-                internal = VerifyPinDialogController.getInstance(30, pin.getLabel(), pin.getIcon(), pin.getMinLength(), pin.getMaxLength(), locale).askForPin();
+                internal = VerifyPinDialogController.getInstance(CCConfig.TIMEOUT, pin.getLabel(), pin.getIcon(), pin.getMinLength(), pin.getMaxLength(), locale).askForPin();
                 System.arraycopy(internal, 0, pcode, 0, internal.length);
             } else {
                 System.arraycopy(pinCode, 0, pcode, 0, pinCode.length);
@@ -635,7 +634,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
                     verifyApdu = getVerifyPinAPDU(pin);
                 }
 
-                responseApdu = new ResponseAPDU(terminalFeatures.transmitModifyPinDirect((byte) 30, (byte) pin.getMinLength(), (byte) pin.getMaxLength(), verifyApdu, getModifyPinAPDU(pin)));
+                responseApdu = new ResponseAPDU(terminalFeatures.transmitModifyPinDirect(CCConfig.TIMEOUT, (byte) pin.getMinLength(), (byte) pin.getMaxLength(), verifyApdu, getModifyPinAPDU(pin)));
                 
                 switch (responseApdu.getSW()) {
                     case 0x9000:

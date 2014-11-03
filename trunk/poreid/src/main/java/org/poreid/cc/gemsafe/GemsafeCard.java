@@ -40,7 +40,7 @@ import org.poreid.RSAPaddingSchemes;
 import org.poreid.cc.CardSpecificReferences;
 import org.poreid.cc.CitizenCard;
 import org.poreid.common.Util;
-import org.poreid.config.POReIDConfig;
+import org.poreid.cc.CCConfig;
 import org.poreid.dialogs.pindialogs.PinBlockedException;
 import org.poreid.dialogs.pindialogs.PinEntryCancelledException;
 import org.poreid.dialogs.pindialogs.PinTimeoutException;
@@ -132,7 +132,7 @@ public final class GemsafeCard extends CitizenCard {
                     baos.write(hash, 0, hash.length);
                 }
                   
-                if (!POReIDConfig.isExternalPinCachePermitted() && !isOTPPinChanging()) {
+                if (!CCConfig.isExternalPinCachePermitted() && !isOTPPinChanging()) {
                     pinCode = null;
                 }
                   
