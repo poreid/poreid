@@ -49,7 +49,7 @@ public final class POReIDSocketFactory {
 
 
     public static SSLSocketFactory getSSLSocketFactory(TrustManager[] tms) throws NoSuchAlgorithmException, KeyManagementException {
-        final SSLContext sslContext = SSLContext.getInstance("TLS");
+        final SSLContext sslContext = SSLContext.getInstance("TLSv1.1");
         final KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(POReIDConfig.POREID);
         sslContext.init(keyManagerFactory.getKeyManagers(), tms, new SecureRandom());
         
@@ -62,7 +62,7 @@ public final class POReIDSocketFactory {
         trustStore.load(org.poreid.crypto.POReIDSocketFactory.class.getResourceAsStream(trustStorePath), trustStorePassword.toCharArray());
         TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
         tmf.init(trustStore);
-        SSLContext sslContext = SSLContext.getInstance("TLS");
+        SSLContext sslContext = SSLContext.getInstance("TLSv1.1");
         sslContext.init(KeyManagerFactory.getInstance(POReIDConfig.POREID).getKeyManagers(), tmf.getTrustManagers(), new SecureRandom());
         
         return sslContext.getSocketFactory();
@@ -74,7 +74,7 @@ public final class POReIDSocketFactory {
         trustStore.load(org.poreid.crypto.POReIDSocketFactory.class.getResourceAsStream(trustStorePath), trustStorePassword.toCharArray());
         TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
         tmf.init(trustStore);
-        SSLContext sslContext = SSLContext.getInstance("TLS"); 
+        SSLContext sslContext = SSLContext.getInstance("TLSv1.1"); 
         KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(POReIDConfig.POREID);
         POReIDManagerFactoryParameters spec = new POReIDManagerFactoryParameters();
         spec.setCard(card);
@@ -93,7 +93,7 @@ public final class POReIDSocketFactory {
         trustStore.load(org.poreid.crypto.POReIDSocketFactory.class.getResourceAsStream(trustStorePath), trustStorePassword.toCharArray());
         TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
         tmf.init(trustStore);
-        SSLContext sslContext = SSLContext.getInstance("TLS");
+        SSLContext sslContext = SSLContext.getInstance("TLSv1.1");
         KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(POReIDConfig.POREID);
         POReIDsslManagerFactoryParameters spec = new POReIDsslManagerFactoryParameters();
         spec.setP(p);
