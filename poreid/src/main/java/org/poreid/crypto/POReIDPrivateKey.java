@@ -24,9 +24,8 @@
 
 package org.poreid.crypto;
 
-import java.math.BigInteger;
+import java.security.PrivateKey;
 import java.security.SignatureException;
-import java.security.interfaces.RSAPrivateKey;
 import org.poreid.POReIDException;
 import org.poreid.POReIDSmartCard;
 import org.poreid.PkAlias;
@@ -37,10 +36,11 @@ import org.poreid.dialogs.pindialogs.PinEntryCancelledException;
 import org.poreid.dialogs.pindialogs.PinTimeoutException;
 
 
-public final class POReIDPrivateKey implements RSAPrivateKey {
+public final class POReIDPrivateKey implements PrivateKey {
     private final POReIDSmartCard eIDCard;
     private final PkAlias pkAlias;
     private final byte[] pin;
+    
     
     public POReIDPrivateKey(final POReIDSmartCard eIDCard, PkAlias alias, byte[] pin) {
         this.eIDCard = eIDCard;
@@ -48,36 +48,31 @@ public final class POReIDPrivateKey implements RSAPrivateKey {
         this.pin = (POReIDConfig.isExternalPinCachePermitted()) ? pin : null;
     }
     
-    protected POReIDPrivateKey(final POReIDSmartCard eIDCard, PkAlias alias, byte[] pin, boolean ssl) {
+    
+    protected POReIDPrivateKey(final POReIDSmartCard eIDCard, byte[] pin, PkAlias alias) {
         this.eIDCard = eIDCard;
         this.pkAlias = alias;
         this.pin = pin;
     }
+    
     
     @Override
     public String getAlgorithm() {
         return POReIDConfig.RSA;
     }
 
+    
     @Override
     public String getFormat() {
         return null;
     }
+    
 
     @Override
     public byte[] getEncoded() {
         return null;
     }
 
-    @Override
-    public BigInteger getPrivateExponent() {
-        throw new UnsupportedOperationException("Operação não suportada");
-    }
-
-    @Override
-    public BigInteger getModulus() {
-        throw new UnsupportedOperationException("Operação não suportada");
-    }
     
     byte[] sign(final byte[] digestValue, final String digestAlgo, RSAPaddingSchemes paddingScheme) throws SignatureException {
         byte[] signatureValue = null;

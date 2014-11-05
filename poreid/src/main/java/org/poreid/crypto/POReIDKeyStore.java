@@ -100,7 +100,7 @@ public class POReIDKeyStore extends KeyStoreSpi {
             if (null != password && POReIDConfig.isExternalPinCachePermitted() || ssl){
                 pin = !ssl ? StandardCharsets.UTF_8.encode(CharBuffer.wrap(password)).array() : sslStoreParameter.getP();
             }
-            return new POReIDPrivateKey(poreidCard, POREID_ALIASES.get(alias),pin,ssl);
+            return new POReIDPrivateKey(poreidCard, pin, POREID_ALIASES.get(alias));
         }
         
         return null;   
