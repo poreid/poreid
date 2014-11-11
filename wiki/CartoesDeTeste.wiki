@@ -1,0 +1,8 @@
+#summary One-sentence summary of this page.
+#labels assinatura,poreid,cartãodetestes,cartãodecidadão
+
+= Utilização de cartões de teste =
+
+Na forma atual o POReID não contempla a utilização de cartões de teste, pelo simples motivo que um cartão de cidadão é mais barato que um cartão de testes.
+
+No entanto é possível utilizar cartões de teste, bastando substituir a _keystore_ *poreid.cc.ks* localizada em *org/poreid/cc/keystores*, com os certificados de testes disponíveis em https://pki.teste.cartaodecidadao.pt/. Desta forma é possivel assinar com cartões de teste. 
