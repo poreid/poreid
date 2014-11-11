@@ -1,4 +1,4 @@
-#summary One-sentence summary of this page.
+#summary Assinaturas com cartões de teste
 #labels assinatura,poreid,cartãodetestes,cartãodecidadão
 
 = Utilização de cartões de teste =
