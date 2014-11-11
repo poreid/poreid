@@ -61,7 +61,7 @@ public class App {
         // digital signature
         ExternalSignature es = new PrivateKeySignature(pk, "SHA-256", POReIDConfig.POREID);
         ExternalDigest digest = new ProviderDigest(null);
-        MakeSignature.signDetached(appearance, digest, es, chain, null, null, null, 0, CryptoStandard.CMS);
+        MakeSignature.signDetached(appearance, digest, es, chain, null, null, null, 9000, CryptoStandard.CMS);
     }
 
     public static void main(String[] args) throws DocumentException, IOException, GeneralSecurityException {
