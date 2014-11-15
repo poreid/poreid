@@ -106,6 +106,20 @@ public final class IASCard extends CitizenCard {
         
         return size;
     }
+    
+    
+    @Override
+    public final byte[] getChallenge() throws POReIDException {
+        try {
+            ResponseAPDU response = this.channel.transmit(new CommandAPDU(0x00, 0x84, 0x00, 0x00, 0x08));
+            if (response.getSW() != 0x9000) {
+                throw new POReIDException("Código de estado não esperado: " + response.getSW());
+            }
+            return response.getData();
+        } catch (CardException ex) {
+            throw new POReIDException(ex);
+        }
+    }
    
     
     @Override
