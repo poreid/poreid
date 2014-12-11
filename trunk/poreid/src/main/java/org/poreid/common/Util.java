@@ -180,9 +180,7 @@ public class Util {
             params.setRevocationEnabled(false);
             PKIXCertPathBuilderResult result = (PKIXCertPathBuilderResult) pathBuilder.build(params);
             
-            ArrayList<? super X509Certificate> certChain = new ArrayList<>(result.getCertPath().getCertificates());    
-            certChain.add(result.getTrustAnchor().getTrustedCert());
-            
+            ArrayList<? super X509Certificate> certChain = new ArrayList<>(result.getCertPath().getCertificates());                
             return (List<X509Certificate>) certChain;
         } catch (IOException | KeyStoreException | CertificateException | NoSuchAlgorithmException | NoSuchProviderException | InvalidAlgorithmParameterException ex) {
             throw new CertificateChainNotFound("Não foi possivel gerar a cadeia de certificação", ex);
