@@ -1,7 +1,8 @@
+#summary Assinatura digital em PDF com long term validation (LTV)
 #labels poreid,itext,pdf,assinatura,java,LTV
 =Assinatura digital em PDF=
 
-Exemplo encontrado no [http://stackoverflow.com/questions/22178665/signing-a-pdf-with-an-eid-using-pkcs11-and-itext/22238404#22238404 stackoverflow]
+Exemplo baseado no encontrado em [http://stackoverflow.com/questions/22178665/signing-a-pdf-with-an-eid-using-pkcs11-and-itext/22238404#22238404 stackoverflow]
 {{{
 package exemplo;
 
