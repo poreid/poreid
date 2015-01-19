@@ -27,6 +27,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -132,7 +133,7 @@ class OTP {
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "text/plain");
             con.setRequestProperty("charset", "utf-8");
-            con.setRequestProperty("Content-Length", String.valueOf(post.getBytes().length));
+            con.setRequestProperty("Content-Length", String.valueOf(post.getBytes(StandardCharsets.UTF_8).length));
             con.setUseCaches(false);
             con.setDoInput(true);
             con.setDoOutput(true);
@@ -165,7 +166,7 @@ class OTP {
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "text/plain");
             con.setRequestProperty("charset", "utf-8");
-            con.setRequestProperty("Content-Length", "" + String.valueOf(ppu.toString().getBytes().length));
+            con.setRequestProperty("Content-Length", "" + String.valueOf(ppu.toString().getBytes(StandardCharsets.UTF_8).length));
             con.setRequestProperty("Cookie", cookie);
             con.setUseCaches(false);
             con.setDoInput(true);
@@ -200,7 +201,7 @@ class OTP {
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "text/plain");
             con.setRequestProperty("charset", "utf-8");
-            con.setRequestProperty("Content-Length", String.valueOf(pcur.toString().getBytes().length));
+            con.setRequestProperty("Content-Length", String.valueOf(pcur.toString().getBytes(StandardCharsets.UTF_8).length));
             con.setRequestProperty("Cookie", cookie);
             con.setUseCaches(false);
             con.setDoInput(true);
@@ -231,7 +232,7 @@ class OTP {
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "text/plain");
             con.setRequestProperty("charset", "utf-8");
-            con.setRequestProperty("Content-Length", String.valueOf(otp.toString().getBytes().length));
+            con.setRequestProperty("Content-Length", String.valueOf(otp.toString().getBytes(StandardCharsets.UTF_8).length));
             con.setRequestProperty("Cookie", cookie);
             con.setUseCaches(false);
             con.setDoInput(true);
@@ -265,7 +266,7 @@ class OTP {
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "text/plain");
             con.setRequestProperty("charset", "utf-8");
-            con.setRequestProperty("Content-Length", String.valueOf(rscr.toString().getBytes().length));
+            con.setRequestProperty("Content-Length", String.valueOf(rscr.toString().getBytes(StandardCharsets.UTF_8).length));
             con.setRequestProperty("Cookie", cookie);
             con.setUseCaches(false);
             con.setDoInput(true);
@@ -291,7 +292,7 @@ class OTP {
         byte[] retbuf;
         PinPafUpdate ppu = new PinPafUpdate();
         
-        ppu.setPin(new String(p));
+        ppu.setPin(new String(p, StandardCharsets.UTF_8));
         ppu.setCdol1(card.getCardSpecificReferences().getCDOL1());
         ppu.setCounter(COUNTER);
         
@@ -432,7 +433,7 @@ class OTP {
         throw ex;
     }
     
-    private class CanContinue__ implements CanContinue {
+    private static class CanContinue__ implements CanContinue {
 
         @Override
         public boolean proceed() {

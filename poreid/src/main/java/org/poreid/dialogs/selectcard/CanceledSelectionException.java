@@ -24,11 +24,16 @@
 package org.poreid.dialogs.selectcard;
 
 /**
- *
+ * Exceção lançada quando o utilizador não selecionou um de entre os vários cartões que foram detetados
  * @author POReID
  */
 public class CanceledSelectionException extends Exception{
-    public CanceledSelectionException(String msg){
-        super(msg);
+    
+    /**
+     * Constroi uma nova exceção com a mensagem de detalhe
+     * @param detalhe A mensagem de detalhe relativa à exceção
+     */
+    public CanceledSelectionException(String detalhe){
+        super(detalhe);
     }
 }

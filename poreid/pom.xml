@@ -48,6 +48,9 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <excludePackageNames>org.poreid.json</excludePackageNames>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

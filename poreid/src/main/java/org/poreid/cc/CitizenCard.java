@@ -24,6 +24,7 @@
 package org.poreid.cc;
 
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
@@ -169,7 +170,7 @@ public abstract class CitizenCard extends POReIDCard implements CitizenData{
     
     @Override
     public final void savePersonalNotes(String notes) throws SmartCardFileException, PinTimeoutException, POReIDException, PinEntryCancelledException, PinBlockedException {
-        byte[] tmp = notes.getBytes();
+        byte[] tmp = notes.getBytes(StandardCharsets.UTF_8);
         byte[] notesBytes;
         
         if (tmp.length+1 > getFileDescription().NOTES.getMaximumSize()){

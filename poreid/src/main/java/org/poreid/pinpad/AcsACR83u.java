@@ -30,7 +30,7 @@ import java.io.IOException;
  * @author POReID
  */
 public class AcsACR83u implements ReaderWithPinPad{
-    private final int ioCtlSmartcardLcdMessages = 0 /*Util.SCARD_CTL_CODE(0x81f)*/; 
+    private static final int ioCtlSmartcardLcdMessages = 0 /*Util.SCARD_CTL_CODE(0x81f)*/; 
     
     
     @Override

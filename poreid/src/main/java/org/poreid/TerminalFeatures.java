@@ -41,12 +41,14 @@ public final class TerminalFeatures {
     private final Card card;
     private final String className;
     private final String readerName;
-    private final byte FEATURE_VERIFY_PIN_DIRECT = 0x06;
-    private final byte FEATURE_MODIFY_PIN_DIRECT = 0x07;              
-    private final byte MICROSOFT_DEVICE_TYPE__SMARTCARD = 0x31;  // http://research.microsoft.com/en-us/um/redmond/projects/invisible/src/drivers/net/simnic/devioctl.h.htm
-    private final int SCARD_CTL_BASE_CODE = 0x42000000;          // reader.h pcsc - *nix code 
-    private final int GET_FEATURE_REQUEST = 3400;                // http://www.pcscworkgroup.com/specifications/files/pcsc10_v2.02.09.pdf
+    private static final byte FEATURE_VERIFY_PIN_DIRECT = 0x06;
+    private static final byte FEATURE_MODIFY_PIN_DIRECT = 0x07;              
+    private static final byte MICROSOFT_DEVICE_TYPE__SMARTCARD = 0x31;  // http://research.microsoft.com/en-us/um/redmond/projects/invisible/src/drivers/net/simnic/devioctl.h.htm
+    private static final int SCARD_CTL_BASE_CODE = 0x42000000;          // reader.h pcsc - *nix code 
+    private static final int GET_FEATURE_REQUEST = 3400;                // http://www.pcscworkgroup.com/specifications/files/pcsc10_v2.02.09.pdf
     private final int CM_IOCTL_GET_FEATURE_REQUEST = SCARD_CTL_CODE(GET_FEATURE_REQUEST);
+    private Integer cachedFeatureVerify;
+    private Integer cachedFeatureModify;
     
     
     private TerminalFeatures(Card card, String readerName) {
@@ -71,8 +73,8 @@ public final class TerminalFeatures {
      * Indica se o leitor disponibiliza a funcionalidade de verificação do pin através de pinpad (caso exista)
      * @return true se disponibiliza, false se não
      */
-    public boolean isVerifyPinThroughPinpadAvailable() {
-        return null != getFeature(FEATURE_VERIFY_PIN_DIRECT);    
+    public boolean isVerifyPinThroughPinpadAvailable() {                
+        return null != (cachedFeatureVerify = getFeature(FEATURE_VERIFY_PIN_DIRECT));    
     }
     
     
@@ -91,7 +93,7 @@ public final class TerminalFeatures {
      * @return true se disponibiliza, false se não
      */
     public boolean isModifyPinThroughPinpadAvailable() {   
-        return null != getFeature(FEATURE_MODIFY_PIN_DIRECT);
+        return null != (cachedFeatureModify = getFeature(FEATURE_MODIFY_PIN_DIRECT));
     }
     
     
@@ -174,7 +176,7 @@ public final class TerminalFeatures {
                 }
             } catch (CardException ignore) { }
                     
-            return card.transmitControlCommand(getFeature(FEATURE_VERIFY_PIN_DIRECT), pData.getFeaturePinDirect());
+            return card.transmitControlCommand(cachedFeatureVerify, pData.getFeaturePinDirect());
         } catch (CardException | InvocationTargetException | IllegalArgumentException | SecurityException | NoSuchMethodException | InstantiationException | IllegalAccessException | ClassNotFoundException | IOException ex) {
             throw new POReIDException("Não foi possivel efetuar a verificação do PIN através do leitor de cartões", ex);
         }
@@ -225,7 +227,7 @@ public final class TerminalFeatures {
                 }
             } catch (CardException ignore) { }
             
-            return card.transmitControlCommand(getFeature(FEATURE_MODIFY_PIN_DIRECT), pData.getFeaturePinDirect());
+            return card.transmitControlCommand(cachedFeatureModify, pData.getFeaturePinDirect());
 
         } catch (CardException | InvocationTargetException | IllegalArgumentException | SecurityException | NoSuchMethodException | InstantiationException | IllegalAccessException | ClassNotFoundException | IOException ex) {
             throw new POReIDException("Não foi possivel efetuar a alteração do PIN através do leitor de cartões", ex);

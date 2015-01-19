@@ -29,6 +29,7 @@ import org.poreid.TerminalFeatures;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -277,7 +278,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
             }
             
             responseApdu = channel.transmit(new CommandAPDU(0x00, 0x20, 0x00, (byte) pin.getReference(), pcode));   
-        } catch (CardException ex) {
+        } catch (CardException | IllegalStateException ex) {
             throw new POReIDException(ex);
         } finally {
             if (null != internal) {
@@ -319,7 +320,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
             } finally {
                 endExclusive();
             }
-        } catch (CardException ex) {
+        } catch (CardException | IllegalStateException ex) {
             throw new POReIDException(ex);
         } 
     }
@@ -425,7 +426,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
             }
 
             return contents;
-        } catch (CardException ex) {
+        } catch (CardException | IllegalStateException ex) {
             throw new POReIDException(ex);
         }
     }
@@ -488,7 +489,9 @@ public abstract class POReIDCard implements POReIDSmartCard {
         try {
             List<X509Certificate> l;
             KeyStore ks = KeyStore.getInstance("JKS");
-            ks.load(POReIDCard.class.getResourceAsStream(poreidKeystore), null);
+            try (InputStream input = POReIDCard.class.getResourceAsStream(poreidKeystore)){
+                ks.load(input, null);
+            }
             l = (List<X509Certificate>) Util.getCertificateChain(getCertificate(files.QualifiedSignatureSubCACertificate), ks);
             l.add(0,getQualifiedSignatureCertificate());
             return l;  
@@ -503,7 +506,9 @@ public abstract class POReIDCard implements POReIDSmartCard {
         try {
             List<X509Certificate> l;
             KeyStore ks = KeyStore.getInstance("JKS");
-            ks.load(POReIDCard.class.getResourceAsStream(poreidKeystore), null);
+            try (InputStream input = POReIDCard.class.getResourceAsStream(poreidKeystore)){
+                ks.load(input, null);
+            }            
             l = (List<X509Certificate>) Util.getCertificateChain(getCertificate(files.AuthenticationSubCACertificate), ks);
             l.add(0,getAuthenticationCertificate());
             return l;
@@ -521,8 +526,8 @@ public abstract class POReIDCard implements POReIDSmartCard {
     
     @Override
     public final byte[] getIcon(){
-        try {
-            return Util.toByteArray(POReIDCard.class.getResourceAsStream(escudoPortugues));
+        try (InputStream input = POReIDCard.class.getResourceAsStream(escudoPortugues)) {
+            return Util.toByteArray(input);
         } catch (IOException ex) {
             return new byte[0];
         }

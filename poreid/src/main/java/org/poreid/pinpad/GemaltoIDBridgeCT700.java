@@ -30,7 +30,7 @@ import java.io.IOException;
  * @author POReID
  */
 public class GemaltoIDBridgeCT700  implements ReaderWithPinPad{
-    private final int ioCtlSmartcardLcdMessages = 0 /*Util.SCARD_CTL_CODE(0x800)*/;
+    private static final int ioCtlSmartcardLcdMessages = 0 /*Util.SCARD_CTL_CODE(0x800)*/;
     
 
     @Override
