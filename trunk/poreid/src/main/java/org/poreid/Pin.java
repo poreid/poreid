@@ -24,6 +24,7 @@
 package org.poreid;
 
 import java.io.IOException;
+import java.io.InputStream;
 import org.poreid.common.Util;
 
 /**
@@ -147,8 +148,8 @@ public class Pin {
      * @return icone do PIN
      */
     public byte[] getIcon(){
-        try {
-            return Util.toByteArray(Pin.class.getResourceAsStream(iconPath));
+        try (InputStream input = Pin.class.getResourceAsStream(iconPath)){
+            return Util.toByteArray(input);
         } catch (IOException ex) {
             return new byte[0];
         }

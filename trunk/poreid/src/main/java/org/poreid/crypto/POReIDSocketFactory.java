@@ -24,6 +24,7 @@
 package org.poreid.crypto;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -59,7 +60,9 @@ public final class POReIDSocketFactory {
     
     public static SSLSocketFactory getSSLSocketFactory(String trustStorePath, String trustStorePassword) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, IOException, CertificateException {    
         KeyStore trustStore = KeyStore.getInstance("JKS");
-        trustStore.load(org.poreid.crypto.POReIDSocketFactory.class.getResourceAsStream(trustStorePath), trustStorePassword.toCharArray());
+        try (InputStream input = org.poreid.crypto.POReIDSocketFactory.class.getResourceAsStream(trustStorePath)) {
+            trustStore.load(input, trustStorePassword.toCharArray());
+        }
         TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
         tmf.init(trustStore);
         SSLContext sslContext = SSLContext.getInstance("TLSv1.1");
@@ -71,7 +74,9 @@ public final class POReIDSocketFactory {
     
     public static SSLSocketFactory getSSLSocketFactory(POReIDSmartCard card, String trustStorePath, String trustStorePassword) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, IOException, CertificateException, InvalidAlgorithmParameterException {    
         KeyStore trustStore = KeyStore.getInstance("JKS");
-        trustStore.load(org.poreid.crypto.POReIDSocketFactory.class.getResourceAsStream(trustStorePath), trustStorePassword.toCharArray());
+        try (InputStream input = org.poreid.crypto.POReIDSocketFactory.class.getResourceAsStream(trustStorePath)) {
+            trustStore.load(input, trustStorePassword.toCharArray());
+        }
         TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
         tmf.init(trustStore);
         SSLContext sslContext = SSLContext.getInstance("TLSv1.1"); 
@@ -90,7 +95,9 @@ public final class POReIDSocketFactory {
             throw new POReIDException("o método getSSLSocketFactory(5) não pode ser invocado fora do contexto OTP");
         }
         KeyStore trustStore = KeyStore.getInstance("JKS");
-        trustStore.load(org.poreid.crypto.POReIDSocketFactory.class.getResourceAsStream(trustStorePath), trustStorePassword.toCharArray());
+        try (InputStream input = org.poreid.crypto.POReIDSocketFactory.class.getResourceAsStream(trustStorePath)) {
+            trustStore.load(input, trustStorePassword.toCharArray());
+        }
         TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
         tmf.init(trustStore);
         SSLContext sslContext = SSLContext.getInstance("TLSv1.1");

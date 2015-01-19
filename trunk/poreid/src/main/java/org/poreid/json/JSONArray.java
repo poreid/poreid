@@ -75,20 +75,20 @@ import java.util.Map;
  * </ul>
  *
  * @author JSON.org
- * @version 2013-04-18
+ * @version 2014-05-03
  */
 public class JSONArray {
 
     /**
      * The arrayList where the JSONArray's properties are kept.
      */
-    private final ArrayList myArrayList;
+    private final ArrayList<Object> myArrayList;
 
     /**
      * Construct an empty JSONArray.
      */
     public JSONArray() {
-        this.myArrayList = new ArrayList();
+        this.myArrayList = new ArrayList<Object>();
     }
 
     /**
@@ -150,10 +150,10 @@ public class JSONArray {
      * @param collection
      *            A Collection.
      */
-    public JSONArray(Collection collection) {
-        this.myArrayList = new ArrayList();
+    public JSONArray(Collection<Object> collection) {
+        this.myArrayList = new ArrayList<Object>();
         if (collection != null) {
-            Iterator iter = collection.iterator();
+            Iterator<Object> iter = collection.iterator();
             while (iter.hasNext()) {
                 this.myArrayList.add(JSONObject.wrap(iter.next()));
             }
@@ -163,7 +163,6 @@ public class JSONArray {
     /**
      * Construct a JSONArray from an array
      *
-     * @param array array
      * @throws JSONException
      *             If not an array.
      */
@@ -358,7 +357,7 @@ public class JSONArray {
      */
     public String join(String separator) throws JSONException {
         int len = this.length();
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < len; i += 1) {
             if (i > 0) {
@@ -594,7 +593,7 @@ public class JSONArray {
      *            A Collection value.
      * @return this.
      */
-    public JSONArray put(Collection value) {
+    public JSONArray put(Collection<Object> value) {
         this.put(new JSONArray(value));
         return this;
     }
@@ -647,7 +646,7 @@ public class JSONArray {
      *            A Map value.
      * @return this.
      */
-    public JSONArray put(Map value) {
+    public JSONArray put(Map<String, Object> value) {
         this.put(new JSONObject(value));
         return this;
     }
@@ -696,7 +695,7 @@ public class JSONArray {
      * @throws JSONException
      *             If the index is negative or if the value is not finite.
      */
-    public JSONArray put(int index, Collection value) throws JSONException {
+    public JSONArray put(int index, Collection<Object> value) throws JSONException {
         this.put(index, new JSONArray(value));
         return this;
     }
@@ -768,7 +767,7 @@ public class JSONArray {
      *             If the index is negative or if the the value is an invalid
      *             number.
      */
-    public JSONArray put(int index, Map value) throws JSONException {
+    public JSONArray put(int index, Map<String, Object> value) throws JSONException {
         this.put(index, new JSONObject(value));
         return this;
     }
@@ -814,9 +813,42 @@ public class JSONArray {
      *         was no value.
      */
     public Object remove(int index) {
-        Object o = this.opt(index);
-        this.myArrayList.remove(index);
-        return o;
+        return index >= 0 && index < this.length()
+            ? this.myArrayList.remove(index)
+            : null;
+    }
+
+    /**
+     * Determine if two JSONArrays are similar.
+     * They must contain similar sequences.
+     *
+     * @param other The other JSONArray
+     * @return true if they are equal
+     */
+    public boolean similar(Object other) {
+        if (!(other instanceof JSONArray)) {
+            return false;
+        }
+        int len = this.length();
+        if (len != ((JSONArray)other).length()) {
+            return false;
+        }
+        for (int i = 0; i < len; i += 1) {
+            Object valueThis = this.get(i);
+            Object valueOther = ((JSONArray)other).get(i);
+            if (valueThis instanceof JSONObject) {
+                if (!((JSONObject)valueThis).similar(valueOther)) {
+                    return false;
+                }
+            } else if (valueThis instanceof JSONArray) {
+                if (!((JSONArray)valueThis).similar(valueOther)) {
+                    return false;
+                }
+            } else if (!valueThis.equals(valueOther)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -871,7 +903,7 @@ public class JSONArray {
      *         object, beginning with <code>[</code>&nbsp;<small>(left
      *         bracket)</small> and ending with <code>]</code>
      *         &nbsp;<small>(right bracket)</small>.
-     * @throws JSONException thrown by the JSON.org classes when things are amiss
+     * @throws JSONException
      */
     public String toString(int indentFactor) throws JSONException {
         StringWriter sw = new StringWriter();
@@ -886,9 +918,8 @@ public class JSONArray {
      * <p>
      * Warning: This method assumes that the data structure is acyclical.
      *
-     * @param writer writer
      * @return The writer.
-     * @throws JSONException thrown by the JSON.org classes when things are amiss
+     * @throws JSONException
      */
     public Writer write(Writer writer) throws JSONException {
         return this.write(writer, 0, 0);
@@ -905,7 +936,7 @@ public class JSONArray {
      * @param indent
      *            The indention of the top level.
      * @return The writer.
-     * @throws JSONException thrown by the JSON.org classes when things are amiss
+     * @throws JSONException
      */
     Writer write(Writer writer, int indentFactor, int indent)
             throws JSONException {

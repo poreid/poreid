@@ -42,11 +42,11 @@ import org.poreid.cc.CCConfig;
  * @author POReID
  */
 public final class GemsafeSpecificReferences implements CardSpecificReferences{
-    private final String SELECT_AID = "00A4040C07604632FF000002";
-    private final String SELECT_EMV_AID = "00A4040007604632FF000001"; 
-    private final String CDOL1 = "0000000000000000000000000000800000000000000000000000000000";
-    private final byte TAMANHO_MIN_PIN = 4;
-    private final byte TAMANHO_MAX_PIN = 8;
+    private static final String SELECT_AID = "00A4040C07604632FF000002";
+    private static final String SELECT_EMV_AID = "00A4040007604632FF000001"; 
+    private static final String CDOL1 = "0000000000000000000000000000800000000000000000000000000000";
+    private static final byte TAMANHO_MIN_PIN = 4;
+    private static final byte TAMANHO_MAX_PIN = 8;
     private final ResourceBundle bundle;
     private final Card card;
     private final CardTerminal terminal;

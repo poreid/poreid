@@ -31,7 +31,7 @@ import java.io.IOException;
  * @author POReID
  */
 public class XiringMyleo implements ReaderWithPinPad{
-    private final int ioCtlSmartcardLcdMessages = 0;
+    private static final int ioCtlSmartcardLcdMessages = 0;
     
     
     @Override

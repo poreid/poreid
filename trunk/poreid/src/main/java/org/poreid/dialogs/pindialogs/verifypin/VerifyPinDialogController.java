@@ -93,7 +93,7 @@ public class VerifyPinDialogController{
             throw new PinEntryCancelledException("Introdução do "+pinLabel+" cancelada.");
         }
 
-        if (/*!cancelled && 0 == pinCode.length*/null == pinCode) {
+        if (null == pinCode) {
             dialog.dispose();
             throw new PinTimeoutException(pinLabel+ "não foi inserido dentro do tempo regular. Tempo regular = "+timeOut+ "segundos.");
         }

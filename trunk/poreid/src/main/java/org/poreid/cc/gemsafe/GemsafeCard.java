@@ -165,13 +165,12 @@ public final class GemsafeCard extends CitizenCard {
                 if (0x9000 != responseApdu.getSW()) {
                     throw new POReIDException("Código de estado não esperado: " + Integer.toHexString(responseApdu.getSW()));
                 }
-
+                
+                return responseApdu.getData();
             } finally {
                 card.endExclusive();
-            }
-
-            return responseApdu != null ? responseApdu.getData() : new byte[0];
-        } catch (CardException ex) {
+            }            
+        } catch (CardException | IllegalStateException ex) {
             throw new POReIDException(ex);
         }
     }

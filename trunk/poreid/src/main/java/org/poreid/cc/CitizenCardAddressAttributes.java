@@ -32,7 +32,7 @@ import java.util.Arrays;
  */
 public final class CitizenCardAddressAttributes {
     private boolean isdataLoaded = false;
-    private final String NACIONAL = "N";
+    private static final String NACIONAL = "N";
     
     private String type;
     private String country;

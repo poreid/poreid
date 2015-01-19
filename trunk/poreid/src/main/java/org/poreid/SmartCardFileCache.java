@@ -60,6 +60,7 @@ public final class SmartCardFileCache {
     private byte[] keyHMAC;
     private static final int SHA_256_DIGEST_LEN = 32;
     private static final int AES_KEY_LEN = 16;
+    private File location;
 
     /**
      * Constroi uma instância
@@ -74,6 +75,7 @@ public final class SmartCardFileCache {
             keyAES = Arrays.copyOfRange(data, 0, AES_KEY_LEN);
             keyHMAC = Arrays.copyOfRange(data, AES_KEY_LEN, data.length);
             this.cacheEnabled = cacheEnabled;
+            location = new File(POReIDConfig.cacheLocation);
         } else {
             this.cacheEnabled = false;
         }
@@ -95,15 +97,11 @@ public final class SmartCardFileCache {
      */
     public boolean isCached(String fileId) {
         boolean isCached = false;
-        if (cacheEnabled) {
-            File location = new File(POReIDConfig.cacheLocation);
-
-            if (!location.exists()) {
-                location.mkdir(); /* correto - cria a diretoria se esta não existir */
-            } else {
-                isCached = new File(POReIDConfig.cacheLocation + fileId).exists();
-            }
+        
+        if (cacheEnabled && location.exists()) {            
+            isCached = new File(POReIDConfig.cacheLocation + fileId).exists();           
         }
+        
         return isCached;
     }
 
@@ -161,8 +159,8 @@ public final class SmartCardFileCache {
      * @param contents Conteúdo a escrever no ficheiro de cache
      */
     public void writeCacheFile(String fileId, byte[] contents) {
-        if (cacheEnabled){
-            try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(POReIDConfig.cacheLocation + fileId))))) {   
+        if (cacheEnabled && (location.exists() || location.mkdir())) {
+            try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(POReIDConfig.cacheLocation + fileId))))) {
                 dos.writeInt(POReIDConfig.getPOReIDVersion());
                 dos.write(cipherCache(contents));
                 dos.flush();
@@ -240,4 +238,3 @@ public final class SmartCardFileCache {
         }
     }
 }
-

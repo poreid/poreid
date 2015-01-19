@@ -4,7 +4,7 @@ package org.poreid.json;
  * The JSONException is thrown by the JSON.org classes when things are amiss.
  *
  * @author JSON.org
- * @version 2013-02-10
+ * @version 2014-05-03
  */
 public class JSONException extends RuntimeException {
     private static final long serialVersionUID = 0;
@@ -22,7 +22,7 @@ public class JSONException extends RuntimeException {
 
     /**
      * Constructs a new JSONException with the specified cause.
-     * @param cause the cause
+     * @param cause The cause.
      */
     public JSONException(Throwable cause) {
         super(cause.getMessage());

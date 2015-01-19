@@ -145,7 +145,7 @@ public class POReIDConfig {
         String uniqueName;
 
         if (null != (uniqueName = getUniqueReaderID(readerName))) {
-            return config.getSmartCardPinPadReaders().getSmartCardReaders().get(uniqueName).getSupportedOses().get(detectOS().value()).isVerify() & getPinPadVerifyPinSupportedSmardCards(readerName,implementingClass);
+            return config.getSmartCardPinPadReaders().getSmartCardReaders().get(uniqueName).getSupportedOses().get(detectOS().value()).isVerify() && getPinPadVerifyPinSupportedSmardCards(readerName,implementingClass);
         }
         
         return true;
@@ -156,7 +156,7 @@ public class POReIDConfig {
         String uniqueName;
 
         if (null != (uniqueName = getUniqueReaderID(readerName))) {
-            return config.getSmartCardPinPadReaders().getSmartCardReaders().get(uniqueName).getSupportedOses().get(detectOS().value()).isModify() & getPinPadModifyPinSupportedSmardCards(readerName,implementingClass);
+            return config.getSmartCardPinPadReaders().getSmartCardReaders().get(uniqueName).getSupportedOses().get(detectOS().value()).isModify() && getPinPadModifyPinSupportedSmardCards(readerName,implementingClass);
         }
         
         return true;

@@ -240,7 +240,7 @@ public class POReIDKeyStore extends KeyStoreSpi {
         if (cert instanceof X509Certificate) {
             BigInteger serial = ((X509Certificate) cert).getSerialNumber();
             for (String alias : POREID_ALIASES.keySet()) {
-                if (((X509Certificate) engineGetCertificate(alias)).getSerialNumber() == serial) {
+                if (null != engineGetCertificate(alias) && ((X509Certificate) engineGetCertificate(alias)).getSerialNumber() == serial) {
                     return alias;
                 }
             }

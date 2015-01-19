@@ -159,7 +159,7 @@ public final class IASCard extends CitizenCard {
             } finally {
                 card.endExclusive();
             }
-        } catch (CardException ex) {
+        } catch (CardException | IllegalStateException ex) {
             throw new POReIDException(ex);
         }
     }
