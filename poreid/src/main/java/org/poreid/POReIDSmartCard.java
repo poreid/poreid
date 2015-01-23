@@ -136,4 +136,10 @@ public interface POReIDSmartCard extends SmartCardUIData {
      * @throws POReIDException Exceção lançada quando ocorre uma exceção num componente (encapsula a exeção original)
      */
     boolean isPOReIDSmartcardPresent() throws POReIDException;
+    
+    /**
+     * Termina a ligação com o cartão
+     * @throws POReIDException Exceção lançada quando ocorre uma exceção num componente (encapsula a exeção original)
+     */
+    void close() throws POReIDException;
 }

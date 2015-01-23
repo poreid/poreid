@@ -137,7 +137,7 @@ public final class IASCard extends CitizenCard {
             }
 
             try {
-                card.beginExclusive();
+                beginExclusive();
 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 baos.write(digestPrefixes.getPrefix(), 0, digestPrefixes.getPrefix().length);
@@ -157,7 +157,7 @@ public final class IASCard extends CitizenCard {
 
                 return responseApdu.getData();
             } finally {
-                card.endExclusive();
+                endExclusive();
             }
         } catch (CardException | IllegalStateException ex) {
             throw new POReIDException(ex);

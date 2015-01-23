@@ -24,6 +24,7 @@
 
 package org.poreid.cc;
 
+import org.poreid.KeepAlive;
 import org.poreid.Pin;
 import org.poreid.TerminalFeatures;
 import java.io.ByteArrayInputStream;
@@ -42,6 +43,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javax.smartcardio.Card;
 import javax.smartcardio.CardChannel;
 import javax.smartcardio.CardException;
@@ -90,13 +94,13 @@ public abstract class POReIDCard implements POReIDSmartCard {
     private boolean otpPinChanging;
     private boolean locked;
     
-    protected POReIDCard(CardSpecificReferences csr)  {
+    protected POReIDCard(CardSpecificReferences csr) {
         this.csr = csr;
         this.card = csr.getCard();
         this.aid = csr.getAID();
         this.locale = csr.getLocale();
         this.files = new Files(csr);
-        this.channel = this.card.getBasicChannel();
+        this.channel = this.card.getBasicChannel();        
         this.terminalFeatures = TerminalFeatures.getInstance(card, csr.getCardReaderName());
         this.bundle = CCConfig.getBundle(POReIDCard.class.getSimpleName(),locale);
     }
@@ -215,7 +219,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
     }
     
     
-    private ResponseAPDU resolveReaderPinpadSupportVerifyPin(Pin pin, byte[] pinCode) throws PinBlockedException, PinEntryCancelledException, PinTimeoutException, POReIDException {
+    private ResponseAPDU resolveReaderPinpadSupportVerifyPin(Pin pin, byte[] pinCode) throws PinEntryCancelledException, PinTimeoutException, POReIDException {
         ResponseAPDU responseApdu;
 
         if (null != pinCode && terminalFeatures.canBypassPinpad()) {
@@ -226,7 +230,9 @@ public abstract class POReIDCard implements POReIDSmartCard {
                     responseApdu = verifyPinWithPinPad(pin);
                 } else {
                     if (terminalFeatures.canBypassPinpad()) {
-                        DialogController.getInstance(bundle.getString("incompatible.title"), MessageFormat.format(bundle.getString("incompatible.message.verify.ok"), pin.getLabel()), locale, false).displayDialog();
+                        if (!isOSWindows8()) { /* evitar apresentar nesta seção do código um diálogo sem keepalive no windows 8 */
+                            DialogController.getInstance(bundle.getString("incompatible.title"), MessageFormat.format(bundle.getString("incompatible.message.verify.ok"), pin.getLabel()), locale, false).displayDialog();
+                        }
                         responseApdu = verifyPinWithoutPinPad(pin, null);
                     } else {
                         DialogController.getInstance(bundle.getString("incompatible.title"), MessageFormat.format(bundle.getString("incompatible.message.verify.error"), pin.getLabel()), locale, true).displayDialog();
@@ -254,21 +260,39 @@ public abstract class POReIDCard implements POReIDSmartCard {
     }
     
     
-    private ResponseAPDU verifyPinWithoutPinPad(Pin pin, byte[] pinCode) throws PinBlockedException, PinEntryCancelledException, PinTimeoutException, POReIDException {
+    private ResponseAPDU verifyPinWithoutPinPad(Pin pin, byte[] pinCode) throws PinEntryCancelledException, PinTimeoutException, POReIDException {
         byte[] pcode = new byte[8];
         byte[] internal = null;
         ResponseAPDU responseApdu;
         boolean unlock = false;
+        ScheduledExecutorService scheduledExecutorService = null;
         
         try {
             if (isOSWindows8()) {
-                unlock = endExclusive();
+                unlock = endExclusive();                
             }
 
             Arrays.fill(pcode, pin.getPadChar());
-            if (null == pinCode || 0 == pinCode.length) {
-                internal = VerifyPinDialogController.getInstance(CCConfig.TIMEOUT, pin.getLabel(), pin.getIcon(), pin.getMinLength(), pin.getMaxLength(), locale).askForPin();
-                System.arraycopy(internal, 0, pcode, 0, internal.length);
+            if (null == pinCode || 0 == pinCode.length) {                
+                if (isOSWindows8()) {
+                    scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();                    
+                    scheduledExecutorService.scheduleAtFixedRate(new KeepAlive(this, pin), 0, 3, TimeUnit.SECONDS);
+                    if (terminalFeatures.isVerifyPinThroughPinpadAvailable() && terminalFeatures.canBypassPinpad()) {
+                        DialogController.getInstance(bundle.getString("incompatible.title"), MessageFormat.format(bundle.getString("incompatible.message.verify.ok"), pin.getLabel()), locale, false).displayDialog();
+                    }
+                }
+                try {
+                    internal = VerifyPinDialogController.getInstance(CCConfig.TIMEOUT, pin.getLabel(), pin.getIcon(), pin.getMinLength(), pin.getMaxLength(), locale).askForPin();
+                    System.arraycopy(internal, 0, pcode, 0, internal.length);
+                } finally {
+                    if (isOSWindows8() && null != scheduledExecutorService) {
+                        scheduledExecutorService.shutdown();
+                        try {
+                            scheduledExecutorService.awaitTermination(250, TimeUnit.MILLISECONDS);
+                        } catch (InterruptedException ignore) {
+                        }
+                    }
+                }                                                                
             } else {
                 System.arraycopy(pinCode, 0, pcode, 0, pinCode.length);
             }
@@ -714,7 +738,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
     }
     
     
-    private void beginExclusive() throws CardException{
+    protected void beginExclusive() throws CardException{
         if (!locked){
             locked = true;
             card.beginExclusive();
@@ -722,7 +746,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
     }
     
     
-    private boolean endExclusive() throws CardException{
+    protected boolean endExclusive() throws CardException{
         boolean unlock = true;
         if (locked){
             locked = false;
@@ -740,6 +764,17 @@ public abstract class POReIDCard implements POReIDSmartCard {
             return csr.getTerminal().isCardPresent();
         } catch (CardException ex) {
             throw new POReIDException("Ocorreu um erro durante a verificação do leitor no cartão", ex);
+        }
+    }
+    
+    
+    @Override
+    public void close() throws POReIDException{
+        try {
+            endExclusive();
+            this.card.disconnect(true);
+        } catch (CardException ex) {
+            throw new POReIDException("Ocorreu um erro durante a terminação da ligação com cartão", ex);
         }
     }
 }

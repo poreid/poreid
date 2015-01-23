@@ -119,7 +119,7 @@ public final class GemsafeCard extends CitizenCard {
     
     @Override
     public byte[] sign(byte hash[],  byte[] pinCode, String digestAlgo, PkAlias pkAlias, RSAPaddingSchemes... sch) throws PinTimeoutException, PinEntryCancelledException, PinBlockedException, POReIDException {
-        ResponseAPDU responseApdu = null;
+        ResponseAPDU responseApdu;
         CommandAPDU cmd;
         
         try {
@@ -133,7 +133,7 @@ public final class GemsafeCard extends CitizenCard {
             }
 
             try {
-                card.beginExclusive();
+                beginExclusive();
                 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 baos.write(0x90);
@@ -168,8 +168,8 @@ public final class GemsafeCard extends CitizenCard {
                 
                 return responseApdu.getData();
             } finally {
-                card.endExclusive();
-            }            
+                endExclusive();
+            }           
         } catch (CardException | IllegalStateException ex) {
             throw new POReIDException(ex);
         }
