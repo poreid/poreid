@@ -327,7 +327,7 @@ class OTP {
         otp.setPanSeqNumber(String.format("%02x", retbuf[32]));
         
         oTPTransmit(GET_PROCESSING_OPTIONS);
-        retbuf = oTPTransmit(GET_DATA__PIN_TRY_COUNTER).getBytes();
+        oTPTransmit(GET_DATA__PIN_TRY_COUNTER).getBytes();
         
         oTPTransmit(otpVerifyPin);
         
