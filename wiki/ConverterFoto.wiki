@@ -47,7 +47,8 @@ public class App {
         try {  
             CitizenCard cc = CardFactory.getCard();
             byte[] foto = cc.getPhotoData().getPhoto();
-            
+            cc.close();
+
             BufferedImage img = ImageIO.read(new ByteArrayInputStream(foto));
             String fileSeparator = java.nio.file.FileSystems.getDefault().getSeparator();
             ImageIO.write(img, "png", new File(System.getProperty("user.home") + fileSeparator + "FOTO.png"));
