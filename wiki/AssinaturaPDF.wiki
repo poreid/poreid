@@ -96,7 +96,9 @@ public class App {
 }}}
 
 ----
+*ATENÇÃO: Este é um exemplo bastante simplificado, numa aplicação que tenha uma interface gráfica, as interações com o cartão não podem ser efetuadas na Event Dispatch Thread (EDT), desta forma, como meio de prevenir, o método CardFactory.getCard() não pode ser executado no contexto da Event Dispatch Thread.*
 
+----
 *NOTA: Se a versão do poreid for inferior à versão 1.45, para assinar sem OCSP, CRL e Timestamp o valor a utilizar no parametro estimatedSize  do método `signDetached` deverá ser 9000.* 
 {{{
 MakeSignature.signDetached(appearance, digest, es, chain, null, null, null, 9000, CryptoStandard.CMS);
