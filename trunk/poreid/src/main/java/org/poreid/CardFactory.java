@@ -126,8 +126,11 @@ public final class CardFactory {
         boolean unknownCard = false;
         T t;
         
+        if (javax.swing.SwingUtilities.isEventDispatchThread()) {
+            throw new POReIDException("Não deve utilizar a Event Dispatch Thread (EDT) para executar lógica da aplicação");
+        }
         
-        try {
+        try {            
             factory = (customProvider) ? TerminalFactory.getInstance("MacOSXCustomPCSC", null) : TerminalFactory.getDefault();
             terminals = factory.terminals().list(CardTerminals.State.CARD_PRESENT);
         } catch (CardException ex) {
