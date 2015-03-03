@@ -26,7 +26,7 @@ package org.poreid.cc;
 import java.util.Arrays;
 
 /**
- * Metadados da foto 
+ * Metadados da foto (eventualmente poderá ser melhorado)
  * @author POReID
  */
 public final class FaceImageRecordFormat {
