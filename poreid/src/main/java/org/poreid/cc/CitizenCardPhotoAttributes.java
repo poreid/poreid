@@ -72,17 +72,33 @@ public final class CitizenCardPhotoAttributes {
             parse(data);
         }
     }
-   
     
-    private void parse(byte[] data){
-        int i;
-        firf = new FaceImageRecordFormat(Arrays.copyOf(data, 34), Arrays.copyOfRange(data, 34, 48), Arrays.copyOfRange(data, 48, 80));  
-        for(i = data.length; i>80; i--){
-            if ((byte)0xff==data[i-1] && (byte)0xd9 == data[i]){
-                break;
+    /* CBEFF - Para futura referência - NISTIR 6529-A pag. 26, iso/iec 7816-11 pag. 20
+    TAG                                                                     Length                  Value
+    7f61    - Biometric Information Group Template                          (base 256)              BIT group template   
+    02      - Número de BITs no grupo                                       1                       1
+    7f60    - Biometric Information Template #1                             (base 256)              Biometric Information Template
+    A1      - Biometric Header Template (BHT) in compliance with CBEFF      tamanho do header       BHT
+    81      - Biometric type                                                1-3                     02      (Facial features)
+    82      - Biometric subtype                                             1                       0       (No information given)
+    87      - Format owner of the biometric verification data www.ibia.org  2                       0101    (ISO/IEC JTC 1 SC 37-Biometrics)
+    88      - Format type of biometric verification data                    2                       0501    (Face Image Format)
+    */
+    private void parse(byte[] data) {
+        int offset;
+        
+        firf = new FaceImageRecordFormat(Arrays.copyOf(data, 34), Arrays.copyOfRange(data, 34, 48), Arrays.copyOfRange(data, 48, 80));
+        if (0x7f == data[0] && 0x61 == data[1] && 0x82 == (int) (data[2] & 0xff)) { // Long form: Application 97 (0x61)
+            offset = (int) (data[3] & 0xff) * 256 + (int) (data[4] & 0xff) + 4;     // base 256 + deslocamento            
+        } else {
+            for (offset = data.length; offset > 80; offset--) {
+                if ((byte) 0xff == data[offset - 1] && (byte) 0xd9 == data[offset]) {
+                    break;
+                }
             }
-        }   
-        photo = Arrays.copyOfRange(data, 80, i+1);
+        }
+
+        photo = Arrays.copyOfRange(data, 80, offset + 1);
         isdataLoaded = true;
-    }  
+    }
 }
