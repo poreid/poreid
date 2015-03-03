@@ -7,7 +7,7 @@
     </parent>
     <groupId>org.poreid</groupId>
     <artifactId>poreid</artifactId>
-    <version>1.47</version>
+    <version>1.48-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>POReID</name>
     <description>The POReID is a java library to handle the portuguese eID smartcard, this library can be used for desktop applications as well as browser based applets</description>
@@ -30,9 +30,9 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:svn:http://poreid.googlecode.com/svn/tags/poreid-1.47</connection>
-        <developerConnection>scm:svn:https://poreid.googlecode.com/svn/tags/poreid-1.47</developerConnection>
-        <url>http://poreid.googlecode.com/svn/tags/poreid-1.47</url>
+        <connection>scm:svn:http://poreid.googlecode.com/svn/trunk/poreid/</connection>
+        <developerConnection>scm:svn:https://poreid.googlecode.com/svn/trunk/poreid/</developerConnection>
+        <url>http://poreid.googlecode.com/svn/trunk/poreid/</url>
     </scm>
     <build>
         <plugins>
