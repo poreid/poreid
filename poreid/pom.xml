@@ -25,14 +25,14 @@
     <licenses>
         <license>
             <name>The MIT License</name>
-            <url>http://poreid.googlecode.com/svn/trunk/poreid/LICENSE.txt</url>
+            <url>https://github.com/poreid/poreid/blob/master/poreid/LICENSE.txt</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
     <scm>
-        <connection>scm:svn:http://poreid.googlecode.com/svn/trunk/poreid/</connection>
-        <developerConnection>scm:svn:https://poreid.googlecode.com/svn/trunk/poreid/</developerConnection>
-        <url>http://poreid.googlecode.com/svn/trunk/poreid/</url>
+        <connection>scm:svn:scm:git:https://github.com/poreid/poreid.git</connection>
+        <developerConnection>scm:svn:https://github.com/poreid/poreid.git</developerConnection>
+        <url>https://github.com/poreid/poreid.git</url>
     </scm>
     <build>
         <plugins>
