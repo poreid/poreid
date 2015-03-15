@@ -14,7 +14,7 @@ Num projeto com maven basta adicionar
 <dependency>
   <groupId>org.poreid</groupId>
   <artifactId>poreid</artifactId>
-  <version>1.47</version>
+  <version>1.48</version>
 </dependency>
 ```
 
