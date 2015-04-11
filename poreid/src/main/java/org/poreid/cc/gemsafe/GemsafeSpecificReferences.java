@@ -23,6 +23,7 @@
  */
 package org.poreid.cc.gemsafe;
 
+import java.net.Proxy;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -57,14 +58,16 @@ public final class GemsafeSpecificReferences implements CardSpecificReferences{
     protected final Map<String, DigestPrefixes> digestsMap;   
     private final Map<String, Byte> fix;
     private final boolean cachePreferences;
+    private final Proxy proxy;
     
 
-    public GemsafeSpecificReferences(Card card, CardTerminal terminal, Locale locale, boolean cachePreferences){
+    public GemsafeSpecificReferences(Card card, CardTerminal terminal, Locale locale, boolean cachePreferences, Proxy proxy){
         this.card = card;
         this.terminal = terminal;
         this.cardReaderName = terminal.getName();
         this.locale = locale;
         this.cachePreferences = cachePreferences;
+        this.proxy = proxy;
         bundle = CCConfig.getBundle(CitizenCard.class.getSimpleName(), locale);
         
         algorithmID = new HashMap<>();
@@ -100,13 +103,13 @@ public final class GemsafeSpecificReferences implements CardSpecificReferences{
     
     @Override
     public String getAID() {
-        return this.SELECT_AID;
+        return GemsafeSpecificReferences.SELECT_AID;
     }
     
     
     @Override
     public String getEmvAID() {
-        return this.SELECT_EMV_AID;
+        return GemsafeSpecificReferences.SELECT_EMV_AID;
     }
     
     
@@ -158,5 +161,10 @@ public final class GemsafeSpecificReferences implements CardSpecificReferences{
     @Override
     public CardTerminal getTerminal() {
         return terminal;
+    }
+
+    @Override
+    public Proxy getProxy() {
+        return this.proxy;
     }
 }

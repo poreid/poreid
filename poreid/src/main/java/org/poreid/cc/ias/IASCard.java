@@ -25,6 +25,7 @@
 package org.poreid.cc.ias;
 
 import java.io.ByteArrayOutputStream;
+import java.net.Proxy;
 import java.util.Locale;
 import javax.smartcardio.Card;
 import javax.smartcardio.CardChannel;
@@ -54,8 +55,8 @@ public final class IASCard extends CitizenCard {
     private final CardChannel channel;
    
 
-    public IASCard(Card card, CardTerminal terminal, Locale locale, boolean cachePreferences) {
-        super(new IASSpecificReferences(card, terminal, locale, cachePreferences));
+    public IASCard(Card card, CardTerminal terminal, Locale locale, boolean cachePreferences, Proxy proxy) {
+        super(new IASSpecificReferences(card, terminal, locale, cachePreferences, proxy));
         this.card = card;
         this.channel = card.getBasicChannel();
     }

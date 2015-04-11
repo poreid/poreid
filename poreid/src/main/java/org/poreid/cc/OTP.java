@@ -25,6 +25,7 @@ package org.poreid.cc;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.Proxy;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -79,12 +80,14 @@ class OTP {
     private boolean errorExpected;
     private OTPFeedbackDialogController otpDialogCtl;
     private final ResourceBundle bundle;
+    private final Proxy proxy;
     
     protected OTP(POReIDCard card, Pin pin, ByteBuffer pins[]) throws POReIDException{
         try {
             this.card = card;
             this.pin = pin;
             this.p = pins[1].array();
+            this.proxy = card.getCardSpecificReferences().getProxy();
             this.bundle = CCConfig.getBundle(OTP.class.getSimpleName(),card.getCardSpecificReferences().getLocale());
             sslSocketFactory = POReIDSocketFactory.getSSLSocketFactoryOTP(new CanContinue__(), card, OTP_TRUST_STORE, OTP_TRUST_STORE_PASSWORD, pins[0].array());
         } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException | IOException | CertificateException | InvalidAlgorithmParameterException ex) {
@@ -128,7 +131,7 @@ class OTP {
     private void httpPostDummyRequest() throws POReIDException{
         try {
             String post = new JSONObject().put("connect", "").toString();
-            HttpsURLConnection con = (HttpsURLConnection) new URL(OTP_CONNECT_URL).openConnection();
+            HttpsURLConnection con = (HttpsURLConnection) new URL(OTP_CONNECT_URL).openConnection(this.proxy);
             con.setSSLSocketFactory(sslSocketFactory);
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "text/plain");
@@ -161,7 +164,7 @@ class OTP {
     
     private byte[] httpPostNewPin(PinPafUpdate ppu) throws POReIDException{    
         try {
-            HttpsURLConnection con = (HttpsURLConnection) new URL(OTP_SEND_PARAMETERS_URL).openConnection();
+            HttpsURLConnection con = (HttpsURLConnection) new URL(OTP_SEND_PARAMETERS_URL).openConnection(this.proxy);
             con.setSSLSocketFactory(sslSocketFactory);
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "text/plain");
@@ -196,7 +199,7 @@ class OTP {
     
     private void httpPostChangeUnlockPINResponse(PinChangeUnlockResponse pcur) throws POReIDException {
         try {
-            HttpsURLConnection con = (HttpsURLConnection) new URL(OTP_SEND_CHANGE_PIN_RESPONSE_URL).openConnection();
+            HttpsURLConnection con = (HttpsURLConnection) new URL(OTP_SEND_CHANGE_PIN_RESPONSE_URL).openConnection(this.proxy);
             con.setSSLSocketFactory(sslSocketFactory);
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "text/plain");
@@ -227,7 +230,7 @@ class OTP {
     
     private byte[] httpPostResetScriptCounter(OnlineTransactionParameters otp) throws POReIDException{
         try {
-            HttpsURLConnection con = (HttpsURLConnection) new URL(OTP_SCRIPT_COUNTER_PARAMETERS_URL).openConnection();
+            HttpsURLConnection con = (HttpsURLConnection) new URL(OTP_SCRIPT_COUNTER_PARAMETERS_URL).openConnection(this.proxy);
             con.setSSLSocketFactory(sslSocketFactory);
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "text/plain");
@@ -261,7 +264,7 @@ class OTP {
   
     private void httpPostResetScriptCounterResponse(ResetScriptCounterResponse rscr) throws POReIDException{
         try {
-            HttpsURLConnection con = (HttpsURLConnection) new URL(OTP_SCRIPT_COUNTER_RESPONSE_URL).openConnection();
+            HttpsURLConnection con = (HttpsURLConnection) new URL(OTP_SCRIPT_COUNTER_RESPONSE_URL).openConnection(this.proxy);
             con.setSSLSocketFactory(sslSocketFactory);
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "text/plain");

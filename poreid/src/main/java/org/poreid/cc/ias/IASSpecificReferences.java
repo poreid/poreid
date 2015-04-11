@@ -23,6 +23,7 @@
  */
 package org.poreid.cc.ias;
 
+import java.net.Proxy;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -56,14 +57,16 @@ public final class IASSpecificReferences implements CardSpecificReferences{
     private final Map<PkAlias, Pin> pinInfo;
     protected final Map<String, DigestPrefixes> digestsMap;
     private final boolean cachePreferences;
+    private final Proxy proxy;
      
     
-    public IASSpecificReferences(Card card, CardTerminal terminal, Locale locale, boolean cachePreferences){
+    public IASSpecificReferences(Card card, CardTerminal terminal, Locale locale, boolean cachePreferences, Proxy proxy){
         this.card = card;
         this.terminal = terminal;
         this.cardReaderName = terminal.getName();
         this.locale = locale;
         this.cachePreferences = cachePreferences;
+        this.proxy = proxy;
         bundle = CCConfig.getBundle(CitizenCard.class.getSimpleName(), locale);
         
         algorithmID = new HashMap<>();
@@ -94,13 +97,13 @@ public final class IASSpecificReferences implements CardSpecificReferences{
     
     @Override
     public String getAID() {
-        return this.SELECT_AID;
+        return IASSpecificReferences.SELECT_AID;
     }
     
     
      @Override
     public String getEmvAID() {
-        return this.SELECT_EMV_AID;
+        return IASSpecificReferences.SELECT_EMV_AID;
     }
      
      
@@ -152,5 +155,10 @@ public final class IASSpecificReferences implements CardSpecificReferences{
     @Override
     public CardTerminal getTerminal() {
         return terminal;
+    }
+    
+    @Override
+    public Proxy getProxy() {
+        return this.proxy;
     }
 }
