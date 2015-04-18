@@ -76,7 +76,7 @@ public final class GemsafeSpecificReferences implements CardSpecificReferences{
         //algorithmID.put(RSAPaddingSchemes.RFC2409, (byte)0x03); 
         
         pinInfo = new HashMap<>();
-        pinInfo.put(PkAlias.AUTENTICACAO, new Pin(bundle.getString("authentication.pin"), TAMANHO_MIN_PIN, TAMANHO_MIN_PIN, CCConfig.IMAGE_AUTHENTICATION_LOCATION, (byte)0x81, (byte)0x02, SELECT_AID, (byte)0xFF));
+        pinInfo.put(PkAlias.AUTENTICACAO, new Pin(bundle.getString("authentication.pin"), TAMANHO_MIN_PIN, TAMANHO_MAX_PIN, CCConfig.IMAGE_AUTHENTICATION_LOCATION, (byte)0x81, (byte)0x02, SELECT_AID, (byte)0xFF));
         pinInfo.put(PkAlias.ASSINATURA, new Pin(bundle.getString("signature.pin"), TAMANHO_MIN_PIN, TAMANHO_MAX_PIN, CCConfig.IMAGE_SIGNATURE_LOCATION, (byte)0x82, (byte)0x01, SELECT_AID, (byte)0xFF));
         
         digestsMap = new HashMap<>();

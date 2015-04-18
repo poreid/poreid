@@ -73,7 +73,7 @@ public final class IASSpecificReferences implements CardSpecificReferences{
         algorithmID.put(RSAPaddingSchemes.PKCS1, (byte)0x02);
         
         pinInfo = new HashMap<>();
-        pinInfo.put(PkAlias.AUTENTICACAO, new Pin(bundle.getString("authentication.pin"), TAMANHO_MIN_PIN, TAMANHO_MIN_PIN, CCConfig.IMAGE_AUTHENTICATION_LOCATION, (byte)0x01, (byte)0x01, (byte)0x2F));
+        pinInfo.put(PkAlias.AUTENTICACAO, new Pin(bundle.getString("authentication.pin"), TAMANHO_MIN_PIN, TAMANHO_MAX_PIN, CCConfig.IMAGE_AUTHENTICATION_LOCATION, (byte)0x01, (byte)0x01, (byte)0x2F));
         pinInfo.put(PkAlias.ASSINATURA, new Pin(bundle.getString("signature.pin"), TAMANHO_MIN_PIN, TAMANHO_MAX_PIN, CCConfig.IMAGE_SIGNATURE_LOCATION, (byte)0x82, (byte)0x82, SELECT_AID, (byte)0x2F));
         
         digestsMap = new HashMap<>();
