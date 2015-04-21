@@ -35,6 +35,7 @@ import org.poreid.config.POReIDConfig;
  * @author POReID
  */
 public class UsePinPadDialogController {
+    private static String infoMsg;
     private String pinLabel;
     private byte[] pinIcon;
     private Locale locale;
@@ -66,7 +67,11 @@ public class UsePinPadDialogController {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                UsePinPadDialogController.this.dialog = new UsePinPadDialog(pinOp,pinLabel, pinIcon, locale);
+                if (null != infoMsg && !infoMsg.isEmpty()){
+                    UsePinPadDialogController.this.dialog = new UsePinPadDialog(pinOp,pinLabel, pinIcon, locale, infoMsg);
+                } else {
+                    UsePinPadDialogController.this.dialog = new UsePinPadDialog(pinOp,pinLabel, pinIcon, locale);
+                }
                 UsePinPadDialogController.this.dialog.setVisible(true);
             }
         });
@@ -80,5 +85,15 @@ public class UsePinPadDialogController {
                 dialog.dispose();
             }
         });
+    }
+    
+    
+    public static void setInfoMessage(String infoMsg){
+        UsePinPadDialogController.infoMsg = infoMsg;
+    }
+    
+    
+    public static void removeInfoMessage(){
+        UsePinPadDialogController.infoMsg = null;
     }
 }

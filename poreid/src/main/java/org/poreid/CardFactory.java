@@ -25,7 +25,9 @@
 package org.poreid;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.Proxy;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -41,6 +43,8 @@ import javax.smartcardio.CardTerminals;
 import javax.smartcardio.TerminalFactory;
 import org.poreid.common.Util;
 import org.poreid.config.POReIDConfig;
+import org.poreid.dialogs.pindialogs.usepinpad.UsePinPadDialogController;
+import org.poreid.dialogs.pindialogs.verifypin.VerifyPinDialogController;
 import org.poreid.dialogs.selectcard.CanceledSelectionException;
 import org.poreid.dialogs.selectcard.SelectCardDialogController;
 
@@ -200,6 +204,8 @@ public final class CardFactory {
             throw new POReIDException("Não deve utilizar a Event Dispatch Thread (EDT) para executar lógica da aplicação");
         }
         
+        bandAid();
+        
         try {            
             factory = (customProvider) ? TerminalFactory.getInstance("MacOSXCustomPCSC", null) : TerminalFactory.getDefault();
             terminals = factory.terminals().list(CardTerminals.State.CARD_PRESENT);
@@ -254,6 +260,56 @@ public final class CardFactory {
         }
 
         throw new UnknownCardException("Cartão não suportado");
+    }
+    
+    /**
+     * Possibilita a exibição de uma mensagem nas janelas de diálogo de pedido de PIN - Típicamente informação de contexto
+     * @param infoMessage - Mensagem a ser exibida, possivel utilizar tags html strong e em
+     */
+    public static void setPinDialogsInfoMessage(String infoMessage){
+        UsePinPadDialogController.setInfoMessage(infoMessage);
+        VerifyPinDialogController.setInfoMessage(infoMessage);
+    }
+    
+    /**
+     * Remove a mensagem préviamente passada
+     */
+    public static void removePinDialogsInfoMessage(){        
+        UsePinPadDialogController.removeInfoMessage();
+        VerifyPinDialogController.removeInfoMessage();
+    }    
+    
+    
+    /* martelada para corrigir comportamento anómalo em windows 8 pelo menos - http://stackoverflow.com/a/26470094 */
+    private static void bandAid() throws POReIDException{
+        try {
+            Class pcscterminal = Class.forName((customProvider) ? "org.poreid.macosx.smartcardio.PCSCTerminals" : "sun.security.smartcardio.PCSCTerminals");
+            Field contextId = pcscterminal.getDeclaredField("contextId");
+            contextId.setAccessible(true);
+            
+            if (contextId.getLong(pcscterminal) != 0) {                
+                Class pcsc = Class.forName((customProvider) ? "org.poreid.macosx.smartcardio.PCSC" : "sun.security.smartcardio.PCSC");
+                Method SCardEstablishContext = pcsc.getDeclaredMethod("SCardEstablishContext", new Class[]{Integer.TYPE});
+                SCardEstablishContext.setAccessible(true);
+                
+                Field SCARD_SCOPE_USER = pcsc.getDeclaredField("SCARD_SCOPE_USER");
+                SCARD_SCOPE_USER.setAccessible(true);
+                
+                long newId = ((Long) SCardEstablishContext.invoke(pcsc, new Object[]{SCARD_SCOPE_USER.getInt(pcsc)}));
+                contextId.setLong(pcscterminal, newId);
+                                
+                TerminalFactory tFactory = TerminalFactory.getDefault();
+                CardTerminals cTerminals = tFactory.terminals();
+                Field fieldTerminals = pcscterminal.getDeclaredField("terminals");
+                fieldTerminals.setAccessible(true);
+                Class classMap = Class.forName("java.util.Map");
+                Method clearMap = classMap.getDeclaredMethod("clear");
+                
+                clearMap.invoke(fieldTerminals.get(cTerminals));
+            }
+        } catch (ClassNotFoundException | NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ex) {            
+            throw new POReIDException(ex);
+        }
     }
 
     /**

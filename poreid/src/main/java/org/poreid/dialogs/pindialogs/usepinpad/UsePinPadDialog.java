@@ -34,13 +34,14 @@ import org.poreid.config.POReIDConfig;
  * @author POReID
  */
 public class UsePinPadDialog extends javax.swing.JDialog {
+    private String infoMessage;
     private final String pinLabel;
     private final byte[] pinIcon;
     private final ResourceBundle bundle;
     private final PinOperation pinOp;
     
     /**
-     * Creates new form WarnVerifyPinDialog
+     * Creates new form UsePinPadDialog
      * @param pinOp operação a realizar no pin (verificação / modificação)
      * @param pinLabel Descrição textual do pin
      * @param pinIcon Icone associado ao pin
@@ -51,6 +52,19 @@ public class UsePinPadDialog extends javax.swing.JDialog {
         this.pinLabel = pinLabel;
         this.pinIcon = pinIcon;
         this.pinOp = pinOp;
+        bundle = POReIDConfig.getBundle(UsePinPadDialog.class.getSimpleName(),locale);
+        initComponents();
+        
+        this.setTitle(MessageFormat.format(bundle.getString("dialog."+pinOp.getOperacao()+".title"), pinLabel));
+        this.getAccessibleContext().setAccessibleDescription(MessageFormat.format(bundle.getString("dialog."+pinOp.getOperacao()+".description"),pinLabel));
+    }
+    
+    public UsePinPadDialog(PinOperation pinOp, String pinLabel, byte[] pinIcon, Locale locale, String infoMessage) {
+        super();
+        this.pinLabel = pinLabel;
+        this.pinIcon = pinIcon;
+        this.pinOp = pinOp;
+        this.infoMessage = infoMessage;
         bundle = POReIDConfig.getBundle(UsePinPadDialog.class.getSimpleName(),locale);
         initComponents();
         
@@ -69,6 +83,7 @@ public class UsePinPadDialog extends javax.swing.JDialog {
         message = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         icon = new javax.swing.JLabel();
+        lblInfoMessage = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setAlwaysOnTop(true);
@@ -99,24 +114,37 @@ public class UsePinPadDialog extends javax.swing.JDialog {
                 .addGap(0, 0, 0))
         );
 
+        if (null != infoMessage && !infoMessage.isEmpty()){
+            lblInfoMessage.setText("<html><body style='width: 260px'>"+infoMessage);
+            lblInfoMessage.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+            lblInfoMessage.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        } else {
+            lblInfoMessage.setVisible(false);
+        }
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(message, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblInfoMessage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(message, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(lblInfoMessage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(message, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(message, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -128,6 +156,7 @@ public class UsePinPadDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel icon;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel lblInfoMessage;
     private javax.swing.JLabel message;
     // End of variables declaration//GEN-END:variables
 }

@@ -47,6 +47,7 @@ import org.poreid.dialogs.pindialogs.MyDocument;
  */
 
 class VerifyPinDialog extends javax.swing.JDialog {
+    private String infoMessage;
     private final String pinLabel;
     private final byte[] pinIcon;
     private final int pinMinLength;
@@ -80,8 +81,7 @@ class VerifyPinDialog extends javax.swing.JDialog {
             }
 
             @Override
-            public void windowOpened(WindowEvent e) {
-                
+            public void windowOpened(WindowEvent e) {                
                 pin.requestFocus();
             }
         });
@@ -90,7 +90,43 @@ class VerifyPinDialog extends javax.swing.JDialog {
         this.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "aceitar");
         this.getRootPane().getActionMap().put("cancelar", new CancelAbstractAction());
         this.getRootPane().getActionMap().put("aceitar", new OKAbstractAction());
-    }    
+    }
+    
+    
+    public VerifyPinDialog(String pinLabel, byte[] pinIcon, int pinMinLength, int pinMaxLength, Locale locale, DialogEventListener<ByteBuffer> listener, String infoMsg){
+        super();
+        this.pinLabel = pinLabel;
+        this.pinIcon = pinIcon;
+        this.pinMinLength = pinMinLength;
+        this.pinMaxLength = pinMaxLength;
+        this.listener = listener;
+        this.infoMessage = infoMsg;
+        bundle = POReIDConfig.getBundle(VerifyPinDialog.class.getSimpleName(),locale);
+        initComponents();
+        
+        this.setTitle(MessageFormat.format(bundle.getString("dialog.title"),pinLabel));
+        this.getAccessibleContext().setAccessibleDescription(MessageFormat.format(bundle.getString("dialog.description"),pinLabel));
+        
+        
+        addWindowListener(new java.awt.event.WindowAdapter() {
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                dispose();
+                VerifyPinDialog.this.listener.onDiagloclosed();
+            }
+
+            @Override
+            public void windowOpened(WindowEvent e) {                
+                pin.requestFocus();
+            }
+        });
+        
+        this.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "cancelar");
+        this.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "aceitar");
+        this.getRootPane().getActionMap().put("cancelar", new CancelAbstractAction());
+        this.getRootPane().getActionMap().put("aceitar", new OKAbstractAction());
+    }
             
     /**
      * This method is called from within the constructor to initialize the form.
@@ -108,6 +144,7 @@ class VerifyPinDialog extends javax.swing.JDialog {
         labelPin = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         icon = new javax.swing.JLabel();
+        lblInfoMessage = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setAlwaysOnTop(true);
@@ -167,21 +204,32 @@ class VerifyPinDialog extends javax.swing.JDialog {
                 .addGap(0, 0, 0))
         );
 
+        if (null != infoMessage && !infoMessage.isEmpty()){
+            lblInfoMessage.setText("<html><body style='width: 260px'>"+infoMessage);
+            lblInfoMessage.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+            lblInfoMessage.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        } else {
+            lblInfoMessage.setVisible(false);
+        }
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnOK, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(labelPin))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 114, Short.MAX_VALUE)
-                    .addComponent(pin))
+                    .addComponent(lblInfoMessage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(btnOK, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(labelPin))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 114, Short.MAX_VALUE)
+                            .addComponent(pin))))
                 .addContainerGap())
         );
 
@@ -191,16 +239,18 @@ class VerifyPinDialog extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(lblInfoMessage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(pin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(labelPin, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnOK, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnOK, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
 
@@ -236,6 +286,7 @@ class VerifyPinDialog extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel labelPin;
+    private javax.swing.JLabel lblInfoMessage;
     private javax.swing.JPasswordField pin;
     // End of variables declaration//GEN-END:variables
 

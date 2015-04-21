@@ -39,11 +39,8 @@ import org.poreid.dialogs.pindialogs.PinTimeoutException;
  *
  * @author POReID
  */
-public class VerifyPinDialogController{
-    /**
-     * @param args the command line arguments
-     */
-   
+public class VerifyPinDialogController{    
+    private static String infoMsg;
     private Semaphore semaphore;
     private boolean cancelled;
     private ByteBuffer pinCode;
@@ -107,7 +104,11 @@ public class VerifyPinDialogController{
 
             @Override
             public void run() {
-                dialog = new VerifyPinDialog(pinLabel, pinIcon, pinMinLength, pinMaxLength, locale, VerifyPinDialogController.this.listener);
+                if (null != infoMsg && !infoMsg.isEmpty()){
+                    dialog = new VerifyPinDialog(pinLabel, pinIcon, pinMinLength, pinMaxLength, locale, VerifyPinDialogController.this.listener, infoMsg);
+                } else {
+                    dialog = new VerifyPinDialog(pinLabel, pinIcon, pinMinLength, pinMaxLength, locale, VerifyPinDialogController.this.listener);
+                }
                 dialog.setVisible(true);
             }
         });
@@ -133,4 +134,14 @@ public class VerifyPinDialogController{
             VerifyPinDialogController.this.semaphore.release();
         }
     };
+    
+    
+    public static void setInfoMessage(String infoMsg){
+        VerifyPinDialogController.infoMsg = infoMsg;
+    }
+    
+    
+    public static void removeInfoMessage(){
+        VerifyPinDialogController.infoMsg = null;
+    }
 }
