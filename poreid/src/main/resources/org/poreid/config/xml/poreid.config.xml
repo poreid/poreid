@@ -274,4 +274,8 @@
     </smartcard-pinpad-readers>
     <default-locale language="pt" country="PT"/>
     <allow-external-pin-caching status="false"/>
+    <timed-interaction>
+        <enabled>false</enabled>
+        <!--<period>120</period> unidade em segundos -->
+    </timed-interaction>
 </configuration>

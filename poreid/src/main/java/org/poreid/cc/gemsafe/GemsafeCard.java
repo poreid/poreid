@@ -26,6 +26,7 @@ package org.poreid.cc.gemsafe;
 
 import java.io.ByteArrayOutputStream;
 import java.net.Proxy;
+import java.util.Date;
 import java.util.Locale;
 import javax.smartcardio.Card;
 import javax.smartcardio.CardChannel;
@@ -54,8 +55,8 @@ public final class GemsafeCard extends CitizenCard {
     private final CardChannel channel;
     
     
-    public GemsafeCard(Card card, CardTerminal terminal, Locale locale, boolean cachePreferences, Proxy proxy) {
-        super(new GemsafeSpecificReferences(card, terminal, locale, cachePreferences,proxy));
+    public GemsafeCard(Card card, CardTerminal terminal, Locale locale, boolean cachePreferences, Proxy proxy, Date date) {
+        super(new GemsafeSpecificReferences(card, terminal, locale, cachePreferences, proxy, date));
         this.channel = card.getBasicChannel();
     }
 

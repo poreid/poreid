@@ -431,7 +431,7 @@ class OTP {
         otpDialogCtl.closeDialog();
         
         DialogController.getInstance(MessageFormat.format(bundle.getString("dialog.otp.error.title"), pin.getLabel()), MessageFormat.format(bundle.getString("dialog.otp.error.message"), 
-                pin.getLabel()), card.getCardSpecificReferences().getLocale(), true).displayDialog();
+                pin.getLabel()), card.getCardSpecificReferences().getLocale(), true).displayDialog(card.getCardSpecificReferences().getStartTime());
         
         throw ex;
     }

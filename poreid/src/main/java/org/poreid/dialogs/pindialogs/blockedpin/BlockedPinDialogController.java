@@ -25,11 +25,16 @@
 package org.poreid.dialogs.pindialogs.blockedpin;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import org.poreid.common.Util;
 import org.poreid.config.POReIDConfig;
+import org.poreid.dialogs.DialogEventListener;
 
 /**
  *
@@ -37,7 +42,9 @@ import org.poreid.config.POReIDConfig;
  */
 public class BlockedPinDialogController {
     private String pinLabel;
+    private Semaphore semaphore = null;
     private Locale locale;
+    private BlockedPinDialog dialog;
     
     private BlockedPinDialogController(String pinLabel, Locale locale) {
         try {
@@ -57,17 +64,66 @@ public class BlockedPinDialogController {
     }
     
     
-    public void displayBlockedPinDialog(){
-        try {
-            SwingUtilities.invokeAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    BlockedPinDialog dialog = new BlockedPinDialog(pinLabel, locale);
-                    dialog.setVisible(true);
+    public void displayBlockedPinDialog(Date date) {
+        if (POReIDConfig.isTimedInteractionEnabled()) {
+            long timeout = Util.getDateDiff(date, new Date(), TimeUnit.SECONDS);
+            timeout = (timeout > POReIDConfig.timedInteractionPeriod() ? 0 : POReIDConfig.timedInteractionPeriod() - timeout);
+            semaphore = new Semaphore(1);
+            
+            try {
+                semaphore.acquire();
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        dialog = new BlockedPinDialog(pinLabel, locale, listener);
+                        dialog.setVisible(true);
+                    }
+                });
+                if (!semaphore.tryAcquire(timeout, TimeUnit.SECONDS)) {
+                    dialog.dispose();
                 }
-            });
-        } catch (InterruptedException | InvocationTargetException ex) {
-            throw new RuntimeException("Não foi possivel criar a janela de dialogo de informação de pin bloqueado.", ex);
+            } catch (InterruptedException ex) {
+                throw new RuntimeException("Não foi possivel criar a janela de dialogo de informação de pin bloqueado.", ex);
+            }
+        } else {
+            try {
+                SwingUtilities.invokeAndWait(new Runnable() {
+                    @Override
+                    public void run() {
+                        dialog = new BlockedPinDialog(pinLabel, locale);
+                        dialog.setVisible(true);
+                    }
+                });
+            } catch (InterruptedException | InvocationTargetException ex) {
+                throw new RuntimeException("Não foi possivel criar a janela de dialogo de informação de pin bloqueado.", ex);
+            }
         }
     }
+    
+    
+    private void releaseSemaphore() {
+        if (null != semaphore) {
+            semaphore.release();
+        }
+    }
+    
+    
+    private DialogEventListener<Void> listener = new DialogEventListener<Void>() {
+        
+        @Override
+        public final void onDiagloclosed() {            
+            releaseSemaphore();
+        }
+
+        @Override
+        public void onCancel() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public void onContinue(Void... data) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+       
+    };
 }

@@ -174,7 +174,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
                 case 0x6983:    // Referenced PIN not successfully verified AND no subsequent tries are allowed (remaining tries counter reached 0)
                 case 0x6984:    // Referenced PIN remaining tries counter or usage counter reached 0
                 case 0x6402:
-                    BlockedPinDialogController.getInstance(pin.getLabel(), locale).displayBlockedPinDialog();
+                    BlockedPinDialogController.getInstance(pin.getLabel(), locale).displayBlockedPinDialog(csr.getStartTime());
                     throw new PinBlockedException("O " + pin.getLabel() + "está bloqueado.");
                 default:
                     if ((responseApdu.getSW() & (int) 0xfffffff0) == 0x63C0) {
@@ -182,7 +182,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
                     } else {
                         throw new POReIDException("Código de estado não esperado: " + Integer.toHexString(responseApdu.getSW()));
                     }
-                    if (WrongPinDialogController.getInstance(pin.getLabel(), pinTriesLeft, locale).displayWrongPinDialog()) {
+                    if (WrongPinDialogController.getInstance(pin.getLabel(), pinTriesLeft, locale).displayWrongPinDialog(csr.getStartTime())) {
                         throw new PinEntryCancelledException("Introdução do " + pin.getLabel() + " cancelada pelo utilizador.");
                     }
             }
@@ -211,7 +211,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
         }
 
         if (0 == pinTriesLeft) {
-            BlockedPinDialogController.getInstance(pin.getLabel(), locale).displayBlockedPinDialog();
+            BlockedPinDialogController.getInstance(pin.getLabel(), locale).displayBlockedPinDialog(csr.getStartTime());
             throw new PinBlockedException("O " + pin.getLabel() + " encontra-se bloqueado");
         }
 
@@ -230,12 +230,12 @@ public abstract class POReIDCard implements POReIDSmartCard {
                     responseApdu = verifyPinWithPinPad(pin);
                 } else {
                     if (terminalFeatures.canBypassPinpad()) {
-                        if (!isOSWindows8()) { /* evitar apresentar nesta seção do código um diálogo sem keepalive no windows 8 */
-                            DialogController.getInstance(bundle.getString("incompatible.title"), MessageFormat.format(bundle.getString("incompatible.message.verify.ok"), pin.getLabel()), locale, false).displayDialog();
+                        if (!isOSWindows8()) { /* evitar apresentar nesta seção do código um diálogo sem keepalive no windows 8  - ver linha 277+*/
+                            DialogController.getInstance(bundle.getString("incompatible.title"), MessageFormat.format(bundle.getString("incompatible.message.verify.ok"), pin.getLabel()), locale, false).displayDialog(csr.getStartTime());
                         }
                         responseApdu = verifyPinWithoutPinPad(pin, null);
                     } else {
-                        DialogController.getInstance(bundle.getString("incompatible.title"), MessageFormat.format(bundle.getString("incompatible.message.verify.error"), pin.getLabel()), locale, true).displayDialog();
+                        DialogController.getInstance(bundle.getString("incompatible.title"), MessageFormat.format(bundle.getString("incompatible.message.verify.error"), pin.getLabel()), locale, true).displayDialog(csr.getStartTime());
                         throw new POReIDException("O leitor de cartões não permite a realização da operação de verificação do " + pin.getLabel());
                     }                    
                 }
@@ -278,7 +278,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
                     scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();                    
                     scheduledExecutorService.scheduleAtFixedRate(new KeepAlive(this, pin), 0, 3, TimeUnit.SECONDS);
                     if (terminalFeatures.isVerifyPinThroughPinpadAvailable() && terminalFeatures.canBypassPinpad()) {
-                        DialogController.getInstance(bundle.getString("incompatible.title"), MessageFormat.format(bundle.getString("incompatible.message.verify.ok"), pin.getLabel()), locale, false).displayDialog();
+                        DialogController.getInstance(bundle.getString("incompatible.title"), MessageFormat.format(bundle.getString("incompatible.message.verify.ok"), pin.getLabel()), locale, false).displayDialog(csr.getStartTime());
                     }
                 }
                 try {
@@ -608,7 +608,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
                 if (terminalFeatures.isModifyPinThroughPinpadSupported(this.getClass().getName())) {
                     responseApdu = modifyPinWithPinPad(pin);
                 } else {
-                    if (terminalFeatures.canBypassPinpad()) {
+                    if (terminalFeatures.canBypassPinpad()) { //TODO: verificar se um keep alive aqui ajuda no caso de windows 8 
                         DialogController.getInstance(bundle.getString("incompatible.title"), MessageFormat.format(bundle.getString("incompatible.message.modify.ok"), pin.getLabel()), locale, false).displayDialog();
                         responseApdu = modifyPinWithoutPinPad(pin);
                     } else {
@@ -662,7 +662,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
                     case 0x6402:
                     case 0x6984:
                         modifyDialogCtl.disposeVerifyPinPinPadDialog();
-                        BlockedPinDialogController.getInstance(pin.getLabel(), locale).displayBlockedPinDialog();
+                        BlockedPinDialogController.getInstance(pin.getLabel(), locale).displayBlockedPinDialog(csr.getStartTime());
                         throw new PinBlockedException("O " + pin.getLabel() + "está bloqueado.");
                     default:
                         modifyDialogCtl.disposeVerifyPinPinPadDialog();
@@ -671,7 +671,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
                         } else {
                             throw new POReIDException("Código de estado não esperado: " + Integer.toHexString(responseApdu.getSW()));
                         }   
-                        if (WrongPinDialogController.getInstance(pin.getLabel(), pinTriesLeft, locale).displayWrongPinDialog()) {
+                        if (WrongPinDialogController.getInstance(pin.getLabel(), pinTriesLeft, locale).displayWrongPinDialog(csr.getStartTime())) {
                             throw new PinEntryCancelledException("Introdução do " + pin.getLabel() + " cancelada pelo utilizador.");
                         }
                 }

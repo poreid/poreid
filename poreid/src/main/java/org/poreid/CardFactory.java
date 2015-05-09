@@ -31,6 +31,7 @@ import java.lang.reflect.Method;
 import java.net.Proxy;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -234,8 +235,8 @@ public final class CardFactory {
             case 1:
                     return cardList.get(0);
             default:
-                    return SelectCardDialogController.getInstance(cardList, locale).selectCard();   
-        }
+                    return SelectCardDialogController.getInstance(cardList, locale).selectCard(new Date());   
+        }        
     }
     
     
@@ -251,8 +252,8 @@ public final class CardFactory {
 
         if (null != className){
             try {
-                Constructor<? extends POReIDSmartCard> ctor = Class.forName(className).asSubclass(POReIDSmartCard.class).getDeclaredConstructor(Card.class, CardTerminal.class, Locale.class, boolean.class, Proxy.class);
-                return (T) ctor.newInstance(card, terminal, locale, cachePreferences, proxy);
+                Constructor<? extends POReIDSmartCard> ctor = Class.forName(className).asSubclass(POReIDSmartCard.class).getDeclaredConstructor(Card.class, CardTerminal.class, Locale.class, boolean.class, Proxy.class, Date.class);
+                return (T) ctor.newInstance(card, terminal, locale, cachePreferences, proxy, new Date());
             } catch (InvocationTargetException | IllegalArgumentException | SecurityException | NoSuchMethodException | InstantiationException | IllegalAccessException | ClassNotFoundException ex) {
                 Logger.getLogger(CardFactory.class.getName()).log(Level.SEVERE, null, ex);
                 throw new UnknownCardException("Cartão não suportado", ex);

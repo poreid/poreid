@@ -28,6 +28,7 @@ import java.awt.event.WindowEvent;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import org.poreid.config.POReIDConfig;
+import org.poreid.dialogs.DialogEventListener;
 
 /**
  *
@@ -37,6 +38,7 @@ public class Dialog extends javax.swing.JDialog {
     private final String message;
     private final ResourceBundle bundle;
     private final boolean error;
+    private DialogEventListener<Void> listener = null;
     
     /**
      * Creates new form ErrorPinDialog
@@ -68,6 +70,12 @@ public class Dialog extends javax.swing.JDialog {
                 okBtn.requestFocus();
             }
         });
+    }
+    
+    
+    public Dialog(String title, String message, Locale locale, boolean error, DialogEventListener<Void> listener){
+        this(title, message, locale, error);
+        this.listener = listener;
     }
 
     /**
@@ -177,11 +185,17 @@ public class Dialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void okBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okBtnActionPerformed
+        if (null != listener) {
+            listener.onDiagloclosed();
+        }
         this.dispose();
     }//GEN-LAST:event_okBtnActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-         this.dispose();
+        if (null != listener) {
+            listener.onDiagloclosed();
+        } 
+        this.dispose();
     }//GEN-LAST:event_formWindowClosing
 
     

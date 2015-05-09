@@ -22,26 +22,40 @@
  * THE SOFTWARE.
  */
 
-package org.poreid;
+package org.poreid.config;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 
 /**
- * 
- * @author POReID
+ *
+ * @author Rui Martinho (rmartinho@gmail.com)
  */
-public final class KeepAlive implements Runnable{
-    private final POReIDSmartCard card;
-    private final Pin pin;
+@XmlAccessorType(XmlAccessType.FIELD)
+public class TimedInteraction {
+    @XmlElement(name = "enabled", required = true)
+    private boolean enabled;
+    @XmlElement(name = "period")
+    private int period;
 
-    public KeepAlive(POReIDSmartCard card, Pin pin){
-        this.card = card;
-        this.pin = pin;
-    }
     
-    @Override
-    public void run() {
-        try {
-            card.getPinStatus(pin);
-        } catch (POReIDException ignore) {            
-        }
-    }    
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    
+    public int getPeriod() {
+        return period;
+    }
+
+    
+    public void setPeriod(int period) {
+        this.period = period;
+    }            
 }

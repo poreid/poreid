@@ -24,6 +24,7 @@
 package org.poreid.cc.ias;
 
 import java.net.Proxy;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -48,6 +49,7 @@ public final class IASSpecificReferences implements CardSpecificReferences{
     private static final String CDOL1 = "0000000000000000000000000000800000000000000000000000000000";
     private static final byte TAMANHO_MIN_PIN = 4;
     private static final byte TAMANHO_MAX_PIN = 8;
+    private final Date date;
     private final ResourceBundle bundle;
     private final Card card;
     private final CardTerminal terminal;
@@ -60,13 +62,14 @@ public final class IASSpecificReferences implements CardSpecificReferences{
     private final Proxy proxy;
      
     
-    public IASSpecificReferences(Card card, CardTerminal terminal, Locale locale, boolean cachePreferences, Proxy proxy){
+    public IASSpecificReferences(Card card, CardTerminal terminal, Locale locale, boolean cachePreferences, Proxy proxy, Date date){
         this.card = card;
         this.terminal = terminal;
         this.cardReaderName = terminal.getName();
         this.locale = locale;
         this.cachePreferences = cachePreferences;
         this.proxy = proxy;
+        this.date = date;
         bundle = CCConfig.getBundle(CitizenCard.class.getSimpleName(), locale);
         
         algorithmID = new HashMap<>();
@@ -161,4 +164,9 @@ public final class IASSpecificReferences implements CardSpecificReferences{
     public Proxy getProxy() {
         return this.proxy;
     }
+
+    @Override
+    public Date getStartTime() {
+        return this.date;
+    } 
 }

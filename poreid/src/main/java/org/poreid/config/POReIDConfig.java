@@ -220,4 +220,14 @@ public class POReIDConfig {
     
         return true;
     }
+    
+    
+    public static boolean isTimedInteractionEnabled(){
+        return config.getTimedInteraction().isEnabled();
+    }
+    
+    
+    public static int timedInteractionPeriod() {
+        return config.getTimedInteraction().isEnabled() ? config.getTimedInteraction().getPeriod() : 0;
+    }
 }

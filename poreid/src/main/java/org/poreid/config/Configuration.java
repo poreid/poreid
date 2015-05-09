@@ -40,7 +40,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"supportedSmartCards", "smartCardReaders", "locale", "externalPinCache"})
+@XmlType(propOrder = {"supportedSmartCards", "smartCardReaders", "locale", "externalPinCache", "timedInteraction"})
 public class Configuration {
     @XmlJavaTypeAdapter(POReIDSupportedSmarCardsMapAdapter.class)
     @XmlElement(name = "poreid-supported-smartcards", required = true)
@@ -56,6 +56,10 @@ public class Configuration {
     @XmlJavaTypeAdapter(PinCacheAdapter.class)
     @XmlElement(name = "allow-external-pin-caching", required = true)
     private Boolean externalPinCache;
+    
+    @XmlElement(name = "timed-interaction", required = true)
+    private TimedInteraction timedInteraction;
+
     
     public Map<String, POReIDSupportedSmartCardProperties> getSupportedSmartCards() {
         return supportedSmartCards;
@@ -94,6 +98,16 @@ public class Configuration {
     
     protected void setExternalPinCache(boolean status){
         this.externalPinCache = status;
+    }
+    
+    
+    public TimedInteraction getTimedInteraction() {
+        return timedInteraction;
+    }
+
+     
+    public void setTimedInteraction(TimedInteraction timedInteraction) {
+        this.timedInteraction = timedInteraction;
     }
 
 }

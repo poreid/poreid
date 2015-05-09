@@ -28,6 +28,7 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import org.poreid.config.POReIDConfig;
+import org.poreid.dialogs.DialogEventListener;
 
 /**
  *
@@ -36,6 +37,7 @@ import org.poreid.config.POReIDConfig;
 public class BlockedPinDialog extends javax.swing.JDialog {
     private final String pinLabel;
     private final ResourceBundle bundle;
+    private DialogEventListener<Void> listener = null;
     
     /**
      * Creates new form ErrorPinDialog
@@ -58,6 +60,11 @@ public class BlockedPinDialog extends javax.swing.JDialog {
                 dispose();        
             }
         });
+    }
+    
+    public BlockedPinDialog(String pinLabel, Locale locale, DialogEventListener<Void> listener){        
+        this(pinLabel,locale);
+        this.listener = listener;
     }
 
     /**
@@ -144,11 +151,17 @@ public class BlockedPinDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void okBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okBtnActionPerformed
-        this.dispose();
+        if (null != listener) {
+            listener.onDiagloclosed();
+        }
+        this.dispose();        
     }//GEN-LAST:event_okBtnActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-         this.dispose();
+        if (null != listener) {
+            listener.onDiagloclosed();
+        } 
+        this.dispose();         
     }//GEN-LAST:event_formWindowClosing
 
     

@@ -50,10 +50,12 @@ import java.security.cert.TrustAnchor;
 import java.security.cert.X509CertSelector;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import javax.xml.bind.DatatypeConverter;
 
 /**
@@ -197,5 +199,11 @@ public class Util {
             sb.append(String.format("%02x", asn1[i]));
         }
         return sb.toString();
+    }
+    
+    
+    /* ideia em http://stackoverflow.com/a/10650881/82609 */
+    public static long getDateDiff(Date initialDate, Date finalDate, TimeUnit timeUnit) {        
+        return timeUnit.convert(finalDate.getTime() - initialDate.getTime(), TimeUnit.MILLISECONDS);
     }
 }

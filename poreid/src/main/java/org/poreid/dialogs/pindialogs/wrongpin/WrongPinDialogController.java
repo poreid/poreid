@@ -25,10 +25,14 @@
 package org.poreid.dialogs.pindialogs.wrongpin;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import org.poreid.common.Util;
 import org.poreid.config.POReIDConfig;
 import org.poreid.dialogs.DialogEventListener;
 
@@ -38,9 +42,11 @@ import org.poreid.dialogs.DialogEventListener;
  */
 public class WrongPinDialogController {
     private boolean cancelled;
+    private Semaphore semaphore = null;
     private String pinLabel;
     private int pinTriesLeft;
     private Locale locale;
+    private WrongPinDialog dialog;
     
     
     private WrongPinDialogController(String pinLabel, int pinTriesLeft, Locale locale) {
@@ -62,19 +68,49 @@ public class WrongPinDialogController {
     }
     
     
-    public boolean displayWrongPinDialog(){
-        try {
-            SwingUtilities.invokeAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    WrongPinDialog dialog = new WrongPinDialog(pinLabel, pinTriesLeft, locale, listener);
-                    dialog.setVisible(true);
+    public boolean displayWrongPinDialog(Date date) {                
+        if (POReIDConfig.isTimedInteractionEnabled()) {
+            long timeout = Util.getDateDiff(date, new Date(), TimeUnit.SECONDS);          
+            timeout = (timeout > POReIDConfig.timedInteractionPeriod() ? 0 : POReIDConfig.timedInteractionPeriod() - timeout);
+            semaphore = new Semaphore(1);
+            
+            try {
+                semaphore.acquire();
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        dialog = new WrongPinDialog(pinLabel, pinTriesLeft, locale, listener);
+                        dialog.setVisible(true);
+                    }
+                });
+                if (!semaphore.tryAcquire(timeout, TimeUnit.SECONDS)) {
+                    dialog.dispose();
+                    cancelled = true;
                 }
-            });
-        } catch (InterruptedException | InvocationTargetException ex) {
-            throw new RuntimeException("Não foi possivel criar a janela de dialogo de informação de pin errado");
+            } catch (InterruptedException ex) {
+                throw new RuntimeException("Não foi possivel criar a janela de dialogo de requisição de pin");
+            }
+        } else {
+            try {
+                SwingUtilities.invokeAndWait(new Runnable() {
+                    @Override
+                    public void run() {
+                        dialog = new WrongPinDialog(pinLabel, pinTriesLeft, locale, listener);
+                        dialog.setVisible(true);
+                    }
+                });
+            } catch (InterruptedException | InvocationTargetException ex) {
+                throw new RuntimeException("Não foi possivel criar a janela de dialogo de informação de pin errado");
+            }
         }
+        
         return cancelled;
+    }
+    
+    private void releaseSemaphore() {
+        if (null != semaphore) {
+            semaphore.release();
+        }
     }
     
     
@@ -83,17 +119,20 @@ public class WrongPinDialogController {
         @Override
         public final void onCancel() {
             WrongPinDialogController.this.cancelled = true;
+            releaseSemaphore();
         }
 
         @Override
         public final void onDiagloclosed() {
             WrongPinDialogController.this.cancelled = true;
+            releaseSemaphore();
         }
 
         @SafeVarargs
         @Override
         public final void onContinue(Void... data) {
             WrongPinDialogController.this.cancelled = false;
+            releaseSemaphore();
         }   
     };
 }

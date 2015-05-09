@@ -24,6 +24,7 @@
 package org.poreid.cc;
 
 import java.net.Proxy;
+import java.util.Date;
 import java.util.Locale;
 import javax.smartcardio.Card;
 import javax.smartcardio.CardTerminal;
@@ -65,4 +66,6 @@ public interface CardSpecificReferences {
     CardTerminal getTerminal();
     
     Proxy getProxy();
+    
+    Date getStartTime();
 }

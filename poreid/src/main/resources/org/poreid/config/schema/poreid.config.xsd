@@ -7,6 +7,7 @@
                 <xs:element name="smartcard-pinpad-readers" type="SmartCardPinPadReadersModeller" minOccurs="0"/>
                 <xs:element name="default-locale" type="locale"/>
                 <xs:element name="allow-external-pin-caching" type="external-pin-cache"/>
+                <xs:element name="timed-interaction" type="use-timed-interaction"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -114,5 +115,11 @@
     </xs:simpleType>
     <xs:complexType name="external-pin-cache">
         <xs:attribute name="status" type="xs:boolean" default="false"/>
+    </xs:complexType>
+    <xs:complexType name="use-timed-interaction">
+        <xs:sequence>
+            <xs:element name="enabled" type="xs:boolean" default="false"/>
+            <xs:element name="period" type="xs:positiveInteger" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
     </xs:complexType>
 </xs:schema>
