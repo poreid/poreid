@@ -27,9 +27,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.util.Locale;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import org.poreid.config.POReIDConfig;
+import org.poreid.common.Util;
 import org.poreid.dialogs.DialogEventListener;
 import org.poreid.dialogs.pindialogs.PinEntryCancelledException;
 
@@ -52,9 +51,7 @@ public class ModifyPinDialogController {
         this.pinMaxLength = pinMaxLength;
         this.locale = locale;
         try {
-            if (null != UIManager.getLookAndFeel()) {
-                UIManager.setLookAndFeel(POReIDConfig.LAF);
-            }
+            Util.setLookAndFeel();
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
             throw new RuntimeException("Não foi possivel criar a janela de dialogo de alteração de pin");
         }

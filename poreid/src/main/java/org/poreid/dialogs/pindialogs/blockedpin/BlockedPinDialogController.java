@@ -30,7 +30,6 @@ import java.util.Locale;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.poreid.common.Util;
 import org.poreid.config.POReIDConfig;
@@ -48,9 +47,7 @@ public class BlockedPinDialogController {
     
     private BlockedPinDialogController(String pinLabel, Locale locale) {
         try {
-            if (null != UIManager.getLookAndFeel()) {
-                UIManager.setLookAndFeel(POReIDConfig.LAF);
-            }
+            Util.setLookAndFeel();
             this.pinLabel = pinLabel;
             this.locale = locale;
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {

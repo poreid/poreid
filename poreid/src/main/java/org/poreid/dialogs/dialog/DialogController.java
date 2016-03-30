@@ -30,7 +30,6 @@ import java.util.Locale;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.poreid.common.Util;
 import org.poreid.config.POReIDConfig;
@@ -50,9 +49,7 @@ public class DialogController {
     
     private DialogController(String title, String message, Locale locale, boolean error) {
         try {
-            if (null != UIManager.getLookAndFeel()) {
-                UIManager.setLookAndFeel(POReIDConfig.LAF);
-            }
+            Util.setLookAndFeel();
             this.title = title;
             this.message = message;
             this.locale = locale;

@@ -31,9 +31,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.poreid.common.Util;
 import org.poreid.config.POReIDConfig;
@@ -56,9 +53,7 @@ public class SelectCardDialogController<T>{
         try {
             this.cardList = cardList;
             this.locale = locale;
-            if (null != UIManager.getLookAndFeel()) {
-                UIManager.setLookAndFeel(POReIDConfig.LAF);
-            }
+            Util.setLookAndFeel();
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
             throw new RuntimeException("Não foi possivel criar a janela de dialogo para seleção de cartão");
         }

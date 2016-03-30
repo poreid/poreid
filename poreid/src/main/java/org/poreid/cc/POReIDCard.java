@@ -469,6 +469,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
     
     private void loadData() throws POReIDException {
         try {
+            beginExclusive();
             if (null == this.cardPan) {
                 selectAID(this.aid);
                 
@@ -476,9 +477,10 @@ public abstract class POReIDCard implements POReIDSmartCard {
                 selectFile(files.SOD.getFileId());
                 this.fileCache = new SmartCardFileCache(this.cardPan, csr.getCachePreference(), readBinary(files.SOD.getDiffOffset(), files.SOD.getDiffLenght()));
             }
-        } catch (IOException ex) {
+        } catch (IOException | CardException ex) {
             throw new POReIDException(ex.getMessage(), ex);
-        } catch (SecurityStatusNotSatisfiedException ignore) { }
+        } catch (SecurityStatusNotSatisfiedException ignore) { 
+        }
     }
 
     

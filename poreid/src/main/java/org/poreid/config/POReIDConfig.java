@@ -42,6 +42,7 @@ import org.xml.sax.SAXException;
  */
 public class POReIDConfig {   
     public static final String LAF = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
+    public static final String LAF_SHORT_NAME = "Nimbus";
     public static final String GENERIC_READER = "generic reader";
     public static final String POREID = "POReID";
     public static final String RSA = "RSA";

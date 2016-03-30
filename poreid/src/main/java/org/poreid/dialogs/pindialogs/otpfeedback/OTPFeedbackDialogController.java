@@ -25,9 +25,8 @@ package org.poreid.dialogs.pindialogs.otpfeedback;
 
 import java.util.Locale;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import org.poreid.config.POReIDConfig;
+import org.poreid.common.Util;
 
 /**
  *
@@ -40,9 +39,7 @@ public class OTPFeedbackDialogController {
     
     private OTPFeedbackDialogController(String pinLabel, Locale locale) {
         try {
-            if (null != UIManager.getLookAndFeel()) {
-                UIManager.setLookAndFeel(POReIDConfig.LAF);
-            }
+            Util.setLookAndFeel();
             this.pinLabel = pinLabel;
             this.locale = locale;
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {

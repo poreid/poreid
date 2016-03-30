@@ -28,9 +28,8 @@ import java.nio.ByteBuffer;
 import java.util.Locale;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import org.poreid.config.POReIDConfig;
+import org.poreid.common.Util;
 import org.poreid.dialogs.DialogEventListener;
 import org.poreid.dialogs.pindialogs.PinEntryCancelledException;
 import org.poreid.dialogs.pindialogs.PinTimeoutException;
@@ -61,9 +60,7 @@ public class VerifyPinDialogController{
         this.pinMaxLength = pinMaxLength;
         this.locale = locale;
         try {
-            if (null != UIManager.getLookAndFeel()) {
-                UIManager.setLookAndFeel(POReIDConfig.LAF);
-            }
+            Util.setLookAndFeel();
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
             throw new RuntimeException("Não foi possivel criar a janela de dialogo de requisição de pin");
         }

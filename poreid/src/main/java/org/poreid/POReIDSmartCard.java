@@ -33,7 +33,7 @@ import org.poreid.dialogs.pindialogs.PinTimeoutException;
  *
  * @author POReID
  */
-public interface POReIDSmartCard extends SmartCardUIData {
+public interface POReIDSmartCard extends SmartCardUIData, AutoCloseable {
 
     /**
      * Produz uma assinatura digital obedecendo aos parametros fornecidos

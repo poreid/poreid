@@ -56,7 +56,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import javax.swing.LookAndFeel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.xml.bind.DatatypeConverter;
+import org.poreid.config.POReIDConfig;
 
 /**
  *
@@ -205,5 +209,13 @@ public class Util {
     /* ideia em http://stackoverflow.com/a/10650881/82609 */
     public static long getDateDiff(Date initialDate, Date finalDate, TimeUnit timeUnit) {        
         return timeUnit.convert(finalDate.getTime() - initialDate.getTime(), TimeUnit.MILLISECONDS);
+    }
+    
+    
+    public static void setLookAndFeel() throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
+        LookAndFeel lnf = UIManager.getLookAndFeel();
+        if (null == lnf || lnf.getName().equalsIgnoreCase(POReIDConfig.LAF_SHORT_NAME)) {
+            UIManager.setLookAndFeel(POReIDConfig.LAF);
+        }
     }
 }
