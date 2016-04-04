@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
+ * Copyright 2014, 2015, 2016 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,11 +23,11 @@
  */
 package org.poreid.cc;
 
+import org.poreid.pcscforjava.Card;
+import org.poreid.pcscforjava.CardTerminal;
 import java.net.Proxy;
 import java.util.Date;
 import java.util.Locale;
-import javax.smartcardio.Card;
-import javax.smartcardio.CardTerminal;
 import org.poreid.DigestPrefixes;
 import org.poreid.Pin;
 import org.poreid.PkAlias;
@@ -59,6 +59,7 @@ public interface CardSpecificReferences {
     
     DigestPrefixes getDigestPrefix(String prefix);
     
+    @Deprecated
     boolean isEMVCAPPin(Pin pin);
     
     boolean getCachePreference();

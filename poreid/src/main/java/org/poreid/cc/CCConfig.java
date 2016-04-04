@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
+ * Copyright 2014, 2015, 2016 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,5 +32,7 @@ import org.poreid.config.POReIDConfig;
 public class CCConfig  extends POReIDConfig{
     public static final String AUTHORIZED_INVOCATION = "org.poreid.cc.OTP";
     public static final String IMAGE_ADDRESS_LOCATION = "/org/poreid/images/morada.png";
+    public static final String BACKGROUND_ADDRESS_LOCATION = "/org/poreid/images/fundo-morada.png";
+    public static final String BACKGROUND_SMALL_ADDRESS_LOCATION = "/org/poreid/images/fundo-morada-min.png";
     public static final byte TIMEOUT = 30;
 }

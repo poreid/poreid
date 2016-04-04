@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
+ * Copyright 2014, 2015, 2016 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,7 @@
  */
 package org.poreid.common;
 
+import java.awt.Image;
 import org.poreid.CertificateChainNotFound;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -50,12 +51,16 @@ import java.security.cert.TrustAnchor;
 import java.security.cert.X509CertSelector;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -217,5 +222,27 @@ public class Util {
         if (null == lnf || lnf.getName().equalsIgnoreCase(POReIDConfig.LAF_SHORT_NAME)) {
             UIManager.setLookAndFeel(POReIDConfig.LAF);
         }
+    }
+    
+    
+    public static Image getImage(String path) {
+
+        try {
+            ImageIcon icon = new ImageIcon(toByteArray(Util.class.getResourceAsStream(path)));
+            return icon.getImage();
+        } catch (IOException ex) {
+            Logger.getLogger(Util.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
+    
+    public static List<Image> getIconImages(){
+        return Arrays.asList(
+                Util.getImage("/org/poreid/images/icone_16x16.png"),
+                Util.getImage("/org/poreid/images/icone_32x32.png"),
+                Util.getImage("/org/poreid/images/icone_48x48.png"),
+                Util.getImage("/org/poreid/images/icone_64x64.png"),
+                Util.getImage("/org/poreid/images/icone_128x128.png"));
     }
 }

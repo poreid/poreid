@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
+ * Copyright 2014, 2015, 2016 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,14 +23,14 @@
  */
 package org.poreid;
 
+import org.poreid.pcscforjava.Card;
+import org.poreid.pcscforjava.CardException;
+import org.poreid.pcscforjava.ResponseAPDU;
 import org.poreid.pinpad.ReaderWithPinPad;
 import org.poreid.pinpad.ReaderWithPinPadData;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import javax.smartcardio.Card;
-import javax.smartcardio.CardException;
-import javax.smartcardio.ResponseAPDU;
 import org.poreid.config.POReIDConfig;
 
 /**

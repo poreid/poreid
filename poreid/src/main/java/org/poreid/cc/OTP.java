@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
+ * Copyright 2014, 2015, 2016 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,9 @@
  */
 package org.poreid.cc;
 
+import org.poreid.pcscforjava.CardException;
+import org.poreid.pcscforjava.CommandAPDU;
+import org.poreid.pcscforjava.ResponseAPDU;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Proxy;
@@ -39,9 +42,6 @@ import java.util.Arrays;
 import java.util.ResourceBundle;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
-import javax.smartcardio.CardException;
-import javax.smartcardio.CommandAPDU;
-import javax.smartcardio.ResponseAPDU;
 import org.poreid.POReIDException;
 import org.poreid.Pin;
 import org.poreid.common.Util;
@@ -418,7 +418,7 @@ class OTP {
     
     private ResponseAPDU transmit(byte[] apdu) throws POReIDException{
         try {
-            return card.getCardSpecificReferences().getCard().getBasicChannel().transmit(new CommandAPDU(apdu));
+            return card.getCardSpecificReferences().getCard().getBasicChannel().transmit(new CommandAPDU(apdu),true,true);
         } catch (CardException ex) {
             warnCitizen(new POReIDException("Não foi possível modificar o" + pin.getLabel() + ". Código de estado: ",ex));
         }

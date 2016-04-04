@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
+ * Copyright 2014, 2015, 2016 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -48,8 +48,9 @@ public class DialogController {
     private Dialog dialog;
     
     private DialogController(String title, String message, Locale locale, boolean error) {
-        try {
+        try {            
             Util.setLookAndFeel();
+            
             this.title = title;
             this.message = message;
             this.locale = locale;
@@ -72,6 +73,7 @@ public class DialogController {
                 public void run() {
                     Dialog dialog = new Dialog(title, message, locale, error);
                     dialog.setVisible(true);
+                    dialog.requestFocusInWindow();
                 }
             });
         } catch (InterruptedException | InvocationTargetException ex) {
@@ -92,6 +94,7 @@ public class DialogController {
                     public void run() {
                         dialog = new Dialog(title, message, locale, error, listener);
                         dialog.setVisible(true);
+                        dialog.requestFocusInWindow();
                     }
                 });
                 if (!semaphore.tryAcquire(timeout, TimeUnit.SECONDS)) {
@@ -107,6 +110,7 @@ public class DialogController {
                     public void run() {
                         dialog = new Dialog(title, message, locale, error);
                         dialog.setVisible(true);
+                        dialog.requestFocusInWindow();
                     }
                 });
             } catch (InterruptedException | InvocationTargetException ex) {

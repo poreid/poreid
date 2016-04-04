@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
+ * Copyright 2014, 2015, 2016 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,8 @@ import org.poreid.common.Util;
 public class Pin {
     private String label = null;
     private final String iconPath;
+    private final String backgroundPath;
+    private final String backgroundSmallPath;
     private final byte reference;
     private byte keyReference;
     private String keyPath = null;
@@ -47,13 +49,17 @@ public class Pin {
      * @param length Tamanho do pin
      * @param maxLength Tamanho máximo do pin
      * @param iconPath Localização do icone associado ao pin
+     * @param backgroundPath Localização do fundo a utilizar na janela de diálogo
+     * @param backgroundSmallPath Localização do fundo a utilizar na janela de diálogo sem mensagem informativa
      * @param reference Referência interna do pin
      * @param keyReference Referência interna da chave
      * @param padChar Caracter de "pad" utilizado
      */
-    public Pin(String label, byte length, byte maxLength, String iconPath, byte reference, byte keyReference, byte padChar) {
+    public Pin(String label, byte length, byte maxLength, String iconPath, String backgroundPath, String backgroundSmallPath, byte reference, byte keyReference, byte padChar) {
         this.label = label;
         this.iconPath = iconPath;
+        this.backgroundPath = backgroundPath;
+        this.backgroundSmallPath = backgroundSmallPath;
         this.reference = reference;
         this.keyReference = keyReference;
         this.padChar = padChar;
@@ -67,13 +73,17 @@ public class Pin {
      * @param length Tamanho do pin
      * @param maxLength Tamanho máximo do pin
      * @param iconPath Localização do icone associado ao pin
+     * @param backgroundPath Localização do fundo a utilizar na janela de diálogo
+     * @param backgroundSmallPath Localização do fundo a utilizar na janela de diálogo sem mensagem informativa
      * @param reference Referência interna do pin
      * @param keyPath Caminho da chave
      * @param padChar Caracter de "pad" utilizado
      */
-    public Pin(String label, byte length, byte maxLength, String iconPath, byte reference, String keyPath, byte padChar) {
+    public Pin(String label, byte length, byte maxLength, String iconPath, String backgroundPath, String backgroundSmallPath, byte reference, String keyPath, byte padChar) {
         this.label = label;
         this.iconPath = iconPath;
+        this.backgroundPath = backgroundPath;
+        this.backgroundSmallPath = backgroundSmallPath;
         this.reference = reference;
         this.keyPath = keyPath;
         this.padChar = padChar;
@@ -87,14 +97,18 @@ public class Pin {
      * @param length Tamanho do pin
      * @param maxLength Tamanho máximo do pin
      * @param iconPath Localização do icone associado ao pin
+     * @param backgroundPath Localização do fundo a utilizar na janela de diálogo
+     * @param backgroundSmallPath Localização do fundo a utilizar na janela de diálogo sem mensagem informativa
      * @param reference Referência interna do pin
      * @param keyReference Referência interna da chave
      * @param keyPath Caminho da chave
      * @param padChar Caracter de "pad" utilizado
      */
-    public Pin(String label, byte length, byte maxLength, String iconPath, byte reference, byte keyReference, String keyPath, byte padChar) {
+    public Pin(String label, byte length, byte maxLength, String iconPath, String backgroundPath, String backgroundSmallPath, byte reference, byte keyReference, String keyPath, byte padChar) {
         this.label = label;
         this.iconPath = iconPath;
+        this.backgroundPath = backgroundPath;
+        this.backgroundSmallPath = backgroundSmallPath;
         this.reference = reference;
         this.keyReference = keyReference;
         this.keyPath = keyPath;
@@ -149,6 +163,23 @@ public class Pin {
      */
     public byte[] getIcon(){
         try (InputStream input = Pin.class.getResourceAsStream(iconPath)){
+            return Util.toByteArray(input);
+        } catch (IOException ex) {
+            return new byte[0];
+        }
+    }
+    
+    
+    public byte[] getBackground(){
+        try (InputStream input = Pin.class.getResourceAsStream(backgroundPath)){
+            return Util.toByteArray(input);
+        } catch (IOException ex) {
+            return new byte[0];
+        }
+    }
+    
+    public byte[] getSmallBackground(){
+        try (InputStream input = Pin.class.getResourceAsStream(backgroundSmallPath)){
             return Util.toByteArray(input);
         } catch (IOException ex) {
             return new byte[0];

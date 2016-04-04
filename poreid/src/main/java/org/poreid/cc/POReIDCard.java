@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
+ * Copyright 2014, 2015, 2016 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,13 @@
 
 package org.poreid.cc;
 
-import org.poreid.KeepAlive;
+
+import org.poreid.pcscforjava.Card;
+import org.poreid.pcscforjava.CardChannel;
+import org.poreid.pcscforjava.CardException;
+import org.poreid.pcscforjava.CommandAPDU;
+import static org.poreid.pcscforjava.PCSCDefines.SCARD_RESET_CARD;
+import org.poreid.pcscforjava.ResponseAPDU;
 import org.poreid.Pin;
 import org.poreid.TerminalFeatures;
 import java.io.ByteArrayInputStream;
@@ -46,16 +52,12 @@ import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import javax.smartcardio.Card;
-import javax.smartcardio.CardChannel;
-import javax.smartcardio.CardException;
-import javax.smartcardio.CommandAPDU;
-import javax.smartcardio.ResponseAPDU;
 import org.poreid.POReIDSmartCard;
 import org.poreid.SmartCardFile;
 import org.poreid.SmartCardFileCache;
 import org.poreid.CertificateChainNotFound;
 import org.poreid.CertificateNotFound;
+import org.poreid.KeepAlive;
 import org.poreid.POReIDException;
 import org.poreid.SecurityStatusNotSatisfiedException;
 import org.poreid.common.Util;
@@ -119,7 +121,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
 
         do {
             CommandAPDU readBinaryApdu = new CommandAPDU(0x00, 0xB0, offset >> 8, offset & 0xFF, (BLOCK_SIZE_READ > size ? size : BLOCK_SIZE_READ) & 0xFF);
-            ResponseAPDU responseApdu = channel.transmit(readBinaryApdu);
+            ResponseAPDU responseApdu = channel.transmit(readBinaryApdu, true, true);
             int sw = responseApdu.getSW();
             if (0x6B00 == sw) {
                 break;
@@ -195,7 +197,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
     private void goToPinKeyPath(Pin pin) throws POReIDException {
         try {
             if (null != pin.getKeyPath()) {
-                if (channel.transmit(new CommandAPDU(Util.hexToBytes(pin.getKeyPath()))).getSW() != 0x9000) {
+                if (channel.transmit(new CommandAPDU(Util.hexToBytes(pin.getKeyPath())),true,true).getSW() != 0x9000) {
                     throw new POReIDException("Erro "+pin.getLabel()+" Key Path " + pin.getKeyPath());
                 }
             }
@@ -229,10 +231,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
                 if (terminalFeatures.isVerifyPinThroughPinpadSupported(this.getClass().getName())) {
                     responseApdu = verifyPinWithPinPad(pin);
                 } else {
-                    if (terminalFeatures.canBypassPinpad()) {
-                        if (!isOSWindows8()) { /* evitar apresentar nesta seção do código um diálogo sem keepalive no windows 8  - ver linha 277+*/
-                            DialogController.getInstance(bundle.getString("incompatible.title"), MessageFormat.format(bundle.getString("incompatible.message.verify.ok"), pin.getLabel()), locale, false).displayDialog(csr.getStartTime());
-                        }
+                    if (terminalFeatures.canBypassPinpad()) {                        
                         responseApdu = verifyPinWithoutPinPad(pin, null);
                     } else {
                         DialogController.getInstance(bundle.getString("incompatible.title"), MessageFormat.format(bundle.getString("incompatible.message.verify.error"), pin.getLabel()), locale, true).displayDialog(csr.getStartTime());
@@ -249,7 +248,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
     
     
     private ResponseAPDU verifyPinWithPinPad(Pin pin) throws POReIDException {
-        UsePinPadDialogController dialogCtl = UsePinPadDialogController.getInstance(PinOperation.VERIFICACAO, pin.getLabel(), pin.getIcon(), locale);
+        UsePinPadDialogController dialogCtl = UsePinPadDialogController.getInstance(PinOperation.VERIFICACAO, pin, locale);
 
         dialogCtl.displayVerifyPinPinPadDialog();
         try {
@@ -263,45 +262,35 @@ public abstract class POReIDCard implements POReIDSmartCard {
     private ResponseAPDU verifyPinWithoutPinPad(Pin pin, byte[] pinCode) throws PinEntryCancelledException, PinTimeoutException, POReIDException {
         byte[] pcode = new byte[8];
         byte[] internal = null;
-        ResponseAPDU responseApdu;
-        boolean unlock = false;
-        ScheduledExecutorService scheduledExecutorService = null;
+        ResponseAPDU responseApdu;        
+        ScheduledExecutorService scheduledExecutorService;
         
-        try {
-            if (isOSWindows8()) {
-                unlock = endExclusive();                
-            }
-
+        try {            
             Arrays.fill(pcode, pin.getPadChar());
-            if (null == pinCode || 0 == pinCode.length) {                
-                if (isOSWindows8()) {
-                    scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();                    
-                    scheduledExecutorService.scheduleAtFixedRate(new KeepAlive(this, pin), 0, 3, TimeUnit.SECONDS);
-                    if (terminalFeatures.isVerifyPinThroughPinpadAvailable() && terminalFeatures.canBypassPinpad()) {
-                        DialogController.getInstance(bundle.getString("incompatible.title"), MessageFormat.format(bundle.getString("incompatible.message.verify.ok"), pin.getLabel()), locale, false).displayDialog(csr.getStartTime());
-                    }
+            if (null == pinCode || 0 == pinCode.length) {
+                
+                scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+                scheduledExecutorService.scheduleAtFixedRate(new KeepAlive(card), 0, 500, TimeUnit.MILLISECONDS);              
+                
+                if (terminalFeatures.isVerifyPinThroughPinpadAvailable() && terminalFeatures.canBypassPinpad()) {
+                    DialogController.getInstance(bundle.getString("incompatible.title"), MessageFormat.format(bundle.getString("incompatible.message.verify.ok"), pin.getLabel()), locale, false).displayDialog(csr.getStartTime());
                 }
+                    
                 try {
-                    internal = VerifyPinDialogController.getInstance(CCConfig.TIMEOUT, pin.getLabel(), pin.getIcon(), pin.getMinLength(), pin.getMaxLength(), locale).askForPin();
+                    internal = VerifyPinDialogController.getInstance(CCConfig.TIMEOUT, pin, locale).askForPin();
                     System.arraycopy(internal, 0, pcode, 0, internal.length);
-                } finally {
-                    if (isOSWindows8() && null != scheduledExecutorService) {
+                } finally {                    
                         scheduledExecutorService.shutdown();
                         try {
                             scheduledExecutorService.awaitTermination(250, TimeUnit.MILLISECONDS);
                         } catch (InterruptedException ignore) {
-                        }
-                    }
+                        }                    
                 }                                                                
             } else {
                 System.arraycopy(pinCode, 0, pcode, 0, pinCode.length);
             }
-            
-            if (isOSWindows8() && unlock) {
-                beginExclusive();
-            }
-            
-            responseApdu = channel.transmit(new CommandAPDU(0x00, 0x20, 0x00, (byte) pin.getReference(), pcode));   
+                                    
+            responseApdu = channel.transmit(new CommandAPDU(0x00, 0x20, 0x00, (byte) pin.getReference(), pcode), true, true);   
         } catch (CardException | IllegalStateException ex) {
             throw new POReIDException(ex);
         } finally {
@@ -325,28 +314,24 @@ public abstract class POReIDCard implements POReIDSmartCard {
 
         try {
             loadData();
-            try {
-                beginExclusive();
-                selectFile(file.getFileId());
-                do {
-                    try {
-                        updateBinary(0, data);
-                        writeComplete = true;
-                    } catch (SecurityStatusNotSatisfiedException ex) {
-                        if (null != file.getPin()) {
-                            verifyPin(file.getPin(), null);
-                            selectFile(file.getFileId());
-                        } else {
-                            throw new POReIDException("Erro não esperado",ex);
-                        }
+            selectFile(file.getFileId());
+            do {
+                try {
+                    updateBinary(0, data);
+                    writeComplete = true;
+                } catch (SecurityStatusNotSatisfiedException ex) {
+                    if (null != file.getPin()) {
+                        verifyPin(file.getPin(), null);
+                        selectFile(file.getFileId());
+                    } else {
+                        throw new POReIDException("Erro não esperado", ex);
                     }
-                } while (!writeComplete);
-            } finally {
-                endExclusive();
-            }
+                }
+            } while (!writeComplete);
+
         } catch (CardException | IllegalStateException ex) {
             throw new POReIDException(ex);
-        } 
+        }
     }
     
     
@@ -364,7 +349,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
             CommandAPDU updateBinaryApdu = new CommandAPDU(0x00, 0xD6, offset >> 8, offset & 0xFF, baos.toByteArray());
             baos.reset();
             Util.prettyPrintBytesToHex(updateBinaryApdu.getBytes());
-            ResponseAPDU responseApdu = channel.transmit(updateBinaryApdu);
+            ResponseAPDU responseApdu = channel.transmit(updateBinaryApdu, true, true);
             int sw = responseApdu.getSW();
             
             if (0x6982 == sw) {
@@ -393,72 +378,66 @@ public abstract class POReIDCard implements POReIDSmartCard {
         int offset, lenght;
         boolean readComplete = false;
 
+        loadData();
+        idFileid = this.fileCache.getSCFileCacheFileName(file);
         try {
-            loadData();
-            idFileid = this.fileCache.getSCFileCacheFileName(file);
-            try {
-                beginExclusive();
-                if (file.isCacheable() && this.fileCache.isCached(idFileid)) {
-                    if (file.isUpdateable()) {
-                        selectFile(file.getFileId());
-                        try {
-                            contents = this.fileCache.readNCheckCacheFile(file, readBinary(file.getDiffOffset(), file.getDiffLenght()));
-                        } catch (SecurityStatusNotSatisfiedException ignore) { }
-                    } else {
-                        contents = this.fileCache.readCachedFile(idFileid);
-                    }
-                    
-                    if (null != contents) {
-                        return contents;
-                    }
-                }
-
-                lenght_sel = selectFile(file.getFileId());
-                if (-1 != file.getOffset()) {
-                    if (-1 != file.getLenght()) {
-                        lenght = file.getLenght();
-                    } else {
-                        lenght = lenght_sel - file.getOffset();
-                    }
-                    offset = file.getOffset();
-                } else {
-                    offset = 0;
-                    lenght = lenght_sel;
-                }
-                
-                do {
+            if (file.isCacheable() && this.fileCache.isCached(idFileid)) {
+                if (file.isUpdateable()) {
+                    selectFile(file.getFileId());
                     try {
-                        contents = readBinary(offset, lenght);
-                        readComplete = true;
-                    } catch (SecurityStatusNotSatisfiedException ex) {
-                        if (null != file.getPin()) {
-                            verifyPin(file.getPin(), null);
-                            selectFile(file.getFileId());
-                        } else {
-                            throw new POReIDException(ex);
-                        }
+                        contents = this.fileCache.readNCheckCacheFile(file, readBinary(file.getDiffOffset(), file.getDiffLenght()));
+                    } catch (SecurityStatusNotSatisfiedException ignore) {
                     }
-                } while (!readComplete);
-
-                if (file.isCacheable()) {
-                    this.fileCache.writeCacheFile(idFileid, contents);
+                } else {
+                    contents = this.fileCache.readCachedFile(idFileid);
                 }
-            } catch (IOException ex) {
-                throw new POReIDException(ex.getMessage(), ex);
-            } finally {
-                endExclusive();
+
+                if (null != contents) {
+                    return contents;
+                }
             }
 
-            return contents;
-        } catch (CardException | IllegalStateException ex) {
-            throw new POReIDException(ex);
+            lenght_sel = selectFile(file.getFileId());
+            if (-1 != file.getOffset()) {
+                if (-1 != file.getLenght()) {
+                    lenght = file.getLenght();
+                } else {
+                    lenght = lenght_sel - file.getOffset();
+                }
+                offset = file.getOffset();
+            } else {
+                offset = 0;
+                lenght = lenght_sel;
+            }
+
+            do {
+                try {
+                    contents = readBinary(offset, lenght);
+                    readComplete = true;
+                } catch (SecurityStatusNotSatisfiedException ex) {
+                    if (null != file.getPin()) {
+                        verifyPin(file.getPin(), null);
+                        selectFile(file.getFileId());
+                    } else {
+                        throw new POReIDException(ex);
+                    }
+                }
+            } while (!readComplete);
+
+            if (file.isCacheable()) {
+                this.fileCache.writeCacheFile(idFileid, contents);
+            }
+        } catch (IOException ex) {
+            throw new POReIDException(ex.getMessage(), ex);
         }
+
+        return contents;
     }
 
     
     private void selectAID(String aid) throws POReIDException{
         try {
-            if (channel.transmit(new CommandAPDU(Util.hexToBytes(aid))).getSW() != 0x9000) {
+            if (channel.transmit(new CommandAPDU(Util.hexToBytes(aid)), true, true).getSW() != 0x9000) {
                 throw new POReIDException("AID " + aid + " não foi selecionado");
             }
         } catch (CardException ex) {
@@ -566,7 +545,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
         try {
             goToPinKeyPath(pin);
 			
-            ResponseAPDU responseApdu = channel.transmit(new CommandAPDU(0x00, 0x20, 0x00, pin.getReference()));
+            ResponseAPDU responseApdu = channel.transmit(new CommandAPDU(0x00, 0x20, 0x00, pin.getReference()),true, true);
             switch (responseApdu.getSW()) {
                 case 0x9000:
                     triesLeft = 3;
@@ -644,7 +623,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
 
         try {
             do {
-                modifyDialogCtl = UsePinPadDialogController.getInstance(PinOperation.MODIFICACAO, pin.getLabel(), pin.getIcon(), locale);
+                modifyDialogCtl = UsePinPadDialogController.getInstance(PinOperation.MODIFICACAO, pin, locale);
                 modifyDialogCtl.displayVerifyPinPinPadDialog();
 
                 if (verifyToModify()) {
@@ -714,7 +693,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
         cApdu = new CommandAPDU(getNFillModifyPinAPDU(pin, new byte[][]{pins[0].array(), pins[1].array()}));
         Arrays.fill(pins[0].array(), pin.getPadChar());
         Arrays.fill(pins[1].array(), pin.getPadChar()); 
-        response = channel.transmit(cApdu);
+        response = channel.transmit(cApdu, true, true);
         
         if (null != otp && 0x9000 == response.getSW()) {
             otp.finish();
@@ -729,9 +708,10 @@ public abstract class POReIDCard implements POReIDSmartCard {
     }
     
     
-    private boolean isOSWindows8() {
-        return System.getProperty("os.name").contains("Windows 8");
-    }
+    /*private boolean isOSWindows8Plus() {
+        String osName = System.getProperty("os.name");
+        return (osName.contains("Windows 8") || osName.contains("Windows 10"));
+    }*/
      
      
     private byte[] getVerifyPinAPDU(Pin pin) {
@@ -743,7 +723,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
     protected void beginExclusive() throws CardException{
         if (!locked){
             locked = true;
-            card.beginExclusive();
+            card.beginExclusive();            
         }
     }
     
@@ -751,7 +731,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
     protected boolean endExclusive() throws CardException{
         boolean unlock = true;
         if (locked){
-            locked = false;
+            locked = false;            
             card.endExclusive();
         } else {
             unlock = false;
@@ -774,7 +754,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
     public void close() throws POReIDException{
         try {
             endExclusive();
-            this.card.disconnect(true);
+            this.card.disconnect(SCARD_RESET_CARD);
         } catch (CardException ex) {
             throw new POReIDException("Ocorreu um erro durante a terminação da ligação com cartão", ex);
         }

@@ -5,56 +5,56 @@
             <atr>3B7D95000080318065B08311C0A98300</atr>
             <properties>
                 <implementing-class>org.poreid.cc.gemsafe.GemsafeCard</implementing-class>
-                <cache-enabled>true</cache-enabled>
+                <cache-enabled>false</cache-enabled>
             </properties>
         </smartcard>
         <smartcard>
             <atr>3B7D95000080318065B08311C0A983009000</atr>
             <properties>
                 <implementing-class>org.poreid.cc.gemsafe.GemsafeCard</implementing-class>
-                <cache-enabled>true</cache-enabled>
+                <cache-enabled>false</cache-enabled>
             </properties>
         </smartcard>
         <smartcard>
             <atr>3B7D95000080318065B0831100C88300</atr>
             <properties>
                 <implementing-class>org.poreid.cc.gemsafe.GemsafeCard</implementing-class>
-                <cache-enabled>true</cache-enabled>
+                <cache-enabled>false</cache-enabled>
             </properties>
         </smartcard>
         <smartcard>
             <atr>3B7D95000080318065B0831100C883009000</atr>
             <properties>
                 <implementing-class>org.poreid.cc.gemsafe.GemsafeCard</implementing-class>
-                <cache-enabled>true</cache-enabled>
+                <cache-enabled>false</cache-enabled>
             </properties>
         </smartcard>
         <smartcard>
             <atr>3B650000D000540131</atr>
             <properties>
                 <implementing-class>org.poreid.cc.ias.IASCard</implementing-class>
-                <cache-enabled>true</cache-enabled>
+                <cache-enabled>false</cache-enabled>
             </properties>
         </smartcard> 
         <smartcard>
             <atr>3B650000D000540132</atr>
             <properties>
                 <implementing-class>org.poreid.cc.ias.IASCard</implementing-class>
-                <cache-enabled>true</cache-enabled>
+                <cache-enabled>false</cache-enabled>
             </properties>
         </smartcard>  
         <smartcard>
             <atr>3B959540FFD000540131</atr>
             <properties>
                 <implementing-class>org.poreid.cc.ias.IASCard</implementing-class>
-                <cache-enabled>true</cache-enabled>
+                <cache-enabled>false</cache-enabled>
             </properties>
         </smartcard>  
         <smartcard>
             <atr>3B959540FFD000540132</atr>
             <properties>
                 <implementing-class>org.poreid.cc.ias.IASCard</implementing-class>
-                <cache-enabled>true</cache-enabled>
+                <cache-enabled>false</cache-enabled>
             </properties>
         </smartcard>
     </poreid-supported-smartcards>
@@ -134,8 +134,8 @@
                             <os-name>windows</os-name>
                             <supports>
                                 <!-- estes senhores têm um problema no driver em windows -->
-                                <verify>false</verify>
-                                <modify>false</modify>
+                                <verify>true</verify>
+                                <modify>true</modify>
                                 <inject>true</inject>
                             </supports>
                         </os>
@@ -275,7 +275,7 @@
     <default-locale language="pt" country="PT"/>
     <allow-external-pin-caching status="false"/>
     <timed-interaction>
-        <enabled>false</enabled>
-        <!--<period>120</period> unidade em segundos -->
+        <enabled>true</enabled>
+        <period>120</period>
     </timed-interaction>
 </configuration>

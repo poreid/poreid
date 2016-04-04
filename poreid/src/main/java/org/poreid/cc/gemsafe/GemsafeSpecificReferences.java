@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
+ * Copyright 2014, 2015, 2016 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,14 +23,14 @@
  */
 package org.poreid.cc.gemsafe;
 
+import org.poreid.pcscforjava.Card;
+import org.poreid.pcscforjava.CardTerminal;
 import java.net.Proxy;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-import javax.smartcardio.Card;
-import javax.smartcardio.CardTerminal;
 import org.poreid.DigestPrefixes;
 import org.poreid.Pin;
 import org.poreid.PkAlias;
@@ -79,8 +79,28 @@ public final class GemsafeSpecificReferences implements CardSpecificReferences{
         //algorithmID.put(RSAPaddingSchemes.RFC2409, (byte)0x03); 
         
         pinInfo = new HashMap<>();
-        pinInfo.put(PkAlias.AUTENTICACAO, new Pin(bundle.getString("authentication.pin"), TAMANHO_MIN_PIN, TAMANHO_MAX_PIN, CCConfig.IMAGE_AUTHENTICATION_LOCATION, (byte)0x81, (byte)0x02, SELECT_AID, (byte)0xFF));
-        pinInfo.put(PkAlias.ASSINATURA, new Pin(bundle.getString("signature.pin"), TAMANHO_MIN_PIN, TAMANHO_MAX_PIN, CCConfig.IMAGE_SIGNATURE_LOCATION, (byte)0x82, (byte)0x01, SELECT_AID, (byte)0xFF));
+        pinInfo.put(PkAlias.AUTENTICACAO, 
+                new Pin(bundle.getString("authentication.pin"), 
+                        TAMANHO_MIN_PIN, 
+                        TAMANHO_MAX_PIN, 
+                        CCConfig.IMAGE_AUTHENTICATION_LOCATION, 
+                        CCConfig.BACKGROUND_AUTHENTICATION_LOCATION,
+                        CCConfig.BACKGROUND_SMALL_AUTHENTICATION_LOCATION,
+                        (byte)0x81, 
+                        (byte)0x02, 
+                        SELECT_AID, 
+                        (byte)0xFF));
+        pinInfo.put(PkAlias.ASSINATURA, 
+                new Pin(bundle.getString("signature.pin"), 
+                        TAMANHO_MIN_PIN, 
+                        TAMANHO_MAX_PIN, 
+                        CCConfig.IMAGE_SIGNATURE_LOCATION,
+                        CCConfig.BACKGROUND_SIGNATURE_LOCATION,
+                        CCConfig.BACKGROUND_SMALL_SIGNATURE_LOCATION,
+                        (byte)0x82, 
+                        (byte)0x01, 
+                        SELECT_AID, 
+                        (byte)0xFF));
         
         digestsMap = new HashMap<>();
         digestsMap.put("SHA-1", DigestPrefixes.SHA_1);
@@ -100,7 +120,15 @@ public final class GemsafeSpecificReferences implements CardSpecificReferences{
     
     @Override
     public Pin getAddressPin() {
-        return new Pin(bundle.getString("address.pin"), TAMANHO_MIN_PIN, TAMANHO_MAX_PIN, CCConfig.IMAGE_ADDRESS_LOCATION, (byte)0x83, SELECT_AID, (byte)0xFF);
+        return new Pin(bundle.getString("address.pin"), 
+                TAMANHO_MIN_PIN, 
+                TAMANHO_MAX_PIN, 
+                CCConfig.IMAGE_ADDRESS_LOCATION,
+                CCConfig.BACKGROUND_ADDRESS_LOCATION,
+                CCConfig.BACKGROUND_SMALL_ADDRESS_LOCATION,
+                (byte)0x83, 
+                SELECT_AID, 
+                (byte)0xFF);
     }
 
     
@@ -152,8 +180,10 @@ public final class GemsafeSpecificReferences implements CardSpecificReferences{
 
 
     @Override
-    public boolean isEMVCAPPin(Pin pin) {
-        return pinInfo.get(PkAlias.AUTENTICACAO).equals(pin);
+    @Deprecated
+    public boolean isEMVCAPPin(Pin pin) {        
+        //return pinInfo.get(PkAlias.AUTENTICACAO).equals(pin);
+        return false;
     }
 
     @Override

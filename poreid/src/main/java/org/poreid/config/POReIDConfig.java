@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
+ * Copyright 2014, 2015, 2016 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -58,7 +58,11 @@ public class POReIDConfig {
     public static final String IMAGE_ERROR_LOCATION = "/org/poreid/images/erro.png";
     public static final String IMAGE_WARNING_LOCATION = "/org/poreid/images/aviso.png";
     public static final String IMAGE_SIGNATURE_LOCATION = "/org/poreid/images/assinatura.png";
-    public static final String IMAGE_AUTHENTICATION_LOCATION = "/org/poreid/images/autenticacao.png";    
+    public static final String BACKGROUND_SIGNATURE_LOCATION = "/org/poreid/images/fundo-assinatura.png";
+    public static final String BACKGROUND_SMALL_SIGNATURE_LOCATION = "/org/poreid/images/fundo-assinatura-min.png";
+    public static final String IMAGE_AUTHENTICATION_LOCATION = "/org/poreid/images/autenticacao.png";
+    public static final String BACKGROUND_AUTHENTICATION_LOCATION = "/org/poreid/images/fundo-autenticacao.png";
+    public static final String BACKGROUND_SMALL_AUTHENTICATION_LOCATION = "/org/poreid/images/fundo-autenticacao-min.png";
     private static final String I18N_BUNDLE_LOCATION = "org.poreid.i18n.";
     private static final String XML_SCHEMA = "/org/poreid/config/schema/poreid.config.xsd";
     private static final String CONFIGURACAO = "/org/poreid/config/xml/poreid.config.xml";

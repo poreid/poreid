@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
+ * Copyright 2014, 2015, 2016 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,12 +24,14 @@
 
 package org.poreid;
 
+import org.poreid.pcscforjava.Card;
+import org.poreid.pcscforjava.CardException;
+import org.poreid.pcscforjava.CardTerminal;
+import org.poreid.pcscforjava.CardTerminals;
+import org.poreid.pcscforjava.TerminalFactory;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.Proxy;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -37,11 +39,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.smartcardio.Card;
-import javax.smartcardio.CardException;
-import javax.smartcardio.CardTerminal;
-import javax.smartcardio.CardTerminals;
-import javax.smartcardio.TerminalFactory;
 import org.poreid.common.Util;
 import org.poreid.config.POReIDConfig;
 import org.poreid.dialogs.pindialogs.usepinpad.UsePinPadDialogController;
@@ -54,13 +51,10 @@ import org.poreid.dialogs.selectcard.SelectCardDialogController;
  * @author POReID
  */
 public final class CardFactory {  
-    private static final Locale defaultLocale;
-    private static final boolean customProvider;
+    private static final Locale defaultLocale;    
    
     
-    static {
-        LinuxFix.locateLibpcsclite();
-        customProvider = MacOSXFix.usePOReIDPCSCProvider();
+    static {        
         defaultLocale = POReIDConfig.getDefaultLocale();
     }
 
@@ -194,7 +188,7 @@ public final class CardFactory {
      * @throws POReIDException Exceção lançada quando ocorre uma exceção num componente (encapsula a exeção original)
      */
     public static <T extends POReIDSmartCard> T getCard(Locale locale, CacheStatus cachePreferences, Proxy proxy) throws CardTerminalNotPresentException, UnknownCardException, CardNotPresentException, CanceledSelectionException, POReIDException{
-        TerminalFactory factory;
+        TerminalFactory factory;        
         Iterator<CardTerminal> iterator;
         List<CardTerminal> terminals;
         List<T> cardList = new ArrayList<>();
@@ -204,17 +198,27 @@ public final class CardFactory {
         if (javax.swing.SwingUtilities.isEventDispatchThread()) {
             throw new POReIDException("Não deve utilizar a Event Dispatch Thread (EDT) para executar lógica da aplicação");
         }
-        
-        bandAid();
-        
-        try {            
-            factory = (customProvider) ? TerminalFactory.getInstance("MacOSXCustomPCSC", null) : TerminalFactory.getDefault();
-            terminals = factory.terminals().list(CardTerminals.State.CARD_PRESENT);
-        } catch (CardException ex) {
-            throw new CardTerminalNotPresentException("Não foi encontrado um leitor de cartões", ex);
-        } catch (NoSuchAlgorithmException ex) {
-            throw new POReIDException("Problema com o provider PCSC", ex);
+                       
+        try {
+            factory = TerminalFactory.getDefault();
+            if (!factory.terminals().isValidContext()) {
+                factory.releaseContext();
+                factory = TerminalFactory.getDefault();
+            }
+        } catch (CardException ex){
+            throw new CardTerminalNotPresentException("Não foi encontrado um leitor de cartões",ex);
         }
+        
+        try {                        
+            if (factory.terminals().list().isEmpty()) {
+                factory.releaseContext();
+                throw new CardTerminalNotPresentException("Não foi encontrado um leitor de cartões");
+            }
+            terminals = factory.terminals().list(CardTerminals.State.CARD_PRESENT);
+        } catch (CardException | NullPointerException ex) {
+            factory.releaseContext();
+            throw new CardTerminalNotPresentException("Não foi possível obter lista de leitores", ex);
+        }     
         
         iterator = terminals.iterator();
         while (iterator.hasNext()) {
@@ -281,38 +285,6 @@ public final class CardFactory {
     }    
     
     
-    /* martelada para corrigir comportamento anómalo em windows 8 pelo menos - http://stackoverflow.com/a/26470094 */
-    private static void bandAid() throws POReIDException{
-        try {
-            Class pcscterminal = Class.forName((customProvider) ? "org.poreid.macosx.smartcardio.PCSCTerminals" : "sun.security.smartcardio.PCSCTerminals");
-            Field contextId = pcscterminal.getDeclaredField("contextId");
-            contextId.setAccessible(true);
-            
-            if (contextId.getLong(pcscterminal) != 0) {                
-                Class pcsc = Class.forName((customProvider) ? "org.poreid.macosx.smartcardio.PCSC" : "sun.security.smartcardio.PCSC");
-                Method SCardEstablishContext = pcsc.getDeclaredMethod("SCardEstablishContext", new Class[]{Integer.TYPE});
-                SCardEstablishContext.setAccessible(true);
-                
-                Field SCARD_SCOPE_USER = pcsc.getDeclaredField("SCARD_SCOPE_USER");
-                SCARD_SCOPE_USER.setAccessible(true);
-                
-                long newId = ((Long) SCardEstablishContext.invoke(pcsc, new Object[]{SCARD_SCOPE_USER.getInt(pcsc)}));
-                contextId.setLong(pcscterminal, newId);
-                                
-                TerminalFactory tFactory = TerminalFactory.getDefault();
-                CardTerminals cTerminals = tFactory.terminals();
-                Field fieldTerminals = pcscterminal.getDeclaredField("terminals");
-                fieldTerminals.setAccessible(true);
-                Class classMap = Class.forName("java.util.Map");
-                Method clearMap = classMap.getDeclaredMethod("clear");
-                
-                clearMap.invoke(fieldTerminals.get(cTerminals));
-            }
-        } catch (ClassNotFoundException | NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ex) {            
-            throw new POReIDException(ex);
-        }
-    }
-
     /**
      * Permite redefinir a utilização da cache face à predefinição existente.
      */

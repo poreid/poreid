@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
+ * Copyright 2014, 2015, 2016 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,16 +24,16 @@
 
 package org.poreid.cc.ias;
 
+import org.poreid.pcscforjava.Card;
+import org.poreid.pcscforjava.CardChannel;
+import org.poreid.pcscforjava.CardException;
+import org.poreid.pcscforjava.CardTerminal;
+import org.poreid.pcscforjava.CommandAPDU;
+import org.poreid.pcscforjava.ResponseAPDU;
 import java.io.ByteArrayOutputStream;
 import java.net.Proxy;
 import java.util.Date;
 import java.util.Locale;
-import javax.smartcardio.Card;
-import javax.smartcardio.CardChannel;
-import javax.smartcardio.CardException;
-import javax.smartcardio.CardTerminal;
-import javax.smartcardio.CommandAPDU;
-import javax.smartcardio.ResponseAPDU;
 import org.poreid.DigestPrefixes;
 import org.poreid.POReIDException;
 import org.poreid.Pin;
@@ -68,12 +68,12 @@ public final class IASCard extends CitizenCard {
         try {
             ResponseAPDU responseApdu;
 
-            responseApdu = channel.transmit(new CommandAPDU(0x00, 0xA4, 0x03, 0x0C));
+            responseApdu = channel.transmit(new CommandAPDU(0x00, 0xA4, 0x03, 0x0C), true, true);
             if (0x9000 != responseApdu.getSW()) {
                 throw new POReIDException("Código de estado não esperado: " + Integer.toHexString(responseApdu.getSW()));
             }
 
-            responseApdu = channel.transmit(new CommandAPDU(0x00, 0xA4, 0x09, 0x00, Util.hexToBytes(fileId.substring(4))));
+            responseApdu = channel.transmit(new CommandAPDU(0x00, 0xA4, 0x09, 0x00, Util.hexToBytes(fileId.substring(4))), true, true);
             if (0x9000 != responseApdu.getSW()) {
                 throw new POReIDException("Código de estado não esperado: " + Integer.toHexString(responseApdu.getSW()));
             }
@@ -113,7 +113,7 @@ public final class IASCard extends CitizenCard {
     @Override
     public final byte[] getChallenge() throws POReIDException {
         try {
-            ResponseAPDU response = this.channel.transmit(new CommandAPDU(0x00, 0x84, 0x00, 0x00, 0x08));
+            ResponseAPDU response = this.channel.transmit(new CommandAPDU(0x00, 0x84, 0x00, 0x00, 0x08), true, true);
             if (response.getSW() != 0x9000) {
                 throw new POReIDException("Código de estado não esperado: " + response.getSW());
             }
@@ -137,30 +137,24 @@ public final class IASCard extends CitizenCard {
             if (null == digestPrefixes) {
                 throw new POReIDException("Algoritmo de resumo desconhecido - " + digestAlgo);
             }
+          
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            baos.write(digestPrefixes.getPrefix(), 0, digestPrefixes.getPrefix().length);
+            baos.write(hash, 0, hash.length);
 
-            try {
-                beginExclusive();
-
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                baos.write(digestPrefixes.getPrefix(), 0, digestPrefixes.getPrefix().length);
-                baos.write(hash, 0, hash.length);
-                
-                if (!CCConfig.isExternalPinCachePermitted() && !isOTPPinChanging()) {
-                    pinCode = null;
-                }
-               
-                verifyPin(iasPin, pinCode);
-                setSecurityEnvironment(csr.getAlgorithmID(digestAlgo, scheme), iasPin.getKeyReference());
-
-                responseApdu = channel.transmit(new CommandAPDU(0x00, 0x88, 0x02, 0x00, baos.toByteArray()));
-                if (0x9000 != responseApdu.getSW()) {
-                    throw new POReIDException("Erro durante a computação da assinatura digital: " + Integer.toHexString(responseApdu.getSW()));
-                }
-
-                return responseApdu.getData();
-            } finally {
-                endExclusive();
+            if (!CCConfig.isExternalPinCachePermitted() && !isOTPPinChanging()) {
+                pinCode = null;
             }
+
+            verifyPin(iasPin, pinCode);
+            setSecurityEnvironment(csr.getAlgorithmID(digestAlgo, scheme), iasPin.getKeyReference());
+
+            responseApdu = channel.transmit(new CommandAPDU(0x00, 0x88, 0x02, 0x00, baos.toByteArray()), true, true);
+            if (0x9000 != responseApdu.getSW()) {
+                throw new POReIDException("Erro durante a computação da assinatura digital: " + Integer.toHexString(responseApdu.getSW()));
+            }
+
+            return responseApdu.getData();     
         } catch (CardException | IllegalStateException ex) {
             throw new POReIDException(ex);
         }
@@ -174,7 +168,7 @@ public final class IASCard extends CitizenCard {
             throw new POReIDException("Algoritmo não suportado");
         }
         
-        responseApdu = channel.transmit(new CommandAPDU(0x00, 0x22, 0x41, 0xA4, new byte[]{(byte) 0x95, (byte) 0x01, (byte) 0x40, (byte) 0x84, (byte) 0x01, keyReference, (byte) 0x80, (byte) 0x01, algorithmID}));
+        responseApdu = channel.transmit(new CommandAPDU(0x00, 0x22, 0x41, 0xA4, new byte[]{(byte) 0x95, (byte) 0x01, (byte) 0x40, (byte) 0x84, (byte) 0x01, keyReference, (byte) 0x80, (byte) 0x01, algorithmID}), true, true);
         if (0x9000 != responseApdu.getSW()) {
             throw new POReIDException("Código de estado não esperado: " + Integer.toHexString(responseApdu.getSW()));
         }

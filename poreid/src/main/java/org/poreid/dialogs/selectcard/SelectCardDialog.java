@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
+ * Copyright 2014, 2015, 2016 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,11 +23,13 @@
  */
 package org.poreid.dialogs.selectcard;
 
+import java.awt.Dialog;
 import org.poreid.dialogs.DialogEventListener;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.swing.DefaultListModel;
+import org.poreid.common.Util;
 import org.poreid.config.POReIDConfig;
 
 /**
@@ -47,7 +49,10 @@ public class SelectCardDialog<T> extends javax.swing.JDialog {
      * @param listener Objecto a notificar
      */
     public SelectCardDialog(final List<T> list, Locale locale, DialogEventListener<T> listener) {
-        super();        
+        super((Dialog)null, true);
+        
+        setIconImages(Util.getIconImages());
+        
         this.listener = listener; 
         for (T t : list) {
             model.addElement(t);
@@ -67,6 +72,7 @@ public class SelectCardDialog<T> extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         availableCards = new javax.swing.JList();
         jPanel1 = new javax.swing.JPanel();
@@ -75,6 +81,7 @@ public class SelectCardDialog<T> extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setAlwaysOnTop(true);
+        setBackground(new java.awt.Color(228, 228, 228));
         setIconImage(null);
         setModal(true);
         setResizable(false);
@@ -83,6 +90,8 @@ public class SelectCardDialog<T> extends javax.swing.JDialog {
                 formWindowClosing(evt);
             }
         });
+
+        jPanel2.setBackground(new java.awt.Color(228, 228, 228));
 
         availableCards.setModel(model);
         availableCards.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
@@ -97,14 +106,17 @@ public class SelectCardDialog<T> extends javax.swing.JDialog {
         });
         jScrollPane2.setViewportView(availableCards);
 
-        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 50, 0));
+        jPanel1.setBackground(new java.awt.Color(228, 228, 228));
+        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 50, 2));
 
+        selectBtn.setFont(selectBtn.getFont().deriveFont(selectBtn.getFont().getSize()-1f));
         selectBtn.setText(bundle.getString("select.button"));
         selectBtn.getAccessibleContext().setAccessibleDescription(bundle.getString("select.button.description"));
+        selectBtn.setAutoscrolls(true);
         selectBtn.setEnabled(false);
-        selectBtn.setMaximumSize(new java.awt.Dimension(150, 36));
-        selectBtn.setMinimumSize(new java.awt.Dimension(150, 36));
-        selectBtn.setPreferredSize(new java.awt.Dimension(150, 36));
+        selectBtn.setMaximumSize(new java.awt.Dimension(136, 30));
+        selectBtn.setMinimumSize(new java.awt.Dimension(136, 30));
+        selectBtn.setPreferredSize(new java.awt.Dimension(136, 30));
         selectBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 selectBtnActionPerformed(evt);
@@ -112,11 +124,12 @@ public class SelectCardDialog<T> extends javax.swing.JDialog {
         });
         jPanel1.add(selectBtn);
 
+        cancelBtn.setFont(cancelBtn.getFont().deriveFont(cancelBtn.getFont().getSize()-1f));
         cancelBtn.setText(bundle.getString("cancel.button"));
         cancelBtn.getAccessibleContext().setAccessibleDescription(bundle.getString("cancel.button.description"));
-        cancelBtn.setMaximumSize(new java.awt.Dimension(150, 36));
-        cancelBtn.setMinimumSize(new java.awt.Dimension(150, 36));
-        cancelBtn.setPreferredSize(new java.awt.Dimension(150, 36));
+        cancelBtn.setMaximumSize(new java.awt.Dimension(136, 30));
+        cancelBtn.setMinimumSize(new java.awt.Dimension(136, 30));
+        cancelBtn.setPreferredSize(new java.awt.Dimension(136, 30));
         cancelBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelBtnActionPerformed(evt);
@@ -124,25 +137,39 @@ public class SelectCardDialog<T> extends javax.swing.JDialog {
         });
         jPanel1.add(cancelBtn);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 413, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane2))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 413, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -180,6 +207,7 @@ public class SelectCardDialog<T> extends javax.swing.JDialog {
     private javax.swing.JList<T> availableCards;
     private javax.swing.JButton cancelBtn;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JButton selectBtn;
     // End of variables declaration//GEN-END:variables

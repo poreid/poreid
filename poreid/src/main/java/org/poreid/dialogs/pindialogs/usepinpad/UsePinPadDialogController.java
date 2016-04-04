@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
+ * Copyright 2014, 2015, 2016 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,8 +25,10 @@
 package org.poreid.dialogs.pindialogs.usepinpad;
 
 import java.util.Locale;
+import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 import javax.swing.UnsupportedLookAndFeelException;
+import org.poreid.Pin;
 import org.poreid.common.Util;
 
 /**
@@ -35,19 +37,17 @@ import org.poreid.common.Util;
  */
 public class UsePinPadDialogController {
     private static String infoMsg;
-    private String pinLabel;
-    private byte[] pinIcon;
+    final private Pin pin;    
     private Locale locale;
-    UsePinPadDialog dialog;
+    JDialog dialog;
     PinOperation pinOp;
     
     
-    private UsePinPadDialogController(PinOperation operacao, String pinLabel, byte[] pinIcon, Locale locale) {
+    private UsePinPadDialogController(PinOperation operacao, Pin pin, Locale locale) {
         try {
             Util.setLookAndFeel();
-            this.pinLabel = pinLabel;
-            this.locale = locale;
-            this.pinIcon = pinIcon;
+            this.pin = pin;            
+            this.locale = locale;            
             this.pinOp = operacao;
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
             throw new RuntimeException("Não foi possivel criar a janela de dialogo de requisição de pin");
@@ -55,8 +55,8 @@ public class UsePinPadDialogController {
     }
     
     
-    public static UsePinPadDialogController getInstance(PinOperation operacao, String pinLabel, byte[] pinIcon, Locale locale){
-        return new UsePinPadDialogController(operacao, pinLabel, pinIcon, locale);
+    public static UsePinPadDialogController getInstance(PinOperation operacao, Pin pin, Locale locale){
+        return new UsePinPadDialogController(operacao, pin, locale);
     }
     
     
@@ -65,11 +65,13 @@ public class UsePinPadDialogController {
             @Override
             public void run() {
                 if (null != infoMsg && !infoMsg.isEmpty()){
-                    UsePinPadDialogController.this.dialog = new UsePinPadDialog(pinOp,pinLabel, pinIcon, locale, infoMsg);
+                    UsePinPadDialogController.this.dialog = new UsePinPadDialog(pinOp,pin.getLabel(), pin.getBackground(), locale, infoMsg);
                 } else {
-                    UsePinPadDialogController.this.dialog = new UsePinPadDialog(pinOp,pinLabel, pinIcon, locale);
+                    UsePinPadDialogController.this.dialog = new UsePinPadDialogSmall(pinOp,pin.getLabel(), pin.getSmallBackground(), locale);
                 }
+                UsePinPadDialogController.this.dialog.setAlwaysOnTop(true);
                 UsePinPadDialogController.this.dialog.setVisible(true);
+                UsePinPadDialogController.this.dialog.requestFocusInWindow();
             }
         });
     }

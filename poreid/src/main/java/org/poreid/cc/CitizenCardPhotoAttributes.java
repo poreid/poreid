@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
+ * Copyright 2014, 2015, 2016 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -98,7 +98,7 @@ public final class CitizenCardPhotoAttributes {
             }
         }
 
-        photo = Arrays.copyOfRange(data, 80, offset + 1);
+        photo = Arrays.copyOfRange(data, 0/*80*/, offset + 1); //RUIM: a applet envia os primeiros 80 bytes, logo este componente tem de trabalhar da mesma forma...
         isdataLoaded = true;
     }
 }

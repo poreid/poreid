@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
+ * Copyright 2014, 2015, 2016 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -78,6 +78,7 @@ public class WrongPinDialogController {
                     public void run() {
                         dialog = new WrongPinDialog(pinLabel, pinTriesLeft, locale, listener);
                         dialog.setVisible(true);
+                        dialog.requestFocusInWindow();
                     }
                 });
                 if (!semaphore.tryAcquire(timeout, TimeUnit.SECONDS)) {
@@ -94,6 +95,7 @@ public class WrongPinDialogController {
                     public void run() {
                         dialog = new WrongPinDialog(pinLabel, pinTriesLeft, locale, listener);
                         dialog.setVisible(true);
+                        dialog.requestFocusInWindow();
                     }
                 });
             } catch (InterruptedException | InvocationTargetException ex) {

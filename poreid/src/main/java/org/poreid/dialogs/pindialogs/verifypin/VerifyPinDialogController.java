@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
+ * Copyright 2014, 2015, 2016 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,9 @@ import java.nio.ByteBuffer;
 import java.util.Locale;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+import javax.swing.JDialog;
 import javax.swing.UnsupportedLookAndFeelException;
+import org.poreid.Pin;
 import org.poreid.common.Util;
 import org.poreid.dialogs.DialogEventListener;
 import org.poreid.dialogs.pindialogs.PinEntryCancelledException;
@@ -40,24 +42,22 @@ import org.poreid.dialogs.pindialogs.PinTimeoutException;
  */
 public class VerifyPinDialogController{    
     private static String infoMsg;
+    private final Pin pin;
     private Semaphore semaphore;
     private boolean cancelled;
     private ByteBuffer pinCode;
     private int timeOut;
-    private byte[] pinIcon;
+    /*private byte[] pinIcon;
     private String pinLabel;
     private int pinMaxLength;
-    private int pinMinLength;
+    private int pinMinLength;*/
     private Locale locale;
-    private VerifyPinDialog dialog = null;
+    private JDialog dialog = null;
     
     
-    private VerifyPinDialogController(int timeOut, String pinLabel, byte[] pinICon, int pinMinLength, int pinMaxLength, Locale locale) {
+    private VerifyPinDialogController(int timeOut, Pin pin, Locale locale) {
         this.timeOut = timeOut;
-        this.pinIcon = pinICon;
-        this.pinLabel = pinLabel;
-        this.pinMinLength = pinMinLength;
-        this.pinMaxLength = pinMaxLength;
+        this.pin = pin;
         this.locale = locale;
         try {
             Util.setLookAndFeel();
@@ -67,8 +67,8 @@ public class VerifyPinDialogController{
     }
     
     
-    public static VerifyPinDialogController getInstance(int timeOut, String pinLabel, byte[] pinICon, int pinMinLength, int pinMaxLength, Locale locale){
-        return new VerifyPinDialogController(timeOut, pinLabel, pinICon, pinMinLength, pinMaxLength, locale);
+    public static VerifyPinDialogController getInstance(int timeOut, Pin pin, Locale locale){
+        return new VerifyPinDialogController(timeOut, pin, locale);
     }
     
     
@@ -84,12 +84,12 @@ public class VerifyPinDialogController{
         }
 
         if (cancelled) {
-            throw new PinEntryCancelledException("Introdução do "+pinLabel+" cancelada.");
+            throw new PinEntryCancelledException("Introdução do "+pin.getLabel()+" cancelada.");
         }
 
         if (null == pinCode) {
             dialog.dispose();
-            throw new PinTimeoutException(pinLabel+ "não foi inserido dentro do tempo regular. Tempo regular = "+timeOut+ "segundos.");
+            throw new PinTimeoutException(pin.getLabel()+ " não foi inserido dentro do tempo regular. Tempo regular = "+timeOut+ "segundos.");
         }
 
         return pinCode.array();
@@ -102,11 +102,13 @@ public class VerifyPinDialogController{
             @Override
             public void run() {
                 if (null != infoMsg && !infoMsg.isEmpty()){
-                    dialog = new VerifyPinDialog(pinLabel, pinIcon, pinMinLength, pinMaxLength, locale, VerifyPinDialogController.this.listener, infoMsg);
+                    dialog = new VerifyPinDialog(pin.getLabel(), pin.getBackground(), pin.getMinLength(), pin.getMaxLength(), locale, VerifyPinDialogController.this.listener, infoMsg);
                 } else {
-                    dialog = new VerifyPinDialog(pinLabel, pinIcon, pinMinLength, pinMaxLength, locale, VerifyPinDialogController.this.listener);
+                    dialog = new VerifyPinDialogSmall(pin.getLabel(), pin.getSmallBackground(), pin.getMinLength(), pin.getMaxLength(), locale, VerifyPinDialogController.this.listener);
                 }
+                dialog.setAlwaysOnTop(true);
                 dialog.setVisible(true);
+                dialog.requestFocusInWindow();
             }
         });
     }

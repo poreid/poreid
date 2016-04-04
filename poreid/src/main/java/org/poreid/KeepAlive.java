@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
+ * Copyright 2014, 2015, 2016 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,24 +24,22 @@
 
 package org.poreid;
 
+import org.poreid.pcscforjava.Card;
+
+
 /**
  * 
  * @author POReID
  */
 public final class KeepAlive implements Runnable{
-    private final POReIDSmartCard card;
-    private final Pin pin;
+    private final Card card;    
 
-    public KeepAlive(POReIDSmartCard card, Pin pin){
-        this.card = card;
-        this.pin = pin;
+    public KeepAlive(Card card){
+        this.card = card;       
     }
     
-    @Override
+    @Override           
     public void run() {
-        try {
-            card.getPinStatus(pin);
-        } catch (POReIDException ignore) {            
-        }
-    }    
+        card.isValid();
+    }
 }
