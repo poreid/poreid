@@ -227,8 +227,8 @@ public class Util {
     
     public static Image getImage(String path) {
 
-        try {
-            ImageIcon icon = new ImageIcon(toByteArray(Util.class.getResourceAsStream(path)));
+        try (InputStream is = Util.class.getResourceAsStream(path)){
+            ImageIcon icon = new ImageIcon(toByteArray(is));
             return icon.getImage();
         } catch (IOException ex) {
             Logger.getLogger(Util.class.getName()).log(Level.SEVERE, null, ex);
