@@ -54,7 +54,12 @@ public final class CitizenCardPhotoAttributes {
      * @return foto do cidadão
      */
     public byte[] getPhoto() {
-        checkNLoad();
+        checkNLoad();        
+        return Arrays.copyOfRange(photo, 80, photo.length);
+    }
+    
+    public byte[] getPhotoAndCBEFF(){
+        checkNLoad();        
         return Arrays.copyOf(photo, photo.length);
     }
     
