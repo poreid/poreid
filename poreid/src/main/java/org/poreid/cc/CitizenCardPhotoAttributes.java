@@ -58,6 +58,10 @@ public final class CitizenCardPhotoAttributes {
         return Arrays.copyOfRange(photo, 80, photo.length);
     }
     
+    /**
+     * Retorna a o foto do cidadão em formato jpeg2000 prefixada pelo header CBEFF
+     * @return foto do cidadão prefixada pelo header CBEFF
+     */
     public byte[] getPhotoAndCBEFF(){
         checkNLoad();        
         return Arrays.copyOf(photo, photo.length);
