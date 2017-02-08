@@ -53,7 +53,7 @@ public final class TerminalFeatures {
     
     private TerminalFeatures(Card card, String readerName) {
         this.card = card;        
-        this.readerName = readerName.replaceAll("( \\d+)*$", "");
+        this.readerName = readerName.replaceAll("((\\(.*\\))( \\d+))|( \\d+)*$", "");
         this.className = POReIDConfig.getSmartCardReaderImplementingClassName(this.readerName);
     }
     

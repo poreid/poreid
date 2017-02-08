@@ -64,6 +64,7 @@
                 <alias>Gemalto GemPC Pinpad USB Smart Card Read</alias>
                 <alias>Gemalto USB GemPCPinpad SmartCard Reader</alias>
                 <alias>Gemplus GemPC Pinpad</alias>
+                <alias>Gemalto Ezio Shield</alias>                
             </alias-of>
             <alias-of unique-id="ACR83 PINeasy">
                 <alias>ACS ACR83U</alias>

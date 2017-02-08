@@ -84,7 +84,7 @@ public interface POReIDSmartCard extends SmartCardUIData, AutoCloseable {
      * @return número de tentativas até bloquear o PIN.
      * @throws POReIDException Exceção lançada quando ocorre uma exceção num componente (encapsula a exeção original)
      */
-    int getPinStatus(Pin pin) throws POReIDException;
+    PinStatus getPinStatus(Pin pin) throws POReIDException;
 
     /**
      * Retorna o certificado contido no ficheiro

@@ -59,6 +59,7 @@ import org.poreid.CertificateChainNotFound;
 import org.poreid.CertificateNotFound;
 import org.poreid.KeepAlive;
 import org.poreid.POReIDException;
+import org.poreid.PinStatus;
 import org.poreid.SecurityStatusNotSatisfiedException;
 import org.poreid.common.Util;
 import org.poreid.dialogs.dialog.DialogController;
@@ -167,7 +168,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
 
             switch (responseApdu.getSW()) {
                 case 0x9000:
-                    pinOk = true;
+                    pinOk = true;                    
                     break;
                 case 0x6400:
                     throw new PinTimeoutException(pin.getLabel()+ " não foi inserido dentro do tempo regular definido pelo leitor");
@@ -178,6 +179,9 @@ public abstract class POReIDCard implements POReIDSmartCard {
                 case 0x6402:
                     BlockedPinDialogController.getInstance(pin.getLabel(), locale).displayBlockedPinDialog(csr.getStartTime());
                     throw new PinBlockedException("O " + pin.getLabel() + "está bloqueado.");
+                case 0x6403:
+                    DialogController.getInstance(bundle.getString("pin.issue.title"), MessageFormat.format(bundle.getString("pin.issue.message"), pin.getLabel()), locale, true).displayDialog(csr.getStartTime());
+                    throw new POReIDException("O leitor de cartões indica que o " + pin.getLabel() + "introduzido não tem o tamanho esperado.");
                 default:
                     if ((responseApdu.getSW() & (int) 0xfffffff0) == 0x63C0) {
                         pinTriesLeft = responseApdu.getSW2() & 0x0f;
@@ -207,17 +211,20 @@ public abstract class POReIDCard implements POReIDSmartCard {
     }
     
     
-    private int checkPinTries(Pin pin, int pinTriesLeft) throws POReIDException, PinBlockedException {
+    private void checkPinTries(Pin pin, int pinTriesLeft) throws POReIDException, PinBlockedException {
+        PinStatus pinStatus;
+        
         if (-1 == pinTriesLeft) {
-            pinTriesLeft = getPinStatus(pin);
+            pinStatus = getPinStatus(pin);
+            if (pinStatus.isPinStatusAvailable()){
+                pinTriesLeft = pinStatus.availableTries();
+            }
         }
 
         if (0 == pinTriesLeft) {
             BlockedPinDialogController.getInstance(pin.getLabel(), locale).displayBlockedPinDialog(csr.getStartTime());
             throw new PinBlockedException("O " + pin.getLabel() + " encontra-se bloqueado");
-        }
-
-        return pinTriesLeft;
+        }        
     }
     
     
@@ -540,27 +547,37 @@ public abstract class POReIDCard implements POReIDSmartCard {
     
     
     @Override
-    public int getPinStatus(Pin pin) throws POReIDException{
+    public PinStatus getPinStatus(Pin pin) throws POReIDException{
+        PinStatus pinStatus;
         int triesLeft;
+        
         try {
             goToPinKeyPath(pin);
 			
             ResponseAPDU responseApdu = channel.transmit(new CommandAPDU(0x00, 0x20, 0x00, pin.getReference()),true, true);
             switch (responseApdu.getSW()) {
+                case 0x6404: // Firewalled pinpad
+                case 0x6982: // Security condition not satisfied
+                case 0x6985: // Conditions of use not satisfied
+                case 0x6a81: // Function not supported                
+                case 0x6d00: // Instruction code not supported or invalid
+                    pinStatus = new PinStatus(false); 
+                    break;                
                 case 0x9000:
-                    triesLeft = 3;
+                    pinStatus = new PinStatus(false);           
                     break;
                 default:
                     if ((responseApdu.getSW() & (int) 0xfffffff0) == 0x63C0) {
                         triesLeft = responseApdu.getSW2() & 0x0f;
+                        pinStatus = new PinStatus(triesLeft);
                     } else {
-                        throw new POReIDException("Código de estado não esperado: " + Integer.toHexString(responseApdu.getSW()));
+                        pinStatus = new PinStatus(false); // não é necessário bloquear a execução só porque surgiu um valor não esperado                    
                     }
             }   
         } catch (CardException ex) {
             throw new POReIDException(ex);
         }
-        return triesLeft;
+        return pinStatus;
     }
     
     
