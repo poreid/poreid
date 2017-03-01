@@ -87,7 +87,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
     private final String aid;
     private String cardPan = null;
     private CertificateFactory certificateFactory = null;
-    private final int BLOCK_SIZE_READ = 0xff;
+    private final int BLOCK_SIZE_READ = 0x100;
     private final int BLOCK_SIZE_WRITE = 0xF8;
     private SmartCardFileCache fileCache;
     private final TerminalFeatures terminalFeatures;
@@ -117,30 +117,30 @@ public abstract class POReIDCard implements POReIDSmartCard {
     
     private byte[] readBinary(int offset, int size) throws IOException, SecurityStatusNotSatisfiedException, POReIDException {
         try {
-        ByteArrayOutputStream data = new ByteArrayOutputStream();
-        byte[] chunk;
+            ByteArrayOutputStream data = new ByteArrayOutputStream();
+            byte[] chunk;
 
-        do {
-            CommandAPDU readBinaryApdu = new CommandAPDU(0x00, 0xB0, offset >> 8, offset & 0xFF, (BLOCK_SIZE_READ > size ? size : BLOCK_SIZE_READ) & 0xFF);
-            ResponseAPDU responseApdu = channel.transmit(readBinaryApdu, true, true);
-            int sw = responseApdu.getSW();
-            if (0x6B00 == sw) {
-                break;
-            }
-            if (0x6982 == sw) {
-                throw new SecurityStatusNotSatisfiedException("Necessário fornecer pin para utilizar recurso.");
-            }
-            if (0x9000 != sw) {
-                throw new IOException("Código de estado não esperado: " + Integer.toHexString(responseApdu.getSW()));
-            }
+            do {
+                CommandAPDU readBinaryApdu = new CommandAPDU(0x00, 0xB0, offset >> 8, offset & 0xFF, (BLOCK_SIZE_READ > size ? size : BLOCK_SIZE_READ));
+                ResponseAPDU responseApdu = channel.transmit(readBinaryApdu, true, true);
+                int sw = responseApdu.getSW();
+                if (0x6B00 == sw) {
+                    break;
+                }
+                if (0x6982 == sw) {
+                    throw new SecurityStatusNotSatisfiedException("Necessário fornecer pin para utilizar recurso.");
+                }
+                if (0x9000 != sw) {
+                    throw new IOException("Código de estado não esperado: " + Integer.toHexString(responseApdu.getSW()));
+                }
 
-            chunk = responseApdu.getData();
-            data.write(chunk);
-            offset += chunk.length;
-            size -= chunk.length;
-        } while (BLOCK_SIZE_READ == chunk.length);
-        return data.toByteArray();
-        } catch (CardException ex){
+                chunk = responseApdu.getData();
+                data.write(chunk);
+                offset += chunk.length;
+                size -= chunk.length;
+            } while (BLOCK_SIZE_READ == chunk.length);
+            return data.toByteArray();
+        } catch (CardException ex) {
             throw new POReIDException(ex);
         }
     }
