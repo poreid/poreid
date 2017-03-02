@@ -88,7 +88,8 @@ public abstract class POReIDCard implements POReIDSmartCard {
     private String cardPan = null;
     private CertificateFactory certificateFactory = null;
     private final int BLOCK_SIZE_READ = 0x100;
-    private final int BLOCK_SIZE_WRITE = 0xF8;
+    private final int BLOCK_SIZE_WRITE = 0xF8;    
+    protected final int NO_FCI = -1;
     private SmartCardFileCache fileCache;
     private final TerminalFeatures terminalFeatures;
     private final Locale locale;
@@ -118,10 +119,11 @@ public abstract class POReIDCard implements POReIDSmartCard {
     private byte[] readBinary(int offset, int size) throws IOException, SecurityStatusNotSatisfiedException, POReIDException {
         try {
             ByteArrayOutputStream data = new ByteArrayOutputStream();
-            byte[] chunk;
-
-            do {
-                CommandAPDU readBinaryApdu = new CommandAPDU(0x00, 0xB0, offset >> 8, offset & 0xFF, (BLOCK_SIZE_READ > size ? size : BLOCK_SIZE_READ));
+            byte[] chunk;            
+                       
+            size = (size == NO_FCI  || size > BLOCK_SIZE_READ ? BLOCK_SIZE_READ : size);            
+            do {                  
+                CommandAPDU readBinaryApdu = new CommandAPDU(0x00, 0xB0, offset >> 8, offset & 0xFF, size);                
                 ResponseAPDU responseApdu = channel.transmit(readBinaryApdu, true, true);
                 int sw = responseApdu.getSW();
                 if (0x6B00 == sw) {
@@ -136,8 +138,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
 
                 chunk = responseApdu.getData();
                 data.write(chunk);
-                offset += chunk.length;
-                size -= chunk.length;
+                offset += chunk.length;                
             } while (BLOCK_SIZE_READ == chunk.length);
             return data.toByteArray();
         } catch (CardException ex) {
@@ -409,7 +410,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
                 if (-1 != file.getLenght()) {
                     lenght = file.getLenght();
                 } else {
-                    lenght = lenght_sel - file.getOffset();
+                    lenght = (lenght_sel != NO_FCI ? lenght_sel - file.getOffset() : lenght_sel);
                 }
                 offset = file.getOffset();
             } else {

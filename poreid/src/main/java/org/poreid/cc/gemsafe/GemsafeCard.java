@@ -79,9 +79,9 @@ public final class GemsafeCard extends CitizenCard {
 
     
     private int parseFCI(byte[] fci) throws POReIDException {
-        int size = 0;
-        int index = 0;
-        if (fci != null && fci[index] == 0x6F && fci.length == fci[++index] + 2) {
+        int size = NO_FCI;
+        int index = 0;        
+        if (fci != null && fci.length > 2 && fci[index] == 0x6F && fci.length == fci[++index] + 2) {
     search:
             while (++index < fci.length) {
                 switch (fci[index]) {
