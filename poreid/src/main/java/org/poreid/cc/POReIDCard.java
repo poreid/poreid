@@ -121,9 +121,9 @@ public abstract class POReIDCard implements POReIDSmartCard {
             ByteArrayOutputStream data = new ByteArrayOutputStream();
             byte[] chunk;            
                        
-            size = (size == NO_FCI  || size > BLOCK_SIZE_READ ? BLOCK_SIZE_READ : size);            
+            size = (size == NO_FCI  || size > BLOCK_SIZE_READ ? BLOCK_SIZE_READ : size);
             do {                  
-                CommandAPDU readBinaryApdu = new CommandAPDU(0x00, 0xB0, offset >> 8, offset & 0xFF, size);                
+                CommandAPDU readBinaryApdu = new CommandAPDU(0x00, 0xB0, offset >> 8, offset & 0xFF, size);
                 ResponseAPDU responseApdu = channel.transmit(readBinaryApdu, true, true);
                 int sw = responseApdu.getSW();
                 if (0x6B00 == sw) {
