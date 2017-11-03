@@ -248,15 +248,15 @@ public final class CardFactory {
     private static <T extends POReIDSmartCard> T knownATR(CardTerminal terminal, Locale locale, CacheStatus status, Proxy proxy) throws CardException, UnknownCardException{
         Card card = terminal.connect("*");
         String className = POReIDConfig.getSmartCardImplementingClassName(Util.bytesToHex(card.getATR().getBytes()));
-        boolean cachePreferences = POReIDConfig.getSmartCardCacheStatus(Util.bytesToHex(card.getATR().getBytes()));
+        org.poreid.CacheStatus cachePreferences = POReIDConfig.getSmartCardCacheStatus(Util.bytesToHex(card.getATR().getBytes()));
 
         if (!CacheStatus.isUnset(status)){
-            cachePreferences = CacheStatus.getStatus(status);
+            cachePreferences = new org.poreid.CacheStatus(CacheStatus.getStatus(status));
         }
 
         if (null != className){
             try {
-                Constructor<? extends POReIDSmartCard> ctor = Class.forName(className).asSubclass(POReIDSmartCard.class).getDeclaredConstructor(Card.class, CardTerminal.class, Locale.class, boolean.class, Proxy.class, Date.class);
+                Constructor<? extends POReIDSmartCard> ctor = Class.forName(className).asSubclass(POReIDSmartCard.class).getDeclaredConstructor(Card.class, CardTerminal.class, Locale.class, org.poreid.CacheStatus.class, Proxy.class, Date.class);
                 return (T) ctor.newInstance(card, terminal, locale, cachePreferences, proxy, new Date());
             } catch (InvocationTargetException | IllegalArgumentException | SecurityException | NoSuchMethodException | InstantiationException | IllegalAccessException | ClassNotFoundException ex) {
                 Logger.getLogger(CardFactory.class.getName()).log(Level.SEVERE, null, ex);

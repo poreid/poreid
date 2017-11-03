@@ -35,6 +35,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import org.poreid.common.Util;
 import org.poreid.config.POReIDConfig;
 
 /**
@@ -56,7 +57,7 @@ public class UsePinPadDialog extends javax.swing.JDialog {
      * @param locale Linguagem utilizada
      */
     public UsePinPadDialog(PinOperation pinOp, String pinLabel, byte[] pinIcon, Locale locale) {
-        super();
+        super();        
         this.pinLabel = pinLabel;
         try {
             image = ImageIO.read(new ByteArrayInputStream(pinIcon));
@@ -67,6 +68,7 @@ public class UsePinPadDialog extends javax.swing.JDialog {
         bundle = POReIDConfig.getBundle(UsePinPadDialog.class.getSimpleName(),locale);
         initComponents();
         
+        setIconImages(Util.getIconImages());
         this.setTitle(MessageFormat.format(bundle.getString("dialog."+pinOp.getOperacao()+".title"), pinLabel));
         this.getAccessibleContext().setAccessibleDescription(MessageFormat.format(bundle.getString("dialog."+pinOp.getOperacao()+".description"),pinLabel));
     }
@@ -84,6 +86,7 @@ public class UsePinPadDialog extends javax.swing.JDialog {
         bundle = POReIDConfig.getBundle(UsePinPadDialog.class.getSimpleName(),locale);
         initComponents();
         
+        setIconImages(Util.getIconImages());
         this.setTitle(MessageFormat.format(bundle.getString("dialog."+pinOp.getOperacao()+".title"), pinLabel));
         this.getAccessibleContext().setAccessibleDescription(MessageFormat.format(bundle.getString("dialog."+pinOp.getOperacao()+".description"),pinLabel));
     }

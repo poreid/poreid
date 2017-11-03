@@ -33,12 +33,14 @@ import javax.xml.bind.annotation.XmlType;
  * @author POReID
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"implementingClass", "cacheEnabled"})
+@XmlType(propOrder = {"implementingClass", "cacheEnabled", "validity"})
 public class POReIDSupportedSmartCardProperties {
     @XmlElement(name = "implementing-class")
     private String implementingClass;
     @XmlElement(name = "cache-enabled")
-    private boolean cacheEnabled;  
+    private boolean cacheEnabled;
+    @XmlElement(name = "validity")
+    private int validity; 
 
     
     public String getImplementingClass() {
@@ -58,5 +60,15 @@ public class POReIDSupportedSmartCardProperties {
     
     public void setCacheEnabled(boolean cacheEnabled) {
         this.cacheEnabled = cacheEnabled;
+    }
+    
+    
+    public void setValidity(int validity){
+        this.validity = validity;
+    }
+    
+    
+    public int getValidity(){
+        return validity;
     }
 }

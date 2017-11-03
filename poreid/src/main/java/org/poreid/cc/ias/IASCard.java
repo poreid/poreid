@@ -34,6 +34,7 @@ import java.io.ByteArrayOutputStream;
 import java.net.Proxy;
 import java.util.Date;
 import java.util.Locale;
+import org.poreid.CacheStatus;
 import org.poreid.DigestPrefixes;
 import org.poreid.POReIDException;
 import org.poreid.Pin;
@@ -56,8 +57,8 @@ public final class IASCard extends CitizenCard {
     private final CardChannel channel;
    
 
-    public IASCard(Card card, CardTerminal terminal, Locale locale, boolean cachePreferences, Proxy proxy, Date date) {
-        super(new IASSpecificReferences(card, terminal, locale, cachePreferences, proxy, date));
+    public IASCard(Card card, CardTerminal terminal, Locale locale, CacheStatus cacheStatus, Proxy proxy, Date date) {
+        super(new IASSpecificReferences(card, terminal, locale, proxy, date), cacheStatus);
         this.card = card;
         this.channel = card.getBasicChannel();
     }

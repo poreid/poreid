@@ -33,6 +33,7 @@ import java.security.spec.RSAPublicKeySpec;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.ResourceBundle;
+import org.poreid.CacheStatus;
 import org.poreid.POReIDException;
 import org.poreid.SmartCardFileException;
 import org.poreid.dialogs.pindialogs.PinBlockedException;
@@ -55,8 +56,8 @@ public abstract class CitizenCard extends POReIDCard implements CitizenData{
     private byte[] sod = null;
       
     
-    protected CitizenCard(CardSpecificReferences csr) {
-        super(csr);
+    protected CitizenCard(CardSpecificReferences csr, CacheStatus cacheStatus) {
+        super(csr, cacheStatus);
         bundle = CCConfig.getBundle(CitizenCard.class.getSimpleName(),csr.getLocale());
     }
    

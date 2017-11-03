@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014, 2015, 2016 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
+ * Copyright 2014, 2015, 2016, 2017 Rui Martinho (rmartinho@gmail.com), António Braz (antoniocbraz@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,50 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poreid.cc;
-
-import org.poreid.pcscforjava.Card;
-import org.poreid.pcscforjava.CardTerminal;
-import java.net.Proxy;
-import java.util.Date;
-import java.util.Locale;
-import org.poreid.DigestPrefixes;
-import org.poreid.Pin;
-import org.poreid.PkAlias;
-import org.poreid.RSAPaddingSchemes;
+package org.poreid;
 
 /**
  *
  * @author POReID
  */
-public interface CardSpecificReferences {
-
-    Pin getCryptoReferences(PkAlias pkAlias);
-
-    Pin getAddressPin();
-
-    String getAID();
+public class CacheStatus {        
+    private final long validity;
+    private final boolean enabled;
     
-    String getEmvAID();
+    public CacheStatus(boolean enabled, int validity){
+        this.validity = (long)(validity * 1440 * 60000);
+        this.enabled = enabled;
+    }
     
-    String getCDOL1();
     
-    Card getCard();
-
-    Byte getAlgorithmID(String digest, RSAPaddingSchemes scheme);
-
-    String getCardReaderName();
-
-    Locale getLocale();
+    public CacheStatus(boolean enabled){
+        this.validity = 0;
+        this.enabled = enabled;
+    }
     
-    DigestPrefixes getDigestPrefix(String prefix);
     
-    @Deprecated
-    boolean isEMVCAPPin(Pin pin);
+    public boolean isEnabled(){
+        return enabled;
+    }
     
-    CardTerminal getTerminal();
     
-    Proxy getProxy();
-    
-    Date getStartTime();
+    public boolean isValid(long cacheDate){        
+        return (isEnabled() && (validity == 0 || (validity > 0 && cacheDate + validity >= System.currentTimeMillis())));
+    }
 }

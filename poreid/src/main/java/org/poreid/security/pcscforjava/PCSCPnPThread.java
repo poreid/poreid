@@ -94,7 +94,7 @@ public class PCSCPnPThread implements Runnable {
         if(m_thread == null)
         {
             m_bStop = false;
-            m_thread = new Thread(this);
+            m_thread = new Thread(this, "PCSCPnPThread");
             m_thread.setDaemon(true);
             m_thread.setPriority(Thread.MIN_PRIORITY);
             m_thread.start();

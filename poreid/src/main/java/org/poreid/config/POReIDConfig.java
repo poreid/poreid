@@ -34,6 +34,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
+import org.poreid.CacheStatus;
 import org.xml.sax.SAXException;
 
 /**
@@ -63,11 +64,12 @@ public class POReIDConfig {
     public static final String IMAGE_AUTHENTICATION_LOCATION = "/org/poreid/images/autenticacao.png";
     public static final String BACKGROUND_AUTHENTICATION_LOCATION = "/org/poreid/images/fundo-autenticacao.png";
     public static final String BACKGROUND_SMALL_AUTHENTICATION_LOCATION = "/org/poreid/images/fundo-autenticacao-min.png";
+    public static final int NO_CACHE_THRESHOLD = 0;
     private static final String I18N_BUNDLE_LOCATION = "org.poreid.i18n.";
     private static final String XML_SCHEMA = "/org/poreid/config/schema/poreid.config.xsd";
     private static final String CONFIGURACAO = "/org/poreid/config/xml/poreid.config.xml";
     private static Configuration config;
-    private static final int version = 0x01;
+    private static final int version = 0x02;
     
     
     static {
@@ -105,11 +107,12 @@ public class POReIDConfig {
     }
     
     
-    public static boolean getSmartCardCacheStatus(String atr){
-        boolean cacheStatus = false;
+    public static CacheStatus getSmartCardCacheStatus(String atr){
+        CacheStatus cacheStatus = null;
+        
         
         if (config.getSupportedSmartCards().containsKey(atr)){
-            cacheStatus = config.getSupportedSmartCards().get(atr).isCacheEnabled();
+            cacheStatus = new CacheStatus(config.getSupportedSmartCards().get(atr).isCacheEnabled(), config.getSupportedSmartCards().get(atr).getValidity());                        
         }
         
         return cacheStatus;
@@ -234,5 +237,9 @@ public class POReIDConfig {
     
     public static int timedInteractionPeriod() {
         return config.getTimedInteraction().isEnabled() ? config.getTimedInteraction().getPeriod() : 0;
+    }
+    
+    public static int getCacheThreshold(){
+        return config.getcacheThreshold();
     }
 }

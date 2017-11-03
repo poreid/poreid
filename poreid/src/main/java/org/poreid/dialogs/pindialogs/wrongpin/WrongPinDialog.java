@@ -26,6 +26,7 @@ package org.poreid.dialogs.pindialogs.wrongpin;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import org.poreid.common.Util;
 import org.poreid.config.POReIDConfig;
 import org.poreid.dialogs.DialogEventListener;
 
@@ -55,6 +56,7 @@ public class WrongPinDialog extends javax.swing.JDialog {
         bundle = POReIDConfig.getBundle(WrongPinDialog.class.getSimpleName(),locale);
         initComponents();
         
+        setIconImages(Util.getIconImages());
         this.setTitle(MessageFormat.format(bundle.getString("dialog.title"),pinLabel));
         this.getAccessibleContext().setAccessibleDescription(MessageFormat.format(bundle.getString("dialog.description"), pinLabel));
     }

@@ -41,7 +41,7 @@ public class POReIDException extends Exception{
      * Constroi uma nova exceção com a causa
      * @param causa A causa da exceção
      */
-    public POReIDException(Exception causa) {
+    public POReIDException(Throwable causa) {
         super(causa);
     }
     
@@ -50,7 +50,7 @@ public class POReIDException extends Exception{
      * @param detalhe A mensagem de detalhe relativa à exceção
      * @param causa A causa da exceção
      */
-    public POReIDException(String detalhe, Exception causa){
+    public POReIDException(String detalhe, Throwable causa){
         super(detalhe, causa);
     }
     

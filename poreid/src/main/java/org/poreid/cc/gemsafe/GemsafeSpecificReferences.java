@@ -58,17 +58,15 @@ public final class GemsafeSpecificReferences implements CardSpecificReferences{
     private final Map<RSAPaddingSchemes, Byte> algorithmID;
     private final Map<PkAlias, Pin> pinInfo;
     protected final Map<String, DigestPrefixes> digestsMap;   
-    private final Map<String, Byte> fix;
-    private final boolean cachePreferences;
+    private final Map<String, Byte> fix;    
     private final Proxy proxy;    
     
 
-    public GemsafeSpecificReferences(Card card, CardTerminal terminal, Locale locale, boolean cachePreferences, Proxy proxy, Date date){
+    public GemsafeSpecificReferences(Card card, CardTerminal terminal, Locale locale, Proxy proxy, Date date){
         this.card = card;
         this.terminal = terminal;
         this.cardReaderName = terminal.getName();
-        this.locale = locale;
-        this.cachePreferences = cachePreferences;
+        this.locale = locale;        
         this.proxy = proxy;
         this.date = date;
         bundle = CCConfig.getBundle(CitizenCard.class.getSimpleName(), locale);
@@ -185,22 +183,20 @@ public final class GemsafeSpecificReferences implements CardSpecificReferences{
         //return pinInfo.get(PkAlias.AUTENTICACAO).equals(pin);
         return false;
     }
-
-    @Override
-    public boolean getCachePreference() {
-        return cachePreferences;
-    }
+    
 
     @Override
     public CardTerminal getTerminal() {
         return terminal;
     }
 
+    
     @Override
     public Proxy getProxy() {
         return this.proxy;
     }
 
+    
     @Override
     public Date getStartTime() {
         return this.date;

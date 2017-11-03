@@ -42,6 +42,7 @@ import java.security.SignatureException;
 import java.security.cert.CertPathBuilder;
 import java.security.cert.CertPathBuilderException;
 import java.security.cert.CertStore;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CollectionCertStoreParameters;
@@ -191,7 +192,7 @@ public class Util {
             params.setRevocationEnabled(false);
             PKIXCertPathBuilderResult result = (PKIXCertPathBuilderResult) pathBuilder.build(params);
             
-            ArrayList<? super X509Certificate> certChain = new ArrayList<>(result.getCertPath().getCertificates());                
+            ArrayList<? extends Certificate> certChain = new ArrayList<>(result.getCertPath().getCertificates());                
             return (List<X509Certificate>) certChain;
         } catch (IOException | KeyStoreException | CertificateException | NoSuchAlgorithmException | NoSuchProviderException | InvalidAlgorithmParameterException ex) {
             throw new CertificateChainNotFound("Não foi possivel gerar a cadeia de certificação", ex);

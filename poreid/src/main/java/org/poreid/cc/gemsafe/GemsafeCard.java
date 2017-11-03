@@ -34,6 +34,7 @@ import java.io.ByteArrayOutputStream;
 import java.net.Proxy;
 import java.util.Date;
 import java.util.Locale;
+import org.poreid.CacheStatus;
 import org.poreid.DigestPrefixes;
 import org.poreid.POReIDException;
 import org.poreid.Pin;
@@ -55,8 +56,8 @@ public final class GemsafeCard extends CitizenCard {
     private final CardChannel channel;
     
     
-    public GemsafeCard(Card card, CardTerminal terminal, Locale locale, boolean cachePreferences, Proxy proxy, Date date) {
-        super(new GemsafeSpecificReferences(card, terminal, locale, cachePreferences, proxy, date));
+    public GemsafeCard(Card card, CardTerminal terminal, Locale locale, CacheStatus cacheStatus, Proxy proxy, Date date) {
+        super(new GemsafeSpecificReferences(card, terminal, locale, proxy, date), cacheStatus);
         this.channel = card.getBasicChannel();
     }
 
