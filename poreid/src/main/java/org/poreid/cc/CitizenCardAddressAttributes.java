@@ -23,7 +23,10 @@
  */
 package org.poreid.cc;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 /**
@@ -64,6 +67,7 @@ public final class CitizenCardAddressAttributes {
     private String postalCodeF;
     private String GenAddressNoF;
     private final byte[] data;
+    private byte[] digest;
     
     
 
@@ -344,6 +348,54 @@ public final class CitizenCardAddressAttributes {
         return GenAddressNoF;
     }
     
+    /**
+     * Retorna o resumo criptográfico da morada
+     * @return resumo criptográfico SHA-256
+     * @throws java.security.NoSuchAlgorithmException
+     * @throws java.io.UnsupportedEncodingException
+     */
+    public byte[] generateDigest() throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        checkNLoad();
+        
+        if (null == digest) {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            if (type.equals(NACIONAL)) {
+                md.update(country.getBytes("utf-8"));
+                md.update(districtCode.getBytes("utf-8"));
+                md.update(district.getBytes("utf-8"));
+                md.update(municipalityCode.getBytes("utf-8"));
+                md.update(municipality.getBytes("utf-8"));
+                md.update(civilParishCode.getBytes("utf-8"));
+                md.update(civilParish.getBytes("utf-8"));
+                md.update(abbreviatedStreetType.getBytes("utf-8"));
+                md.update(streetType.getBytes("utf-8"));
+                md.update(streetName.getBytes("utf-8"));
+                md.update(abbreviatedBuildingType.getBytes("utf-8"));
+                md.update(buildingType.getBytes("utf-8"));
+                md.update(doorNo.getBytes("utf-8"));
+                md.update(floor.getBytes("utf-8"));
+                md.update(side.getBytes("utf-8"));
+                md.update(place.getBytes("utf-8"));
+                md.update(locality.getBytes("utf-8"));
+                md.update(zip4.getBytes("utf-8"));
+                md.update(zip3.getBytes("utf-8"));
+                md.update(postalLocality.getBytes("utf-8"));
+                md.update(GenAddressNo.getBytes("utf-8"));
+            } else {
+                md.update(country.getBytes("utf-8"));
+                md.update(countryDescriptionF.getBytes("utf-8"));
+                md.update(addressF.getBytes("utf-8"));
+                md.update(cityF.getBytes("utf-8"));
+                md.update(regionF.getBytes("utf-8"));
+                md.update(localityF.getBytes("utf-8"));
+                md.update(postalCodeF.getBytes("utf-8"));
+                md.update(GenAddressNoF.getBytes("utf-8"));
+            }
+            digest = md.digest();
+        }
+        
+        return digest;
+    }
     
     
     private void checkNLoad(){

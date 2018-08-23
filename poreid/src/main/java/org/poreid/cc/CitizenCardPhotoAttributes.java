@@ -23,6 +23,8 @@
  */
 package org.poreid.cc;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 /**
@@ -34,6 +36,7 @@ public final class CitizenCardPhotoAttributes {
     private FaceImageRecordFormat firf;
     private byte[] photo;
     private final byte[] data;
+    private byte[] digest;
     
     
     protected CitizenCardPhotoAttributes(byte[] data){
@@ -76,6 +79,28 @@ public final class CitizenCardPhotoAttributes {
     }
     
     
+    /**
+     * Retorna o resumo criptográfico da fotografia do cidadão
+     * @return resumo criptográfico SHA-256
+     * @throws java.security.NoSuchAlgorithmException
+     */
+    public byte[] generateDigest() throws NoSuchAlgorithmException {
+        checkNLoad();
+
+        if (null == digest) {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update(firf.getCbeff());
+            md.update(firf.getFacialRecordHeader());
+            md.update(firf.getFacialRecordData());
+            md.update(Arrays.copyOfRange(photo,80,photo.length));
+            
+            digest = md.digest();
+        }
+        
+        return digest;
+    }
+    
+          
     private void checkNLoad(){
         if (!isdataLoaded){
             parse(data);

@@ -260,11 +260,11 @@ public final class CardFactory {
                 return (T) ctor.newInstance(card, terminal, locale, cachePreferences, proxy, new Date());
             } catch (InvocationTargetException | IllegalArgumentException | SecurityException | NoSuchMethodException | InstantiationException | IllegalAccessException | ClassNotFoundException ex) {
                 Logger.getLogger(CardFactory.class.getName()).log(Level.SEVERE, null, ex);
-                throw new UnknownCardException("Cartão não suportado", ex);
+                throw new UnknownCardException("Cartão não suportado ATR=["+Util.bytesToHex(card.getATR().getBytes())+"]", ex);
             }
         }
 
-        throw new UnknownCardException("Cartão não suportado");
+        throw new UnknownCardException("Cartão não suportado ATR=["+Util.bytesToHex(card.getATR().getBytes())+"]");
     }
     
     /**

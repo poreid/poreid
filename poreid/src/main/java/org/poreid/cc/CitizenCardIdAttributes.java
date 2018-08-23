@@ -23,7 +23,10 @@
  */
 package org.poreid.cc;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 /**
@@ -61,6 +64,7 @@ public final class CitizenCardIdAttributes {
     private String mrz2;
     private String mrz3;
     private final byte[] data;
+    private byte[] digest;
     
     
     protected CitizenCardIdAttributes(byte[] data){
@@ -325,6 +329,49 @@ public final class CitizenCardIdAttributes {
      */
     public byte[] getRawData(){
         return Arrays.copyOf(data, data.length);
+    }
+    
+    /**
+     * Retorna o resumo criptográfico dos dados do cidadão
+     * @return resumo criptográfico SHA-256
+     * @throws java.security.NoSuchAlgorithmException
+     * @throws java.io.UnsupportedEncodingException
+     */
+    public byte[] generateDigest() throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        checkNLoad();
+
+        if (null == digest) {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            
+            md.update(issuingEntity.getBytes("utf-8"));            
+            md.update(country.getBytes("utf-8"));           
+            md.update(documentType.getBytes("utf-8"));            
+            md.update(documentNumber.getBytes("utf-8"));            
+            md.update(documentNumberPAN.getBytes("utf-8"));            
+            md.update(documentVersion.getBytes("utf-8"));            
+            md.update(validityBeginDate.getBytes("utf-8"));           
+            md.update(localofRequest.getBytes("utf-8"));            
+            md.update(validityEndDate.getBytes("utf-8"));            
+            md.update(surname.getBytes("utf-8"));           
+            md.update(name.getBytes("utf-8"));            
+            md.update(gender.getBytes("utf-8"));            
+            md.update(nationality.getBytes("utf-8"));            
+            md.update(dateOfBirth.getBytes("utf-8"));
+            md.update(heigh.getBytes("utf-8"));
+            md.update(civilianIdNumber.getBytes("utf-8"));
+            md.update(surnameMother.getBytes("utf-8"));
+            md.update(givenNameMother.getBytes("utf-8"));
+            md.update(surnameFather.getBytes("utf-8"));
+            md.update(givenNameFather.getBytes("utf-8"));
+            md.update(accidentalIndications.getBytes("utf-8"));            
+            md.update(taxNo.getBytes("utf-8"));
+            md.update(socialSecurityNo.getBytes("utf-8"));
+            md.update(healthNo.getBytes("utf-8"));
+               
+            digest = md.digest();
+        }
+        
+        return digest;
     }
     
     

@@ -122,14 +122,16 @@ public abstract class POReIDCard implements POReIDSmartCard {
 
     
     private byte[] readBinary(int offset, int size) throws IOException, SecurityStatusNotSatisfiedException, POReIDException {
+        boolean availableFCI = (size != NO_FCI);        
+        int blockSize = (!availableFCI || size > BLOCK_SIZE_READ ? BLOCK_SIZE_READ : size);
+        
         try {
             ByteArrayOutputStream data = new ByteArrayOutputStream();
             byte[] chunk = new byte[0];
             int retry = 0;
-
-            size = (size == NO_FCI || size > BLOCK_SIZE_READ ? BLOCK_SIZE_READ : size);
-            do {
-                CommandAPDU readBinaryApdu = new CommandAPDU(0x00, 0xB0, offset >> 8, offset & 0xFF, size);
+            
+            do {                
+                CommandAPDU readBinaryApdu = new CommandAPDU(0x00, 0xB0, offset >> 8, offset & 0xFF, (availableFCI ? (BLOCK_SIZE_READ > size ? size : BLOCK_SIZE_READ) : blockSize));
                 ResponseAPDU responseApdu = channel.transmit(readBinaryApdu, true, true);
                 int sw = responseApdu.getSW();
 
@@ -153,8 +155,10 @@ public abstract class POReIDCard implements POReIDSmartCard {
                 
                 chunk = responseApdu.getData();
                 data.write(chunk);
-                offset += chunk.length;                
+                offset += chunk.length;
+                size -= chunk.length;                
             } while (BLOCK_SIZE_READ == chunk.length || retry != 0);
+            
             return data.toByteArray();
         } catch (CardException ex) {
             throw new POReIDException(ex);
