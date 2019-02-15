@@ -2,6 +2,13 @@
 <configuration xmlns="http://config.por.eid" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://config.por.eid poreid.config.xsd">
     <poreid-supported-smartcards>
         <smartcard>
+            <atr>3BFF9600008131FE4380318065B085040120120FFF829000D0</atr>
+            <properties>
+                <implementing-class>org.poreid.cc.gemsafe.GemsafeCard</implementing-class>
+                <cache-enabled>true</cache-enabled>
+            </properties>
+        </smartcard>
+        <smartcard>
             <atr>3BFF9600008131804380318065B0850300EF120FFF82900067</atr>
             <properties>
                 <implementing-class>org.poreid.cc.gemsafe.GemsafeCard</implementing-class>
