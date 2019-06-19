@@ -90,11 +90,16 @@ public abstract class CitizenCard extends POReIDCard implements CitizenData{
     
     @Override
     public final CitizenCardAddressAttributes getAddress() throws PinTimeoutException, PinEntryCancelledException, PinBlockedException, POReIDException {
+        return getAddress(null);
+    }
+
+
+    @Override
+    public final CitizenCardAddressAttributes getAddress(byte[] addressPinCode) throws PinBlockedException, POReIDException, PinEntryCancelledException, PinTimeoutException {
         if (null != ccaa) {
             return ccaa;
         }
-        
-        return ccaa = new CitizenCardAddressAttributes(readFile(getFileDescription().ADDRESS));
+        return ccaa = new CitizenCardAddressAttributes(readFile(getFileDescription().ADDRESS, addressPinCode));
     }
 
     

@@ -407,9 +407,12 @@ public abstract class POReIDCard implements POReIDSmartCard {
     final Files getFileDescription(){
         return files;
     }
-    
-    
+
     protected final byte[] readFile(SmartCardFile file) throws PinEntryCancelledException, PinBlockedException, POReIDException, PinTimeoutException {
+        return readFile(file, null);
+    }
+
+    protected final byte[] readFile(SmartCardFile file, byte[] pinCode) throws PinEntryCancelledException, PinBlockedException, POReIDException, PinTimeoutException {
         String idFileid;
         byte[] contents = null;
         int lenght_sel;
@@ -462,7 +465,7 @@ public abstract class POReIDCard implements POReIDSmartCard {
                     }                    
                 } catch (SecurityStatusNotSatisfiedException ex) {
                     if (null != file.getPin()) {
-                        verifyPin(file.getPin(), null);                        
+                        verifyPin(file.getPin(), pinCode);
                     } else {
                         throw new POReIDException(ex);
                     }
