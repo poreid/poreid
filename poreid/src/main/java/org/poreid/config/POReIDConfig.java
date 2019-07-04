@@ -41,7 +41,7 @@ import org.xml.sax.SAXException;
  *
  * @author POReID
  */
-public class POReIDConfig {   
+public class POReIDConfig {
     public static final String LAF = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
     public static final String LAF_SHORT_NAME = "Nimbus";
     public static final String GENERIC_READER = "generic reader";
@@ -72,18 +72,21 @@ public class POReIDConfig {
     private static final int version = 0x02;
     
     
-    public static synchronized void init(Class<? extends Configuration> configurationClass) {
+    public static synchronized void init(ConfigurationOverrider configurationOverrider) {
         if(config !=null) {
             return;
         }
         try {
             SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
             Schema schema = sf.newSchema(POReIDConfig.class.getResource(XML_SCHEMA));
-            JAXBContext jaxbContext = JAXBContext.newInstance(configurationClass);
+            JAXBContext jaxbContext = JAXBContext.newInstance(Configuration.class);
             Unmarshaller u = jaxbContext.createUnmarshaller();
             u.setSchema(schema);
             u.setEventHandler(new javax.xml.bind.helpers.DefaultValidationEventHandler());
             config = (Configuration) u.unmarshal(POReIDConfig.class.getResource(CONFIGURACAO));
+            if (configurationOverrider != null) {
+                configurationOverrider.override(config);
+            }
         } catch (JAXBException | SAXException ex) {
             Logger.getLogger(POReIDConfig.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -91,7 +94,7 @@ public class POReIDConfig {
 
     private static Configuration getConfig() {
         if(config == null) {
-            init(Configuration.class);
+            init(null);
         }
         return config;
     }

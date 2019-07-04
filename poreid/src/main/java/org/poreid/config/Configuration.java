@@ -99,11 +99,11 @@ public class Configuration {
     }
     
     
-    protected void setExternalPinCache(boolean status){
+    public void setExternalPinCache(boolean status){
         this.externalPinCache = status;
     }
     
-    
+
     public TimedInteraction getTimedInteraction() {
         return timedInteraction;
     }
