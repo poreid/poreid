@@ -852,7 +852,9 @@ public abstract class POReIDCard implements POReIDSmartCard {
     
     @Override
     public void close() throws POReIDException{
-        fileCache.enforceCacheThreshold();
+        if (fileCache != null) {
+            fileCache.enforceCacheThreshold();
+        }
         try {
             endExclusive();
             this.card.disconnect(SCARD_RESET_CARD);
