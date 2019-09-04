@@ -56,6 +56,17 @@ public interface CitizenData {
     CitizenCardAddressAttributes getAddress() throws PinTimeoutException, PinEntryCancelledException, PinBlockedException, POReIDException;
 
     /**
+     * Retorna o conteúdo do ficheiro da morada
+     * @param addressPinCode pin da morada
+     * @return morada
+     * @throws org.poreid.dialogs.pindialogs.PinTimeoutException Exceção lançada quando o PIN não é introduzido dentro do tempo especificado (30 segundos)
+     * @throws org.poreid.dialogs.pindialogs.PinEntryCancelledException Exceção lançada quando a introdução do PIN é cancelada
+     * @throws org.poreid.dialogs.pindialogs.PinBlockedException Exceção lançada quando o PIN está bloqueado
+     * @throws org.poreid.POReIDException Exceção genérica do POReID, tipicamente encapsula outra exceção
+     */
+    CitizenCardAddressAttributes getAddress(byte[] addressPinCode) throws PinTimeoutException, PinEntryCancelledException, PinBlockedException, POReIDException;
+
+    /**
      * Retorna o conteúdo do ficheiro das notas pessoais
      * @return conteúdo do ficheiro das notas pessoais
      * @throws SmartCardFileException Exceção lançada quando ocorre um erro durante uma operação sobre um ficheiro existente no cartão
