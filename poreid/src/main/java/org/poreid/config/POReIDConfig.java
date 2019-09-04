@@ -41,7 +41,7 @@ import org.xml.sax.SAXException;
  *
  * @author POReID
  */
-public class POReIDConfig {   
+public class POReIDConfig {
     public static final String LAF = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
     public static final String LAF_SHORT_NAME = "Nimbus";
     public static final String GENERIC_READER = "generic reader";
@@ -72,7 +72,10 @@ public class POReIDConfig {
     private static final int version = 0x02;
     
     
-    static {
+    public static synchronized void init(ConfigurationOverrider configurationOverrider) {
+        if(config !=null) {
+            return;
+        }
         try {
             SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
             Schema schema = sf.newSchema(POReIDConfig.class.getResource(XML_SCHEMA));
@@ -81,11 +84,20 @@ public class POReIDConfig {
             u.setSchema(schema);
             u.setEventHandler(new javax.xml.bind.helpers.DefaultValidationEventHandler());
             config = (Configuration) u.unmarshal(POReIDConfig.class.getResource(CONFIGURACAO));
+            if (configurationOverrider != null) {
+                configurationOverrider.override(config);
+            }
         } catch (JAXBException | SAXException ex) {
             Logger.getLogger(POReIDConfig.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
+    private static Configuration getConfig() {
+        if(config == null) {
+            init(null);
+        }
+        return config;
+    }
     
     public static int getPOReIDVersion(){
         return version;
@@ -99,8 +111,8 @@ public class POReIDConfig {
     public static String getSmartCardImplementingClassName(String atr){
         String implementingClass = null;
         
-        if (config.getSupportedSmartCards().containsKey(atr)){
-            implementingClass = config.getSupportedSmartCards().get(atr).getImplementingClass();
+        if (getConfig().getSupportedSmartCards().containsKey(atr)){
+            implementingClass = getConfig().getSupportedSmartCards().get(atr).getImplementingClass();
         }
         
         return implementingClass;
@@ -111,8 +123,8 @@ public class POReIDConfig {
         CacheStatus cacheStatus = null;
         
         
-        if (config.getSupportedSmartCards().containsKey(atr)){
-            cacheStatus = new CacheStatus(config.getSupportedSmartCards().get(atr).isCacheEnabled(), config.getSupportedSmartCards().get(atr).getValidity());                        
+        if (getConfig().getSupportedSmartCards().containsKey(atr)){
+            cacheStatus = new CacheStatus(getConfig().getSupportedSmartCards().get(atr).isCacheEnabled(), getConfig().getSupportedSmartCards().get(atr).getValidity());
         }
         
         return cacheStatus;
@@ -120,15 +132,15 @@ public class POReIDConfig {
     
     
     public static java.util.Locale getDefaultLocale(){
-        return config.getLocale();
+        return getConfig().getLocale();
     }
     
     
     private static String getUniqueReaderID(String readerName){
-        String uniqueName = config.getSmartCardPinPadReaders().getAliases().get(readerName);
+        String uniqueName = getConfig().getSmartCardPinPadReaders().getAliases().get(readerName);
         
         if (null == uniqueName){
-            uniqueName = config.getSmartCardPinPadReaders().getAliases().get(POReIDConfig.GENERIC_READER); 
+            uniqueName = getConfig().getSmartCardPinPadReaders().getAliases().get(POReIDConfig.GENERIC_READER);
         }
         
         return uniqueName;
@@ -140,8 +152,8 @@ public class POReIDConfig {
         String uniqueName;
 
         if (null != (uniqueName = getUniqueReaderID(readerName))) {
-            if (config.getSmartCardPinPadReaders().getSmartCardReaders().containsKey(uniqueName)) {
-                implementingClass = config.getSmartCardPinPadReaders().getSmartCardReaders().get(uniqueName).getImplementingClass();
+            if (getConfig().getSmartCardPinPadReaders().getSmartCardReaders().containsKey(uniqueName)) {
+                implementingClass = getConfig().getSmartCardPinPadReaders().getSmartCardReaders().get(uniqueName).getImplementingClass();
             }
         }
 
@@ -153,7 +165,7 @@ public class POReIDConfig {
         String uniqueName;
 
         if (null != (uniqueName = getUniqueReaderID(readerName))) {
-            return config.getSmartCardPinPadReaders().getSmartCardReaders().get(uniqueName).getSupportedOses().get(detectOS().value()).isVerify() && getPinPadVerifyPinSupportedSmardCards(readerName,implementingClass);
+            return getConfig().getSmartCardPinPadReaders().getSmartCardReaders().get(uniqueName).getSupportedOses().get(detectOS().value()).isVerify() && getPinPadVerifyPinSupportedSmardCards(readerName,implementingClass);
         }
         
         return true;
@@ -164,7 +176,7 @@ public class POReIDConfig {
         String uniqueName;
 
         if (null != (uniqueName = getUniqueReaderID(readerName))) {
-            return config.getSmartCardPinPadReaders().getSmartCardReaders().get(uniqueName).getSupportedOses().get(detectOS().value()).isModify() && getPinPadModifyPinSupportedSmardCards(readerName,implementingClass);
+            return getConfig().getSmartCardPinPadReaders().getSmartCardReaders().get(uniqueName).getSupportedOses().get(detectOS().value()).isModify() && getPinPadModifyPinSupportedSmardCards(readerName,implementingClass);
         }
         
         return true;
@@ -175,7 +187,7 @@ public class POReIDConfig {
         String uniqueName;
 
         if (null != (uniqueName = getUniqueReaderID(readerName))) {
-            return config.getSmartCardPinPadReaders().getSmartCardReaders().get(uniqueName).getSupportedOses().get(detectOS().value()).isInject();
+            return getConfig().getSmartCardPinPadReaders().getSmartCardReaders().get(uniqueName).getSupportedOses().get(detectOS().value()).isInject();
         }
         
         return true;
@@ -183,7 +195,7 @@ public class POReIDConfig {
     
     
     public static boolean isExternalPinCachePermitted(){
-        return config.isExternalPinCachePermitted();
+        return getConfig().isExternalPinCachePermitted();
     }
     
     
@@ -208,8 +220,8 @@ public class POReIDConfig {
         String uniqueName;
 
         if (null != (uniqueName = getUniqueReaderID(readerName))) {
-            if (config.getSmartCardPinPadReaders().getSmartCardReaders().containsKey(uniqueName) && config.getSmartCardPinPadReaders().getSmartCardReaders().get(uniqueName).getSupportedSmartCards().containsKey(implementingClass)){
-                return config.getSmartCardPinPadReaders().getSmartCardReaders().get(uniqueName).getSupportedSmartCards().get(implementingClass).isVerify();
+            if (getConfig().getSmartCardPinPadReaders().getSmartCardReaders().containsKey(uniqueName) && getConfig().getSmartCardPinPadReaders().getSmartCardReaders().get(uniqueName).getSupportedSmartCards().containsKey(implementingClass)){
+                return getConfig().getSmartCardPinPadReaders().getSmartCardReaders().get(uniqueName).getSupportedSmartCards().get(implementingClass).isVerify();
             }
         }
     
@@ -221,8 +233,8 @@ public class POReIDConfig {
         String uniqueName;
 
         if (null != (uniqueName = getUniqueReaderID(readerName))) {
-            if (config.getSmartCardPinPadReaders().getSmartCardReaders().containsKey(uniqueName) && config.getSmartCardPinPadReaders().getSmartCardReaders().get(uniqueName).getSupportedSmartCards().containsKey(implementingClass)){
-                return config.getSmartCardPinPadReaders().getSmartCardReaders().get(uniqueName).getSupportedSmartCards().get(implementingClass).isModify();
+            if (getConfig().getSmartCardPinPadReaders().getSmartCardReaders().containsKey(uniqueName) && getConfig().getSmartCardPinPadReaders().getSmartCardReaders().get(uniqueName).getSupportedSmartCards().containsKey(implementingClass)){
+                return getConfig().getSmartCardPinPadReaders().getSmartCardReaders().get(uniqueName).getSupportedSmartCards().get(implementingClass).isModify();
             }
         }
     
@@ -231,15 +243,15 @@ public class POReIDConfig {
     
     
     public static boolean isTimedInteractionEnabled(){
-        return config.getTimedInteraction().isEnabled();
+        return getConfig().getTimedInteraction().isEnabled();
     }
     
     
     public static int timedInteractionPeriod() {
-        return config.getTimedInteraction().isEnabled() ? config.getTimedInteraction().getPeriod() : 0;
+        return getConfig().getTimedInteraction().isEnabled() ? getConfig().getTimedInteraction().getPeriod() : 0;
     }
     
     public static int getCacheThreshold(){
-        return config.getcacheThreshold();
+        return getConfig().getcacheThreshold();
     }
 }
