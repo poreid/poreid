@@ -33,7 +33,7 @@ import java.util.Arrays;
  * Contem todos os atributos da morada do cidadão
  * @author POReID
  */
-public final class CitizenCardAddressAttributes {
+public class CitizenCardAddressAttributes {
     private boolean isdataLoaded = false;
     private static final String NACIONAL = "N";
     

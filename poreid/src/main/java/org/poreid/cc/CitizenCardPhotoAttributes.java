@@ -31,7 +31,7 @@ import java.util.Arrays;
  * Metadados e foto do cidadão
  * @author POReID
  */
-public final class CitizenCardPhotoAttributes {
+public class CitizenCardPhotoAttributes {
     private boolean isdataLoaded = false;
     private FaceImageRecordFormat firf;
     private byte[] photo;
