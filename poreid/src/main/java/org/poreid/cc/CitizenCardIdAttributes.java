@@ -33,7 +33,7 @@ import java.util.Arrays;
  * Contem os atributos de identificação do cidadão
  * @author POReID
  */
-public final class CitizenCardIdAttributes {
+public class CitizenCardIdAttributes {
     private boolean isdataLoaded = false;
     
     private String issuingEntity;
